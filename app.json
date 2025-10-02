@@ -1,0 +1,8 @@
+{
+    "env": {
+        "USE_NPM_INSTALL": {
+            "description": "Use npm install",
+            "value": "true"
+        }
+    }
+}
