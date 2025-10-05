@@ -1,0 +1,44 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy Express API to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            set -e
+
+            echo "🔄 Changing to app directory"
+            cd ${{ secrets.EC2_APP_DIR }}
+
+            echo "✅ Marking directory as safe"
+            git config --global --add safe.directory $(pwd)
+
+            echo "🔐 Adding GitHub to known hosts"
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+            echo "📥 Pulling latest code"
+            git pull origin main
+
+            echo "📦 Installing dependencies"
+            npm ci --ignore-scripts --no-audit
+
+            echo "🚀 Restarting app with PM2"
+            pm2 start ecosystem.config.js --env production || pm2 reload ecosystem.config.js --env production
+
+            echo "✅ Deployment completed successfully!"
