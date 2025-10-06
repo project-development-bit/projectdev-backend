@@ -4,6 +4,10 @@ const mysql2 = require("mysql2");
 
 class DBConnection {
   constructor(database) {
+    
+    console.log(`Connecting to ${database} database...`);
+    console.log(`DB_${database}_URL`);
+
     if (process.env[`DB_${database}_URL`]) {
       this.db = mysql2.createPool(process.env[`DB_${database}_URL`]);
     } else {
@@ -64,16 +68,16 @@ const HttpStatusCodes = Object.freeze({
 });
 
 // Create instances of DBConnection for each database
-const onlineServiceDB = new DBConnection("ONLINESERVICE");
-const datamartDB = new DBConnection("DATAMART");
-const JWDB = new DBConnection("JWDB");
-const productOnlineDB = new DBConnection("PRODUCTONLINE");
+// const onlineServiceDB = new DBConnection("ONLINESERVICE");
+// const datamartDB = new DBConnection("DATAMART");
+// const JWDB = new DBConnection("JWDB");
+const coinDB = new DBConnection("COIN");
 // Add more instances for other databases as needed
 
 module.exports = {
-  onlineServiceQuery: onlineServiceDB.query,
-  datamartQuery: datamartDB.query,
-  jwdbQuery: JWDB.query,
-  productOnlineQuery: productOnlineDB.query,
+  // onlineServiceQuery: onlineServiceDB.query,
+  // datamartQuery: datamartDB.query,
+  // jwdbQuery: JWDB.query,
+  coinQuery: coinDB.query,
   // Export more query functions for other databases if necessary
 };

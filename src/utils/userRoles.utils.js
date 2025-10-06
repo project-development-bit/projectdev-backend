@@ -1,5 +1,5 @@
 module.exports = {
-    Dev: 'dev',
+    Dev: 'Dev',
     Admin: 'Admin',
     SuperUser: 'SuperUser',
     NormalUser: 'NormalUser'

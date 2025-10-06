@@ -1,4 +1,4 @@
-const { onlineServiceQuery } = require("../config/db");
+const { coinQuery } = require("../config/db");
 const { multipleColumnSet } = require("../utils/common.utils");
 const Role = require("../utils/userRoles.utils");
 class UserModel {
@@ -8,13 +8,13 @@ class UserModel {
     let sql = `SELECT * FROM ${this.tableName}`;
 
     if (!Object.keys(params).length) {
-      return await onlineServiceQuery(sql);
+      return await coinQuery(sql);
     }
 
     const { columnSet, values } = multipleColumnSet(params);
     sql += ` WHERE ${columnSet}`;
 
-    return await onlineServiceQuery(sql, [...values]);
+    return await coinQuery(sql, [...values]);
   };
 
   findOne = async (params) => {
@@ -23,7 +23,7 @@ class UserModel {
     const sql = `SELECT * FROM ${this.tableName}
         WHERE ${columnSet}`;
 
-    const result = await onlineServiceQuery(sql, [...values]);
+    const result = await coinQuery(sql, [...values]);
 
     // return back the first row (user)
     return result[0];
@@ -39,7 +39,7 @@ class UserModel {
     right  join datamart.m_insured m on m.m_insuredDependenceNo= u.memberID
     where u.username = ?`;
 
-    const result = await onlineServiceQuery(sql, [email]);
+    const result = await coinQuery(sql, [email]);
 
     // return back the first row (user)
     return result[0];
@@ -61,7 +61,7 @@ class UserModel {
     right  join datamart.m_insured m on m.m_insuredDependenceNo= u.memberID
     where m.m_email = ? and m.m_insuredDependenceNo = ? and m.m_birthDate= ?`;
 
-    const result = await onlineServiceQuery(sql, [email, member_id, dob]);
+    const result = await coinQuery(sql, [email, member_id, dob]);
 
     // return back the first row (user)
     return result[0];
@@ -70,7 +70,7 @@ class UserModel {
   checkMember = async (email) => {
     const sql = `Select memberID, username from users where username = ?`;
 
-    const result = await onlineServiceQuery(sql, [email]);
+    const result = await coinQuery(sql, [email]);
 
     // return back the first row (user)
     return result[0];
@@ -79,7 +79,7 @@ class UserModel {
   savePassword = async ({ email }, { securityCode }) => {
     const sql = `UPDATE users SET verification_code = ? WHERE username = ?`;
 
-    const result = await onlineServiceQuery(sql, [securityCode, email]);
+    const result = await coinQuery(sql, [securityCode, email]);
 
     const affectedRows = result ? result.affectedRows : 0;
 
@@ -93,11 +93,11 @@ class UserModel {
     if (status == 0) {
       sql = `UPDATE users SET verification_code = ? WHERE username = ?`;
 
-      result = await onlineServiceQuery(sql, [securityCode, email]);
+      result = await coinQuery(sql, [securityCode, email]);
     } else {
       sql = `INSERT INTO users (user_type,memberID,username,verification_code,status, password) VALUES (1, ?, ?, ?, 0, "-")`;
 
-      result = await onlineServiceQuery(sql, [member_id, email, securityCode]);
+      result = await coinQuery(sql, [member_id, email, securityCode]);
     }
 
     const affectedRows = result ? result.affectedRows : 0;
@@ -106,25 +106,19 @@ class UserModel {
   };
 
   create = async ({
-    username,
+    name,
     password,
-    first_name,
-    last_name,
     email,
-    role = Role.SuperUser,
-    age = 0,
+    role = Role.NormalUser,
   }) => {
     const sql = `INSERT INTO ${this.tableName}
-        (username, password, first_name, last_name, email, role, age) VALUES (?,?,?,?,?,?,?)`;
+        (name, password, email, role) VALUES (?,?,?,?)`;
 
-    const result = await onlineServiceQuery(sql, [
-      username,
+    const result = await coinQuery(sql, [
+      name,
       password,
-      first_name,
-      last_name,
       email,
       role,
-      age,
     ]);
     const affectedRows = result ? result.affectedRows : 0;
 
@@ -136,7 +130,7 @@ class UserModel {
 
     const sql = `UPDATE users SET ${columnSet} WHERE username = ?`;
 
-    const result = await onlineServiceQuery(sql, [...values, email]);
+    const result = await coinQuery(sql, [...values, email]);
 
     return result;
   };
@@ -146,7 +140,7 @@ class UserModel {
 
     const sql = `UPDATE users SET ${columnSet} WHERE id = ?`;
 
-    const result = await onlineServiceQuery(sql, [...values, id]);
+    const result = await coinQuery(sql, [...values, id]);
 
     return result;
   };
@@ -156,7 +150,7 @@ class UserModel {
     Select user_id, memberID from users where username = ? and verification_code = ?
   `;
 
-    const result = await onlineServiceQuery(sql, [email, security_code]);
+    const result = await coinQuery(sql, [email, security_code]);
 
     // return back the first row (user)
     return result[0];
@@ -167,7 +161,7 @@ class UserModel {
     SET status = 1
     WHERE memberID = ?`;
 
-    const result = await onlineServiceQuery(sql, [id]);
+    const result = await coinQuery(sql, [id]);
 
     return result;
   };
@@ -177,7 +171,7 @@ class UserModel {
     SET password = ?, verification_code = NULL, status = 1
     WHERE memberID = ?`;
 
-    const result = await onlineServiceQuery(sql, [password, memberID]);
+    const result = await coinQuery(sql, [password, memberID]);
 
     return result;
   };
@@ -185,7 +179,7 @@ class UserModel {
   delete = async (id) => {
     const sql = `DELETE FROM ${this.tableName}
         WHERE id = ?`;
-    const result = await onlineServiceQuery(sql, [id]);
+    const result = await coinQuery(sql, [id]);
     const affectedRows = result ? result.affectedRows : 0;
 
     return affectedRows;
@@ -229,7 +223,7 @@ class UserModel {
 		AND u.username LIKE ?
   `;
 
-    const result = await onlineServiceQuery(sql, [values[1], values[0]]);
+    const result = await coinQuery(sql, [values[1], values[0]]);
 
     // return back the first row (user)
     return result[0];
@@ -261,7 +255,7 @@ class UserModel {
 			lumaportal.lp_file;
   `;
 
-    const result = await onlineServiceQuery(sql, [values[0], values[0]]);
+    const result = await coinQuery(sql, [values[0], values[0]]);
 
     return result[0];
   };

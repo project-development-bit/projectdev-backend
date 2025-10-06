@@ -2,23 +2,9 @@ const { body } = require("express-validator");
 const Role = require("../../utils/userRoles.utils");
 
 exports.createUserSchema = [
-  body("username")
+  body("name")
     .exists()
-    .withMessage("username is required")
-    .isLength({ min: 3 })
-    .withMessage("Must be at least 3 chars long"),
-  body("first_name")
-    .exists()
-    .withMessage("Your first name is required")
-    .isAlpha()
-    .withMessage("Must be only alphabetical chars")
-    .isLength({ min: 3 })
-    .withMessage("Must be at least 3 chars long"),
-  body("last_name")
-    .exists()
-    .withMessage("Your last name is required")
-    .isAlpha()
-    .withMessage("Must be only alphabetical chars")
+    .withMessage("Name is required")
     .isLength({ min: 3 })
     .withMessage("Must be at least 3 chars long"),
   body("email")
@@ -29,7 +15,7 @@ exports.createUserSchema = [
     .normalizeEmail(),
   body("role")
     .optional()
-    .isIn([Role.Admin, Role.SuperUser])
+    .isIn([Role.Admin, Role.SuperUser, Role.NormalUser, Role.Dev])
     .withMessage("Invalid Role type"),
   body("password")
     .exists()
@@ -45,7 +31,6 @@ exports.createUserSchema = [
     .withMessage(
       "confirm_password field must have the same value as the password field"
     ),
-  body("age").optional().isNumeric().withMessage("Must be a number"),
 ];
 
 exports.updateUserSchema = [

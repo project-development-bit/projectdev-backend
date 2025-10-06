@@ -460,7 +460,7 @@ class UserController {
   checkValidation = (req) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      throw new HttpException(400, "Email and password are required.", errors);
+      throw new HttpException(400, "Validation failed. Please check your input fields.", errors);
     }
   };
 

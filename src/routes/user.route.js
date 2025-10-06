@@ -39,11 +39,13 @@ router.get(
   auth(),
   awaitHandlerFactory(userController.getCurrentUser)
 ); // localhost:3000/api/v1/users/whoami
+
 router.post(
   "/",
   createUserSchema,
   awaitHandlerFactory(userController.createUser)
 ); // localhost:3000/api/v1/users
+
 router.patch(
   "/id/:id",
   auth(Role.Admin),
