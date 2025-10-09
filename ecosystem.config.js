@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "api",
+      name: "express-api",
       script: "src/server.js",
 
       /* default (dev) env */
