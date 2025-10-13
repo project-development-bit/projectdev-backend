@@ -105,24 +105,26 @@ class UserModel {
     return affectedRows;
   };
 
-  create = async ({
-    name,
-    password,
-    email,
-    role = Role.NormalUser,
-  }) => {
-    const sql = `INSERT INTO ${this.tableName}
-        (name, password, email, role) VALUES (?,?,?,?)`;
+  create = async ({ name, password, email, role = Role.NormalUser }) => {
+    const sql = `
+    INSERT INTO ${this.tableName} (name, password, email, role)
+    VALUES (?, ?, ?, ?)
+  `;
 
-    const result = await coinQuery(sql, [
-      name,
-      password,
-      email,
-      role,
-    ]);
-    const affectedRows = result ? result.affectedRows : 0;
+    const result = await coinQuery(sql, [name, password, email, role]);
 
-    return affectedRows;
+    // Get inserted ID (MySQL usually returns insertId)
+    if (result && result.insertId) {
+      return {
+        id: result.insertId,
+        name,
+        email,
+        role,
+        createdAt: new Date().toISOString(),
+      };
+    }
+
+    return null;
   };
 
   updateTerms = async (params, email) => {

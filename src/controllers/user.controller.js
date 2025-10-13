@@ -75,17 +75,24 @@ class UserController {
   };
 
   createUser = async (req, res, next) => {
-    this.checkValidation(req);
+    try {
+      this.checkValidation(req);
+      await this.hashPassword(req);
 
-    await this.hashPassword(req);
+      const userData = await UserModel.create(req.body);
 
-    const result = await UserModel.create(req.body);
+      if (!userData) {
+        throw new HttpException(500, "Something went wrong");
+      }
 
-    if (!result) {
-      throw new HttpException(500, "Something went wrong");
+      res.status(201).json({
+        success: true,
+        message: "User was created successfully.",
+        data: userData,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    res.status(201).send("User was created!");
   };
 
   updateUser = async (req, res, next) => {
@@ -209,7 +216,7 @@ class UserController {
       next,
       user.m_name,
       user.m_surname,
-      req.body.email, 
+      req.body.email,
       securityCode,
       "forgot_password"
     );
@@ -260,10 +267,7 @@ class UserController {
     const user = await UserModel.checkMember(req.body.email);
 
     if (!user) {
-      throw new HttpException(
-        401,
-        "Something went wrong"
-      );
+      throw new HttpException(401, "Something went wrong");
     }
 
     const hashedPassword = crypto
@@ -408,7 +412,11 @@ class UserController {
         "<br/>" +
         "it is possible that someone else is trying to access" +
         "<br/>" +
-        `your LUMA Account <a href="mailto:` + recieverEmail + `">` + recieverEmail + `</a>.` +
+        `your LUMA Account <a href="mailto:` +
+        recieverEmail +
+        `">` +
+        recieverEmail +
+        `</a>.` +
         "<br/>" +
         "If so, please ignore and do not forward this message to anyone." +
         "<br/><br/>" +
@@ -460,7 +468,11 @@ class UserController {
   checkValidation = (req) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      throw new HttpException(400, "Validation failed. Please check your input fields.", errors);
+      throw new HttpException(
+        400,
+        "Validation failed. Please check your input fields.",
+        errors
+      );
     }
   };
 
