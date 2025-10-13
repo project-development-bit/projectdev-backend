@@ -8,6 +8,11 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
 
+const JWT_SECRET = process.env.SECRET_JWT;
+const JWT_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRY || "15m";
+const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || JWT_SECRET + "_r";
+const REFRESH_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRY || "7d";
+
 /******************************************************************************
  *                              User Controller
  ******************************************************************************/
@@ -130,62 +135,68 @@ class UserController {
   };
 
   userLogin = async (req, res, next) => {
-    this.checkValidation(req);
+    try {
+      this.checkValidation(req);
 
-    const { email, password: pass } = req.body;
+      const { email, password: pass } = req.body;
 
-    // const user = await UserModel.findOne({ email });
-    const user = await UserModel.findOne({ username: email });
+      const user = await UserModel.findOne({ email });
 
-    if (!user) {
-      throw new HttpException(
-        401,
-        "Your email is incorrect. Please try again."
-      );
+      if (!user) {
+        throw new HttpException(
+          401,
+          "Your email is incorrect. Please try again."
+        );
+      }
+
+      if (user.is_banned === 1) {
+        throw new HttpException(
+          401,
+          "Your account isn't verified. Please contact us."
+        );
+      }
+
+      const hashedPassword = Buffer.isBuffer(user.password)
+        ? user.password.toString()
+        : user.password;
+
+      const ok = await bcrypt.compare(pass, hashedPassword);
+      if (!ok) {
+        throw new HttpException(401, "Invalid email or password");
+      }
+
+      // Build JWT payload (never include password)
+      const payload = { id: user.id, role: user.role, email: user.email };
+
+      const accessToken = jwt.sign(payload, JWT_SECRET, {
+        expiresIn: JWT_EXPIRES_IN,
+      });
+      const refreshToken = jwt.sign({ id: user.id }, REFRESH_SECRET, {
+        expiresIn: REFRESH_EXPIRES_IN,
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Login successful.",
+        data: {
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          },
+          tokens: {
+            accessToken,
+            refreshToken,
+            tokenType: "Bearer",
+            accessTokenExpiresIn: JWT_EXPIRES_IN,
+            refreshTokenExpiresIn: REFRESH_EXPIRES_IN,
+          },
+        },
+      });
+    } catch (err) {
+      next(err);
     }
-
-    if (user.status != 1) {
-      throw new HttpException(
-        401,
-        "Your account isn't verified. Please contact Luma Care."
-      );
-    }
-
-    // Hash the password
-    const hashedPassword = crypto
-      .createHash("md5")
-      .update(
-        process.env.HASH_SALT +
-          crypto.createHash("md5").update(pass).digest("hex")
-      )
-      .digest("hex");
-
-    // Concatenate the uppercased memberID and hashed password
-    const concatenatedString = user.memberID.toUpperCase() + hashedPassword;
-
-    // Hash the concatenated string
-    const finalHash = crypto
-      .createHash("md5")
-      .update(concatenatedString)
-      .digest("hex");
-
-    if (finalHash != user.password) {
-      throw new HttpException(
-        401,
-        "Your password is incorrect. Please try again."
-      );
-    }
-
-    // user matched!
-    const secretKey = process.env.SECRET_JWT || "";
-    // const token = jwt.sign({ user_id: user.user_id.toString() }, secretKey, {
-    //   expiresIn: "24h",
-    // });
-    const token = jwt.sign({ user_id: user.user_id.toString() }, secretKey);
-
-    const { password, ...userWithoutPassword } = user;
-
-    res.send({ ...userWithoutPassword, token });
   };
 
   forgotPassword = async (req, res, next) => {
