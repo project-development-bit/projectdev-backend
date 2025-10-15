@@ -167,3 +167,13 @@ exports.validateTerms = [
     .isLength({ max: 1 })
     .withMessage("Must be not greater tha 1 chars long"),
 ];
+
+exports.validateRefreshToken = [
+  body("refreshToken")
+    .exists()
+    .withMessage("Refresh token is required")
+    .isString()
+    .withMessage("Refresh token must be a string")
+    .notEmpty()
+    .withMessage("Refresh token must not be empty")
+];

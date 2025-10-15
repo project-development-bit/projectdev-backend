@@ -13,6 +13,7 @@ const {
   validateRegister,
   validateTerms,
   validatePassword,
+  validateRefreshToken,
 } = require("../middleware/validators/userValidator.middleware");
 
 router.get(
@@ -84,5 +85,11 @@ router.post(
   validatePassword,
   awaitHandlerFactory(userController.savePassword)
 );
+
+router.post(
+  "/refresh-token",
+  validateRefreshToken,
+  awaitHandlerFactory(userController.refreshToken)
+); // POST localhost:3000/api/v1/users/refresh-token
 
 module.exports = router;

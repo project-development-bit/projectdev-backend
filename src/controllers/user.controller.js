@@ -8,10 +8,10 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const JWT_SECRET = process.env.SECRET_JWT;
-const JWT_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRY || "15m";
-const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || JWT_SECRET + "_r";
-const REFRESH_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRY || "7d";
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../utils/token.utils");
 
 /******************************************************************************
  *                              User Controller
@@ -165,14 +165,12 @@ class UserController {
         throw new HttpException(401, "Invalid email or password");
       }
 
-      // Build JWT payload (never include password)
-      const payload = { id: user.id, role: user.role, email: user.email };
+      const accessToken = generateAccessToken(user);
+      const refreshToken = generateRefreshToken(user);
 
-      const accessToken = jwt.sign(payload, JWT_SECRET, {
-        expiresIn: JWT_EXPIRES_IN,
-      });
-      const refreshToken = jwt.sign({ id: user.id }, REFRESH_SECRET, {
-        expiresIn: REFRESH_EXPIRES_IN,
+      await UserModel.refreshToken({
+        refreshToken,
+        userID: user.id,
       });
 
       res.status(200).json({
@@ -189,8 +187,8 @@ class UserController {
             accessToken,
             refreshToken,
             tokenType: "Bearer",
-            accessTokenExpiresIn: JWT_EXPIRES_IN,
-            refreshTokenExpiresIn: REFRESH_EXPIRES_IN,
+            accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m",
+            refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d",
           },
         },
       });
@@ -537,16 +535,30 @@ class UserController {
     res.send(userWithoutPassword);
   };
 
-  checkDocuments = async (req, res, next) => {
-    const isDocuments = await UserModel.checkDocuments({
-      insured_id: req.params.insured_id,
-    });
+  refreshToken = async (req, res, next) => {
+    const { refreshToken } = req.body;
 
-    if (!isDocuments) {
-      throw new HttpException(404, "Documents not found");
+    this.checkValidation(req);
+
+    try {
+      const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+      const user = await UserModel.findOne({ id: decoded.id });
+
+      if (!user) {
+        return res.status(403).json({ message: "User not found" });
+      }
+
+      const newAccessToken = generateAccessToken(user);
+
+      res.send({
+        accessToken: newAccessToken,
+      });
+    } catch (err) {
+      return res
+        .status(403)
+        .json({ message: "Invalid or expired refresh token" });
     }
-
-    res.send(isDocuments);
   };
 }
 

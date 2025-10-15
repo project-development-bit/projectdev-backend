@@ -261,6 +261,18 @@ class UserModel {
 
     return result[0];
   };
+
+  refreshToken = async ({ refreshToken, userID }) => {
+    try {
+      const sql = `UPDATE users SET refresh_token = ? WHERE id = ?`;
+      const result = await kitchenQuery(sql, [refreshToken, userID]);
+
+      return result;
+    } catch (error) {
+      console.error(error);
+      return { success: false, error: "Internal server error" };
+    }
+  };
 }
 
 module.exports = new UserModel();
