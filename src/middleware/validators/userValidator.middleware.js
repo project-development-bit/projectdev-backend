@@ -119,25 +119,6 @@ exports.validateForgotPassword = [
     .withMessage("Must be a valid email"),
 ];
 
-exports.validateRegister = [
-  body("member_id")
-    .exists()
-    .withMessage("Member ID is required")
-    .isLength({ min: 3 })
-    .withMessage("Member ID is required must be at least 3 chars long"),
-  body("email")
-    .exists()
-    .withMessage("Email is required")
-    .isEmail()
-    .withMessage("Email must be a valid email"),
-  // .normalizeEmail(),
-  body("dob")
-    .exists()
-    .withMessage("Date of birth is required")
-    .notEmpty()
-    .withMessage("Date of birth must be filled"),
-];
-
 exports.validatePassword = [
   body("email")
     .exists()

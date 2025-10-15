@@ -71,11 +71,6 @@ router.post(
   awaitHandlerFactory(userController.forgotPassword)
 ); // localhost:3000/api/v1/users/register
 
-router.post(
-  "/register",
-  validateRegister,
-  awaitHandlerFactory(userController.userRegister)
-); // localhost:3000/api/v1/users/register
 router.get(
   "/verify/:email/:security_code",
   awaitHandlerFactory(userController.verifyUser)

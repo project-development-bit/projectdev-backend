@@ -84,10 +84,24 @@ class UserController {
       this.checkValidation(req);
       await this.hashPassword(req);
 
-      const userData = await UserModel.create(req.body);
+      const userData = await this.saveNewUser(req);
 
-      if (!userData) {
-        throw new HttpException(500, "Something went wrong");
+      const sendEmailResult = await this.sendRegistrationEmail(
+        req,
+        res,
+        next,
+        userData.name,
+        "",
+        userData.email,
+        userData.securityCode,
+        "register"
+      );
+
+      if (!sendEmailResult) {
+        throw new HttpException(
+          500,
+          "Something went wrong when sending email notification"
+        );
       }
 
       res.status(201).json({
@@ -247,36 +261,6 @@ class UserController {
     res.status(201).send("Reset password is completed!");
   };
 
-  userRegister = async (req, res, next) => {
-    this.checkRegisterValidation(req);
-
-    const { status, m_email, m_name, m_surname } =
-      await this.checkMemberIDEmailDOB(req);
-    console.log(status);
-
-    const securityCode = await this.saveNewUser(req, status);
-
-    const sendEmailResult = await this.sendRegistrationEmail(
-      req,
-      res,
-      next,
-      m_name,
-      m_surname,
-      m_email,
-      securityCode,
-      "register"
-    );
-
-    if (!sendEmailResult) {
-      throw new HttpException(
-        500,
-        "Something went wrong when sending email notification"
-      );
-    }
-
-    res.status(201).send("Registration is completed!");
-  };
-
   savePassword = async (req, res, next) => {
     this.checkConfirmPassword(req);
 
@@ -339,19 +323,18 @@ class UserController {
     return user;
   };
 
-  saveNewUser = async (req, status) => {
+  saveNewUser = async (req) => {
     const securityCode = this.securityCode();
 
-    const result = await UserModel.register(req.body, {
+    const userData = await UserModel.create(req.body, {
       securityCode: securityCode,
-      status: status,
     });
 
-    if (!result) {
+    if (!userData) {
       throw new HttpException(500, "Something went wrong");
     }
 
-    return securityCode;
+    return userData;
   };
 
   sendRegistrationEmail = async (
@@ -364,12 +347,20 @@ class UserController {
     securityCode,
     type
   ) => {
+
+    console.log("Preparing to send email to:", recieverEmail);
+    console.log("memberName:", memberName);
+    console.log("surname:", surname);
+    console.log("securityCode:", securityCode);
+    console.log("type:", type);
+
+
     const transporter = nodemailer.createTransport({
       // host: process.env.EMAIL_HOST,
       // port: process.env.EMAIL_PORT,
       host: process.env.MAIL_NO_REPLY_HOST,
       port: process.env.MAIL_NO_REPLY_PORT,
-      secure: false, // true for 465, false for other ports
+      secure: true, // true for 465, false for other ports
       auth: {
         // login info
         user: process.env.EMAIL_USERNAME, // email user
@@ -384,7 +375,7 @@ class UserController {
     let html = "";
 
     if (type == "register") {
-      subject = "Luma Online Service Registration - Luma Health Insurance";
+      subject = "Gigafaucet Accoount Registration";
       html =
         `<div>` +
         "Dear " +
@@ -392,20 +383,20 @@ class UserController {
         " " +
         surname +
         ",<br /><br />" +
-        "Thank you for signing up for our online service." +
+        "Thank you for signing up for our service." +
         "<br/><br/>" +
         `Please use the following verification code: <br /><b><font style="font-size: 25px;">` +
         securityCode +
         `</font></b><br/><br/>` +
         "Yours Sincerely,<br/>" +
-        "Client Services Team<br/><br/>" +
-        `<img src="https://www.lumahealth.com/wp-content/uploads/2017/09/logo.png" width="90px"/><br><br>` +
-        "<b>Luma Health Insurance</b><br/>" +
-        `Unit 912, 9th Floor.<br/>` +
-        `Park Ventures Ecoplex 57 Wireless Road,<br/>` +
-        `Lumpini, Pathumwan, Bangkok, Thailand 10330<br/>` +
-        `Tel. +66 2 494 3600<br/>` +
-        `Email: cs@lumahealth.com<br/>` +
+        "Gigafaucet Team<br/><br/>" +
+        // `<img src="https://www.lumahealth.com/wp-content/uploads/2017/09/logo.png" width="90px"/><br><br>` +
+        "<b>Gifafaucet</b><br/>" +
+        `95/87, Moo 7, Soi Saiyuan,<br/>` +
+        `A.Mueang, T.Rawai, Phuket, 83130<br/>` +
+        // `Lumpini, Pathumwan, Bangkok, Thailand 10330<br/>` +
+        // `Tel. +66 2 494 3600<br/>` +
+        // `Email: cs@lumahealth.com<br/>` +
         "<div>" +
         // + "<br/><br/><br/><hr/>test server : "
         // + process.env.MAIL_NO_REPLY_SERVER_SEND
@@ -453,7 +444,7 @@ class UserController {
 
     const info = await transporter.sendMail({
       // from: process.env.EMAIL_FROM, // sender email
-      from: '"LUMA Member Portal" <application@lumahealth.com>',
+      from: '"Gigafaucet" <projectdev.bit@gmail.com>',
       to: recieverEmail, // reciever email by ,(Comma)
       subject: subject, // email subject
       text: "(TESTING) test noti member portal", // plain text body
