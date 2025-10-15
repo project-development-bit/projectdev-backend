@@ -156,6 +156,13 @@ class UserController {
         );
       }
 
+      if (user.is_verified !== 1) {
+        throw new HttpException(
+          401,
+          "Your account isn't verified. Please contact us."
+        );
+      }
+
       const hashedPassword = Buffer.isBuffer(user.password)
         ? user.password.toString()
         : user.password;
