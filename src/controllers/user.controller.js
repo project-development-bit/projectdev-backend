@@ -317,14 +317,14 @@ class UserController {
     if (user.is_banned === 1) {
       throw new HttpException(
         401,
-        "Your account isn't verified. Please contact us."
+        "Your account is banned. Please contact support."
       );
     }
 
     if (user.is_verified !== 1) {
       throw new HttpException(
         401,
-        "Your account isn't verified. Please contact us."
+        "Your account isn't verified."
       );
     }
 
