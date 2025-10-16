@@ -1,19 +1,25 @@
 function errorMiddleware(error, req, res, next) {
-    let { status = 500, message, data } = error;
+  let { status = 500, message, code, data } = error;
 
-    console.log(`[Error] ${error}`);
+  console.log(`[Error]`, error);
 
-    // If status code is 500 - change the message to Intrnal server error
-    message = status === 500 || !message ? 'Internal server error' : message;
+  // If no message or 500 status → use a generic fallback
+  if (status === 500 || !message) {
+    message = 'Internal server error';
+    code = 'INTERNAL_ERROR';
+  }
 
-    error = {
-        type: 'error',
-        status,
-        message,
-        ...(data) && data
-    }
+  const response = {
+    type: 'error',
+    status,
+    message,
+    code: code || 'UNKNOWN_ERROR',
+  };
 
-    res.status(status).send(error);
+  // Include extra data if present
+  if (data) response.data = data;
+
+  res.status(status).json(response);
 }
 
 module.exports = errorMiddleware;
@@ -21,6 +27,7 @@ module.exports = errorMiddleware;
 {
     type: 'error',
     status: 404,
+    code: 'NOT_FOUND',
     message: 'Not Found'
     data: {...} // optional
 }

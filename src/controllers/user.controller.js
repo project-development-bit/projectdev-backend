@@ -162,7 +162,7 @@ class UserController {
 
       const ok = await bcrypt.compare(pass, hashedPassword);
       if (!ok) {
-        throw new HttpException(401, "Invalid email or password");
+        throw new HttpException(401, "Invalid password", "INVALID_CREDENTIALS");
       }
 
       const tokens = await this.generateToken(user);
@@ -310,21 +310,24 @@ class UserController {
     if (!user) {
       throw new HttpException(
         401,
-        "Your email is incorrect. Please try again."
+        "Your email is incorrect. Please try again.",
+        "INVALID_EMAIL",
       );
     }
 
     if (user.is_banned === 1) {
       throw new HttpException(
         401,
-        "Your account is banned. Please contact support."
+        "Your account is banned. Please contact support.",
+        "BANNED_ACCOUNT",
       );
     }
 
     if (user.is_verified !== 1) {
       throw new HttpException(
         401,
-        "Your account isn't verified."
+        "Your account isn't verified.",
+        "UNVERIFIED_ACCOUNT",
       );
     }
 
@@ -473,8 +476,12 @@ class UserController {
       security_code: req.params.security_code,
     });
 
+    console.log("Verification result:", verification);
+
     if (!verification) {
-      throw new HttpException(404, "Verification code does not match.");
+      throw new HttpException(404, "Verification code does not match.", "INVALID_CODE");
+    } else {
+      await UserModel.updateRegistrationStatus(req.params.email);
     }
 
     const user = await this.checkUserExists(req.params.email);

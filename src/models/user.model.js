@@ -158,26 +158,22 @@ class UserModel {
   };
 
   checkSecurityCode = async ({ email, security_code }) => {
-  //   const sql = `
-  //   Select id, email from users where email = ? and security_code = ?
-  // `;
-
-    const sql = `UPDATE users
-    SET is_verified = 1
-    where email = ? and security_code = ?`;
+    const sql = `
+    Select id from users where email = ? and security_code = ?
+  `;
 
     const result = await coinQuery(sql, [email, security_code]);
 
-    // return result[0];
-    return result;
+    // return back the first row (user)
+    return result[0];
   };
 
-  updateRegistrationStatus = async (id) => {
+  updateRegistrationStatus = async (email) => {
     const sql = `UPDATE users
-    SET status = 1
-    WHERE memberID = ?`;
+    SET is_verified = 1
+    where email = ?`;
 
-    const result = await coinQuery(sql, [id]);
+    const result = await coinQuery(sql, [email]);
 
     return result;
   };
@@ -279,7 +275,7 @@ class UserModel {
   refreshToken = async ({ refreshToken, userID }) => {
     try {
       const sql = `UPDATE users SET refresh_token = ? WHERE id = ?`;
-      const result = await kitchenQuery(sql, [refreshToken, userID]);
+      const result = await coinQuery(sql, [refreshToken, userID]);
 
       return result;
     } catch (error) {
