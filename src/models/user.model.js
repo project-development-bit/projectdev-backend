@@ -105,13 +105,22 @@ class UserModel {
     return affectedRows;
   };
 
-  create = async ({ name, password, email, role = Role.NormalUser }, { securityCode }) => {
+  create = async (
+    { name, password, email, role = Role.NormalUser },
+    { securityCode }
+  ) => {
     const sql = `
     INSERT INTO ${this.tableName} (name, password, email, role, security_code)
     VALUES (?, ?, ?, ?, ?)
   `;
 
-    const result = await coinQuery(sql, [name, password, email, role, securityCode]);
+    const result = await coinQuery(sql, [
+      name,
+      password,
+      email,
+      role,
+      securityCode,
+    ]);
 
     // Get inserted ID (MySQL usually returns insertId)
     if (result && result.insertId) {
@@ -149,14 +158,18 @@ class UserModel {
   };
 
   checkSecurityCode = async ({ email, security_code }) => {
-    const sql = `
-    Select user_id, memberID from users where username = ? and verification_code = ?
-  `;
+  //   const sql = `
+  //   Select id, email from users where email = ? and security_code = ?
+  // `;
+
+    const sql = `UPDATE users
+    SET is_verified = 1
+    where email = ? and security_code = ?`;
 
     const result = await coinQuery(sql, [email, security_code]);
 
-    // return back the first row (user)
-    return result[0];
+    // return result[0];
+    return result;
   };
 
   updateRegistrationStatus = async (id) => {

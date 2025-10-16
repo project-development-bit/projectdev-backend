@@ -154,28 +154,7 @@ class UserController {
 
       const { email, password: pass } = req.body;
 
-      const user = await UserModel.findOne({ email });
-
-      if (!user) {
-        throw new HttpException(
-          401,
-          "Your email is incorrect. Please try again."
-        );
-      }
-
-      if (user.is_banned === 1) {
-        throw new HttpException(
-          401,
-          "Your account isn't verified. Please contact us."
-        );
-      }
-
-      if (user.is_verified !== 1) {
-        throw new HttpException(
-          401,
-          "Your account isn't verified. Please contact us."
-        );
-      }
+      const user = await this.checkUserExists(email);
 
       const hashedPassword = Buffer.isBuffer(user.password)
         ? user.password.toString()
@@ -186,13 +165,7 @@ class UserController {
         throw new HttpException(401, "Invalid email or password");
       }
 
-      const accessToken = generateAccessToken(user);
-      const refreshToken = generateRefreshToken(user);
-
-      await UserModel.refreshToken({
-        refreshToken,
-        userID: user.id,
-      });
+      const tokens = await this.generateToken(user);
 
       res.status(200).json({
         success: true,
@@ -204,13 +177,7 @@ class UserController {
             email: user.email,
             role: user.role,
           },
-          tokens: {
-            accessToken,
-            refreshToken,
-            tokenType: "Bearer",
-            accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m",
-            refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d",
-          },
+          tokens: tokens,
         },
       });
     } catch (err) {
@@ -337,6 +304,51 @@ class UserController {
     return userData;
   };
 
+  checkUserExists = async (email) => {
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+      throw new HttpException(
+        401,
+        "Your email is incorrect. Please try again."
+      );
+    }
+
+    if (user.is_banned === 1) {
+      throw new HttpException(
+        401,
+        "Your account isn't verified. Please contact us."
+      );
+    }
+
+    if (user.is_verified !== 1) {
+      throw new HttpException(
+        401,
+        "Your account isn't verified. Please contact us."
+      );
+    }
+
+    return user;
+  };
+
+  generateToken = async (user) => {
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    await UserModel.refreshToken({
+      refreshToken,
+      userID: user.id,
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+      tokenType: "Bearer",
+      accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m",
+      refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d",
+    };
+  };
+
   sendRegistrationEmail = async (
     req,
     res,
@@ -347,13 +359,11 @@ class UserController {
     securityCode,
     type
   ) => {
-
     console.log("Preparing to send email to:", recieverEmail);
     console.log("memberName:", memberName);
     console.log("surname:", surname);
     console.log("securityCode:", securityCode);
     console.log("type:", type);
-
 
     const transporter = nodemailer.createTransport({
       // host: process.env.EMAIL_HOST,
@@ -458,18 +468,32 @@ class UserController {
   };
 
   verifyUser = async (req, res) => {
-    const user = await UserModel.checkSecurityCode({
+    const verification = await UserModel.checkSecurityCode({
       email: req.params.email,
       security_code: req.params.security_code,
     });
 
-    if (!user) {
+    if (!verification) {
       throw new HttpException(404, "Verification code does not match.");
     }
 
-    const { password, ...userWithoutPassword } = user;
+    const user = await this.checkUserExists(req.params.email);
 
-    res.send(userWithoutPassword);
+    const tokens = await this.generateToken(user);
+
+    res.status(200).json({
+      success: true,
+      message: "Verified successfully.",
+      data: {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+        tokens: tokens,
+      },
+    });
   };
 
   checkValidation = (req) => {
