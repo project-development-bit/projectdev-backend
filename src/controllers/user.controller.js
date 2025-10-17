@@ -304,14 +304,14 @@ class UserController {
     return userData;
   };
 
-  checkUserExists = async (email) => {
+  checkUserExists = async (email, no_verify = false) => {
     const user = await UserModel.findOne({ email });
 
     if (!user) {
       throw new HttpException(
         401,
         "Your email is incorrect. Please try again.",
-        "INVALID_EMAIL",
+        "INVALID_EMAIL"
       );
     }
 
@@ -319,15 +319,15 @@ class UserController {
       throw new HttpException(
         401,
         "Your account is banned. Please contact support.",
-        "BANNED_ACCOUNT",
+        "BANNED_ACCOUNT"
       );
     }
 
-    if (user.is_verified !== 1) {
+    if (!no_verify && user.is_verified !== 1) {
       throw new HttpException(
         401,
         "Your account isn't verified.",
-        "UNVERIFIED_ACCOUNT",
+        "UNVERIFIED_ACCOUNT"
       );
     }
 
@@ -362,12 +362,7 @@ class UserController {
     securityCode,
     type
   ) => {
-    console.log("Preparing to send email to:", recieverEmail);
-    console.log("memberName:", memberName);
-    console.log("surname:", surname);
-    console.log("securityCode:", securityCode);
-    console.log("type:", type);
-
+    
     const transporter = nodemailer.createTransport({
       // host: process.env.EMAIL_HOST,
       // port: process.env.EMAIL_PORT,
@@ -479,7 +474,11 @@ class UserController {
     console.log("Verification result:", verification);
 
     if (!verification) {
-      throw new HttpException(404, "Verification code does not match.", "INVALID_CODE");
+      throw new HttpException(
+        404,
+        "Verification code does not match.",
+        "INVALID_CODE"
+      );
     } else {
       await UserModel.updateRegistrationStatus(req.params.email);
     }
@@ -501,6 +500,64 @@ class UserController {
         tokens: tokens,
       },
     });
+  };
+
+  resendVerificationCode = async (req, res, next) => {
+    try {
+      this.checkValidation(req);
+
+      const userData = await this.checkUserExists(req.body.email, true);
+
+      if (userData.is_verified === 1) {
+        throw new HttpException(
+          400,
+          "Account is already verified.",
+          "ALREADY_VERIFIED"
+        );
+      }
+
+      const securityCode = this.securityCode();
+
+      const result = await UserModel.savePassword(
+        { email: req.body.email },
+        {
+          securityCode: securityCode,
+        }
+      );
+
+      if (!result) {
+        throw new HttpException(500, "Something went wrong");
+      }
+
+      const sendEmailResult = await this.sendRegistrationEmail(
+        req,
+        res,
+        next,
+        userData.name,
+        "",
+        userData.email,
+        securityCode,
+        "register"
+      );
+
+      if (!sendEmailResult) {
+        throw new HttpException(
+          500,
+          "Something went wrong when sending email notification"
+        );
+      }
+
+      res.status(201).json({
+        success: true,
+        message: "Verification code sent.",
+        data: {
+          email: userData.email,
+          securityCode: securityCode,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   };
 
   checkValidation = (req) => {

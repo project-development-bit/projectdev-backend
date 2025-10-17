@@ -9,7 +9,7 @@ const {
   createUserSchema,
   updateUserSchema,
   validateLogin,
-  validateForgotPassword,
+  validateEmail,
   validateRegister,
   validateTerms,
   validatePassword,
@@ -67,7 +67,7 @@ router.post(
 
 router.post(
   "/forgot_password",
-  validateForgotPassword,
+  validateEmail,
   awaitHandlerFactory(userController.forgotPassword)
 ); // localhost:3000/api/v1/users/register
 
@@ -75,11 +75,18 @@ router.get(
   "/verify/:email/:security_code",
   awaitHandlerFactory(userController.verifyUser)
 ); // localhost:3000/api/v1/users/verify/g.usertest01@gmail.com/1211
+
 router.post(
   "/save_password",
   validatePassword,
   awaitHandlerFactory(userController.savePassword)
 );
+
+router.post(
+  "/resend-code",
+  validateEmail,
+  awaitHandlerFactory(userController.resendVerificationCode)
+); // localhost:3000/api/v1/users/resend-code
 
 router.post(
   "/refresh-token",

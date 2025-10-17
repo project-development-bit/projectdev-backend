@@ -111,7 +111,7 @@ exports.validateLogin = [
     .withMessage("Password must be filled"),
 ];
 
-exports.validateForgotPassword = [
+exports.validateEmail = [
   body("email")
     .exists()
     .withMessage("Email is required")
