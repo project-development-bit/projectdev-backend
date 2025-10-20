@@ -143,12 +143,12 @@ class UserModel {
     return result;
   };
 
-  updatePassword = async ({ memberID, password }) => {
-    const sql = `UPDATE users
-    SET password = ?, verification_code = NULL, status = 1
-    WHERE memberID = ?`;
+  updatePassword = async ({ email, password }) => {
+    const sql = `UPDATE ${this.tableName}
+    SET password = ?, security_code = NULL, is_verified = 1
+    WHERE email = ?`;
 
-    const result = await coinQuery(sql, [password, memberID]);
+    const result = await coinQuery(sql, [password, email]);
 
     return result;
   };

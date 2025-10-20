@@ -241,35 +241,40 @@ class UserController {
   savePassword = async (req, res, next) => {
     this.checkConfirmPassword(req);
 
-    const user = await UserModel.checkMember(req.body.email);
+    const user = await this.checkUserExists(req.body.email);
 
     if (!user) {
-      throw new HttpException(401, "Something went wrong");
+      throw new HttpException(401, "Something went wrong", "INVALID_REQUEST");
     }
 
-    const hashedPassword = crypto
-      .createHash("md5")
-      .update(
-        process.env.HASH_SALT +
-          crypto.createHash("md5").update(req.body.password).digest("hex")
-      )
-      .digest("hex");
-    const concatenatedString = user.memberID.toUpperCase() + hashedPassword;
-    const finalHash = crypto
-      .createHash("md5")
-      .update(concatenatedString)
-      .digest("hex");
+    await this.hashPassword(req);
 
     const result = await UserModel.updatePassword({
-      memberID: user.memberID,
-      password: finalHash,
+      email: req.body.email,
+      password: req.body.password,
     });
 
     if (!result) {
       throw new HttpException(500, "Something went wrong");
     }
 
-    res.status(201).send("Password was saved successfully!");
+    // res.status(201).send("Password was saved successfully!");
+
+    const tokens = await this.generateToken(user);
+
+    res.status(201).json({
+      success: true,
+      message: "Password was saved successfully!",
+      data: {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+        tokens: tokens,
+      },
+    });
   };
 
   securityCode = () => {
@@ -479,8 +484,6 @@ class UserController {
       email: req.params.email,
       security_code: req.params.security_code,
     });
-
-    console.log("Verification result:", verification);
 
     if (!verification) {
       throw new HttpException(

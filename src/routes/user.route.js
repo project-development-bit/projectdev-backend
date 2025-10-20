@@ -80,7 +80,7 @@ router.post(
   "/save_password",
   validatePassword,
   awaitHandlerFactory(userController.savePassword)
-);
+); // localhost:3000/api/v1/users/save_password
 
 router.post(
   "/resend-code",
