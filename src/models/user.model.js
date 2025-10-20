@@ -31,22 +31,9 @@ class UserModel {
 
   checkEmail = async ({ email }) => {
     const sql = `SELECT 
-    m.m_insuredNo,	
-    m.m_email,
-    m.m_name, 
-    m.m_surname		
-    FROM online_service.users u
-    right  join datamart.m_insured m on m.m_insuredDependenceNo= u.memberID
-    where u.username = ?`;
-
-    const result = await coinQuery(sql, [email]);
-
-    // return back the first row (user)
-    return result[0];
-  };
-
-  checkMember = async (email) => {
-    const sql = `Select memberID, username from users where username = ?`;
+    name, email
+    FROM ${this.tableName}
+    where email = ?`;
 
     const result = await coinQuery(sql, [email]);
 
@@ -55,7 +42,7 @@ class UserModel {
   };
 
   savePassword = async ({ email }, { securityCode }) => {
-    const sql = `UPDATE users SET security_code = ? WHERE email = ?`;
+    const sql = `UPDATE ${this.tableName} SET security_code = ? WHERE email = ?`;
 
     const result = await coinQuery(sql, [securityCode, email]);
 

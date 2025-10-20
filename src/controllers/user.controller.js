@@ -193,7 +193,8 @@ class UserController {
     if (!user) {
       throw new HttpException(
         401,
-        "Your Email is incorrect. Please try again."
+        "Your Email is incorrect. Please try again.",
+        "INVALID_EMAIL"
       );
     }
 
@@ -211,8 +212,8 @@ class UserController {
       req,
       res,
       next,
-      user.m_name,
-      user.m_surname,
+      user.name,
+      "",
       req.body.email,
       securityCode,
       "forgot_password"
@@ -221,11 +222,20 @@ class UserController {
     if (!sendEmailResult) {
       throw new HttpException(
         500,
-        "Something went wrong when sending email notification"
+        "Something went wrong when sending email notification",
+        "EMAIL_NOT_SENT"
       );
     }
 
-    res.status(201).send("Reset password is completed!");
+    // res.status(201).send("Reset password is completed!");
+    res.status(201).json({
+      success: true,
+      message: "Reset password is completed!",
+      data: {
+        email: req.body.email,
+        securityCode: securityCode,
+      },
+    });
   };
 
   savePassword = async (req, res, next) => {
@@ -362,7 +372,6 @@ class UserController {
     securityCode,
     type
   ) => {
-    
     const transporter = nodemailer.createTransport({
       // host: process.env.EMAIL_HOST,
       // port: process.env.EMAIL_PORT,
@@ -410,7 +419,7 @@ class UserController {
         // + process.env.MAIL_NO_REPLY_SERVER_SEND
         "<br/><hr/>";
     } else {
-      subject = "Forgot Password Request - Luma Health Insurance";
+      subject = "Forgot Password Request - Gigafaucet";
       html =
         `<div>` +
         "Dear " +
@@ -418,32 +427,32 @@ class UserController {
         " " +
         surname +
         ",<br /><br />" +
-        "We received a request to reset your LUMA account password." +
+        "We received a request to reset your Gigafaucet account password." +
         "<br/><br/>" +
         `Please use the following verification code: <br /><b><font style="font-size: 25px;">` +
         securityCode +
         `</font></b><br/><br/>` +
         "If you did not make a request to reset your password," +
-        "<br/>" +
-        "it is possible that someone else is trying to access" +
-        "<br/>" +
-        `your LUMA Account <a href="mailto:` +
+        // "<br/>" +
+        " it is possible that someone else is trying to access " +
+        // "<br/>" +
+        `your Gigafaucet Account <a href="mailto:` +
         recieverEmail +
         `">` +
         recieverEmail +
         `</a>.` +
-        "<br/>" +
-        "If so, please ignore and do not forward this message to anyone." +
+        // "<br/>" +
+        " If so, please ignore and do not forward this message to anyone." +
         "<br/><br/>" +
         "Yours Sincerely,<br/>" +
-        "Client Services Team<br/><br/>" +
-        `<img src="https://www.lumahealth.com/wp-content/uploads/2017/09/logo.png" width="90px"/><br><br>` +
-        "<b>Luma Health Insurance</b><br/>" +
-        `Unit 912, 9th Floor.<br/>` +
-        `Park Ventures Ecoplex 57 Wireless Road,<br/>` +
-        `Lumpini, Pathumwan, Bangkok, Thailand 10330<br/>` +
-        `Tel. +66 2 494 3600<br/>` +
-        `Email: cs@lumahealth.com<br/>` +
+        "Gigafaucet Team<br/><br/>" +
+        // `<img src="https://www.lumahealth.com/wp-content/uploads/2017/09/logo.png" width="90px"/><br><br>` +
+        "<b>Gigafaucet</b><br/>" +
+        `95/87, Moo 7, Soi Saiyuan,<br/>` +
+        `A.Mueang, T.Rawai, Phuket, 83130<br/>` +
+        // `Lumpini, Pathumwan, Bangkok, Thailand 10330<br/>` +
+        // `Tel. +66 2 494 3600<br/>` +
+        // `Email: cs@lumahealth.com<br/>` +
         "<div>" +
         // + "<br/><br/><br/><hr/>test server : "
         // + process.env.MAIL_NO_REPLY_SERVER_SEND

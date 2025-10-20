@@ -69,7 +69,7 @@ router.post(
   "/forgot_password",
   validateEmail,
   awaitHandlerFactory(userController.forgotPassword)
-); // localhost:3000/api/v1/users/register
+); // localhost:3000/api/v1/users/forgot_password
 
 router.get(
   "/verify/:email/:security_code",
