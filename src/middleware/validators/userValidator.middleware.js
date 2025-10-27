@@ -31,6 +31,11 @@ exports.createUserSchema = [
     .withMessage(
       "confirm_password field must have the same value as the password field"
     ),
+  body("recaptchaToken")
+    .exists()
+    .withMessage("reCAPTCHA token is required")
+    .notEmpty()
+    .withMessage("reCAPTCHA token must not be empty"),
 ];
 
 exports.updateUserSchema = [
@@ -109,6 +114,11 @@ exports.validateLogin = [
     .withMessage("Password is required")
     .notEmpty()
     .withMessage("Password must be filled"),
+  body("recaptchaToken")
+    .exists()
+    .withMessage("reCAPTCHA token is required")
+    .notEmpty()
+    .withMessage("reCAPTCHA token must not be empty"),
 ];
 
 exports.validateEmail = [
@@ -117,6 +127,11 @@ exports.validateEmail = [
     .withMessage("Email is required")
     .isEmail()
     .withMessage("Must be a valid email"),
+  body("recaptchaToken")
+    .exists()
+    .withMessage("reCAPTCHA token is required")
+    .notEmpty()
+    .withMessage("reCAPTCHA token must not be empty"),
 ];
 
 exports.validatePassword = [

@@ -4,6 +4,7 @@ const userController = require("../controllers/user.controller");
 const auth = require("../middleware/auth.middleware");
 const Role = require("../utils/userRoles.utils");
 const awaitHandlerFactory = require("../middleware/awaitHandlerFactory.middleware");
+const verifyRecaptcha = require("../middleware/recaptcha.middleware");
 
 const {
   createUserSchema,
@@ -44,6 +45,7 @@ router.get(
 router.post(
   "/",
   createUserSchema,
+  verifyRecaptcha,
   awaitHandlerFactory(userController.createUser)
 ); // localhost:3000/api/v1/users
 
@@ -62,12 +64,14 @@ router.delete(
 router.post(
   "/login",
   validateLogin,
+  verifyRecaptcha,
   awaitHandlerFactory(userController.userLogin)
 ); // localhost:3000/api/v1/users/login
 
 router.post(
   "/forgot_password",
   validateEmail,
+  verifyRecaptcha,
   awaitHandlerFactory(userController.forgotPassword)
 ); // localhost:3000/api/v1/users/forgot_password
 
