@@ -21,6 +21,7 @@ router.get(
   auth(),
   awaitHandlerFactory(userController.getPersonalInfo)
 ); // localhost:3000/api/v1/users/personal_info/chetva@google.com/BXT-GOO107
+
 router.patch(
   "/accept_terms/:email",
   validateTerms,
@@ -29,12 +30,13 @@ router.patch(
 ); // localhost:3000/api/v1/users/accept_terms/chetva@google.com
 
 router.get("/", auth(), awaitHandlerFactory(userController.getAllUsers)); // localhost:3000/api/v1/users
-router.get("/id/:id", auth(), awaitHandlerFactory(userController.getUserById)); // localhost:3000/api/v1/users/id/1
+
 router.get(
   "/username/:username",
   auth(),
   awaitHandlerFactory(userController.getUserByuserName)
 ); // localhost:3000/api/v1/users/usersname/julia
+
 router.get(
   "/whoami",
   auth(),
@@ -93,5 +95,7 @@ router.post(
   validateRefreshToken,
   awaitHandlerFactory(userController.refreshToken)
 ); // POST localhost:3000/api/v1/users/refresh-token
+
+router.get("/id/:id", auth(), awaitHandlerFactory(userController.getUserById)); // localhost:3000/api/v1/users/id/1
 
 module.exports = router;

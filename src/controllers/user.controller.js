@@ -52,7 +52,8 @@ class UserController {
   };
 
   getUserById = async (req, res, next) => {
-    const user = await UserModel.findOne({ user_id: req.params.id });
+
+    const user = await UserModel.findOne({ id: req.params.id });
     if (!user) {
       throw new HttpException(404, "User not found");
     }
@@ -284,25 +285,6 @@ class UserController {
       Math.floor(Math.random() * (max - min + 1)) + min;
 
     return generateSecurityCode;
-  };
-
-  checkMemberIDEmailDOB = async (req) => {
-    const user = await UserModel.checkMemberIDEmailDOB(req.body);
-    if (!user) {
-      throw new HttpException(
-        401,
-        "Your Member ID, Email, or Date of Birth is incorrect. Please try again."
-      );
-    }
-
-    if (user.status == 1) {
-      throw new HttpException(
-        401,
-        "You have already registered. Please log in."
-      );
-    }
-
-    return user;
   };
 
   saveNewUser = async (req) => {
