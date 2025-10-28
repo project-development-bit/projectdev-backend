@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const auth = (...roles) => {
+
     return async function (req, res, next) {
         try {
             const authHeader = req.headers.authorization;
@@ -20,8 +21,7 @@ const auth = (...roles) => {
             // Verify Token
             const decoded = jwt.verify(token, secretKey);
             // const user = await UserModel.findOne({ id: decoded.user_id });
-            const user = await UserModel.findOne({ user_id: decoded.user_id });
-
+            const user = await UserModel.findOne({ id: decoded.id });
             if (!user) {
                 throw new HttpException(401, 'Authentication failed!');
             }

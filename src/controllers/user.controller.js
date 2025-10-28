@@ -52,7 +52,7 @@ class UserController {
   };
 
   getUserById = async (req, res, next) => {
-    const user = await UserModel.findOne({ user_id: req.params.id });
+    const user = await UserModel.findOne({ id: req.params.id });
     if (!user) {
       throw new HttpException(404, "User not found");
     }
@@ -63,7 +63,7 @@ class UserController {
   };
 
   getUserByuserName = async (req, res, next) => {
-    const user = await UserModel.findOne({ username: req.params.username });
+    const user = await UserModel.findOne({ name: req.params.username });
     if (!user) {
       throw new HttpException(404, "User not found");
     }
@@ -126,18 +126,23 @@ class UserController {
     const result = await UserModel.update(restOfUpdates, req.params.id);
 
     if (!result) {
-      throw new HttpException(404, "Something went wrong");
+      throw new HttpException(500, "Something went wrong");
     }
 
-    const { affectedRows, changedRows, info } = result;
+    const { affectedRows, changedRows } = result;
 
-    const message = !affectedRows
-      ? "User not found"
-      : affectedRows && changedRows
+    if (!affectedRows) {
+      throw new HttpException(404, "User not found");
+    }
+
+    const message = affectedRows && changedRows
       ? "User updated successfully"
-      : "Updated faild";
+      : "No changes made";
 
-    res.send({ message, info });
+    res.status(200).json({
+      success: true,
+      message: message,
+    });
   };
 
   deleteUser = async (req, res, next) => {
@@ -145,7 +150,10 @@ class UserController {
     if (!result) {
       throw new HttpException(404, "User not found");
     }
-    res.send("User has been deleted");
+    res.status(200).json({
+        success: true,
+        message: "User has been deleted.",
+    });
   };
 
   userLogin = async (req, res, next) => {
