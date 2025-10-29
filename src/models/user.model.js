@@ -105,7 +105,7 @@ class UserModel {
   updateTerms = async (params, email) => {
     const { columnSet, values } = multipleColumnSet(params);
 
-    const sql = `UPDATE users SET ${columnSet} WHERE username = ?`;
+    const sql = `UPDATE users SET ${columnSet} WHERE email = ?`;
 
     const result = await coinQuery(sql, [...values, email]);
 
