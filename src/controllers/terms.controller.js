@@ -8,11 +8,11 @@ class TermsController {
             const data = {
                 terms: {
                     version: process.env.TERMS_VERSION || "1.0",
-                    url: process.env.TERMS_URL || "https://cointiply.com/terms",
+                    url: process.env.TERMS_URL || "https://doc.gigafaucet.com/terms/terms.html",
                 },
                 privacy: {
                     version: process.env.PRIVACY_VERSION || "1.0",
-                    url: process.env.PRIVACY_URL || "https://cointiply.com/privacy",
+                    url: process.env.PRIVACY_URL || "https://doc.gigafaucet.com/terms/privacy.html",
                 },
             };
             res.status(200).json(data);

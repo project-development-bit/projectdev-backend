@@ -71,6 +71,11 @@ router.post(
 ); // localhost:3000/api/v1/users/login
 
 router.post(
+  "/complete-2fa-login",
+  awaitHandlerFactory(userController.complete2FALogin)
+); // localhost:3000/api/v1/users/complete-2fa-login
+
+router.post(
   "/forgot_password",
   validateEmail,
   verifyRecaptcha,

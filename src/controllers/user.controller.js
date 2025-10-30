@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const TwoFAController = require("./twofa.controller");
 dotenv.config();
 
 const {
@@ -175,16 +176,31 @@ class UserController {
 
       const tokens = await this.generateToken(user);
 
+      const userData = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        twofa_enabled: user.twofa_enabled
+      };
+
+      // If 2FA is enabled, include twofa_secret, otpauth_url, and qrCode
+      if (user.twofa_enabled === 1 && user.twofa_secret) {
+        // Use TwoFAController helper function to generate 2FA data
+        const twoFAData = await TwoFAController.generate2FAData(
+          user.twofa_secret,
+          user.email
+        );
+
+        // Add 2FA data to user response
+        Object.assign(userData, twoFAData);
+      }
+
       res.status(200).json({
         success: true,
         message: "Login successful.",
         data: {
-          user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-          },
+          user: userData,
           tokens: tokens,
         },
       });
