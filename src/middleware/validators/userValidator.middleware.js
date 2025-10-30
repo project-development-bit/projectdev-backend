@@ -108,11 +108,11 @@ exports.validateLogin = [
     .withMessage("Password is required")
     .notEmpty()
     .withMessage("Password must be filled"),
-  body("recaptchaToken")
-    .exists()
-    .withMessage("reCAPTCHA token is required")
-    .notEmpty()
-    .withMessage("reCAPTCHA token must not be empty"),
+  // body("recaptchaToken")
+  //   .exists()
+  //   .withMessage("reCAPTCHA token is required")
+  //   .notEmpty()
+  //   .withMessage("reCAPTCHA token must not be empty"),
 ];
 
 exports.validateEmail = [

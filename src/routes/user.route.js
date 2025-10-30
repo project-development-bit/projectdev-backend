@@ -47,7 +47,7 @@ router.get(
 router.post(
   "/",
   createUserSchema,
-  verifyRecaptcha,
+  verifyRecaptcha({version : 'v3',expectedAction : 'create_user',minScore: 0.5}),
   awaitHandlerFactory(userController.createUser)
 ); // localhost:3000/api/v1/users
 
@@ -66,7 +66,7 @@ router.delete(
 router.post(
   "/login",
   validateLogin,
-  verifyRecaptcha,
+  verifyRecaptcha({version : 'v3',expectedAction : 'login',minScore: 0.5}),
   awaitHandlerFactory(userController.userLogin)
 ); // localhost:3000/api/v1/users/login
 
@@ -78,7 +78,7 @@ router.post(
 router.post(
   "/forgot_password",
   validateEmail,
-  verifyRecaptcha,
+  verifyRecaptcha({version : 'v3',expectedAction : 'forgot_password',minScore: 0.5}),
   awaitHandlerFactory(userController.forgotPassword)
 ); // localhost:3000/api/v1/users/forgot_password
 

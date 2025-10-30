@@ -1,75 +1,110 @@
-const https = require('https');
-const querystring = require('querystring');
 const HttpException = require('../utils/HttpException.utils');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const verifyRecaptcha = async (req, res, next) => {
-    try {
-        const { recaptchaToken } = req.body;
+const verifyRecaptcha = (options = {}) => {
+    const {
+        version = 'v3',
+        expectedAction = null,
+        minScore = 0.5
+    } = options;
 
-        const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+    return async (req, res, next) => {
 
-        if (!secretKey) {
-            throw new HttpException(500, 'reCAPTCHA is not configured on the server', 'RECAPTCHA_NOT_CONFIGURED');
-        }
+        try {
+            const { recaptchaToken } = req.body;
 
-        const postData = querystring.stringify({
-            secret: secretKey,
-            response: recaptchaToken
-        });
-
-        const options = {
-            hostname: 'www.google.com',
-            path: '/recaptcha/api/siteverify',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Content-Length': Buffer.byteLength(postData)
+            if (!recaptchaToken) {
+                // throw new HttpException(
+                //     400,
+                //     'reCAPTCHA token is required',
+                //     'RECAPTCHA_TOKEN_REQUIRED'
+                // );
+                
+                return next();
             }
-        };
 
-        const googleResponse = await new Promise((resolve, reject) => {
-            const request = https.request(options, (resp) => {
-                let data = '';
+            const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 
-                resp.on('data', (chunk) => {
-                    data += chunk;
-                });
+            if (!secretKey) {
+                throw new HttpException(
+                    500,
+                    'reCAPTCHA is not configured on the server',
+                    'RECAPTCHA_NOT_CONFIGURED'
+                );
+            }
 
-                resp.on('end', () => {
-                    try {
-                        resolve(JSON.parse(data));
-                    } catch (e) {
-                        reject(e);
-                    }
-                });
+            // Prepare form data
+            const params = new URLSearchParams();
+            params.append('secret', secretKey);
+            params.append('response', recaptchaToken);
+
+            // Verify with Google
+            const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params.toString()
             });
 
-            request.on('error', (err) => {
-                reject(err);
-            });
+            if (!response.ok) {
+                throw new HttpException(
+                    502,
+                    'Failed to verify reCAPTCHA with Google',
+                    'RECAPTCHA_SERVICE_ERROR'
+                );
+            }
 
-            request.write(postData);
-            request.end();
-        });
+            const data = await response.json();
 
-        if (!googleResponse.success) {
-            throw new HttpException(400, 'reCAPTCHA verification failed', 'RECAPTCHA_VERIFICATION_FAILED');
+            // Check verification success
+            if (!data.success) {
+                throw new HttpException(
+                    403,
+                    'reCAPTCHA verification failed',
+                    'RECAPTCHA_VERIFICATION_FAILED',
+                    { data }
+                );
+            }
+
+            // For v3: validate score
+            if (version === 'v3') {
+                if (expectedAction && data.action && data.action !== expectedAction) {
+                    throw new HttpException(
+                        403,
+                        `reCAPTCHA action mismatch`,
+                        'RECAPTCHA_ACTION_MISMATCH',
+                        { expectedAction, got: data.action }
+                    );
+                }
+
+                if (typeof data.score === 'number' && data.score < Number(minScore)) {
+                    throw new HttpException(
+                        429,
+                        'reCAPTCHA score too low',
+                        'RECAPTCHA_LOW_SCORE',{
+                            score:data.score
+                        }
+                    );
+                }
+            }
+
+            next();
+
+        } catch (e) {
+            if (e instanceof HttpException) {
+                next(e);
+            } else {
+                next(new HttpException(
+                    500,
+                    'reCAPTCHA verification error',
+                    'RECAPTCHA_ERROR',
+                    { error: e.message }
+                ));
+            }
         }
-
-        // Optional: Check score for reCAPTCHA v3
-        // if (googleResponse.score && googleResponse.score < 0.5) {
-        //     throw new HttpException(400, 'reCAPTCHA score too low', 'RECAPTCHA_LOW_SCORE');
-        // }
-
-        next();
-
-    } catch (e) {
-        e.status = e.status || 400;
-        next(e);
-    }
+    };
 };
-
 
 module.exports = verifyRecaptcha;
