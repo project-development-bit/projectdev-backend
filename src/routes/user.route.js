@@ -4,7 +4,7 @@ const userController = require("../controllers/user.controller");
 const auth = require("../middleware/auth.middleware");
 const Role = require("../utils/userRoles.utils");
 const awaitHandlerFactory = require("../middleware/awaitHandlerFactory.middleware");
-const verifyRecaptcha = require("../middleware/recaptcha.middleware");
+const verifyTurnstile = require("../middleware/turnstile.middleware");
 
 const {
   createUserSchema,
@@ -47,7 +47,8 @@ router.get(
 router.post(
   "/",
   createUserSchema,
-  verifyRecaptcha({version : 'v3',expectedAction : 'create_user',minScore: 0.5}),
+  //verifyRecaptcha({version : 'v3',expectedAction : 'create_user',minScore: 0.5}),
+  verifyTurnstile({ expectedAction: 'create_user', includeRemoteIp: true }),
   awaitHandlerFactory(userController.createUser)
 ); // localhost:3000/api/v1/users
 
@@ -66,7 +67,8 @@ router.delete(
 router.post(
   "/login",
   validateLogin,
-  verifyRecaptcha({version : 'v3',expectedAction : 'login',minScore: 0.5}),
+  //verifyRecaptcha({version : 'v3',expectedAction : 'login',minScore: 0.5}),
+  verifyTurnstile({ expectedAction: 'login', includeRemoteIp: true }),
   awaitHandlerFactory(userController.userLogin)
 ); // localhost:3000/api/v1/users/login
 
@@ -78,7 +80,6 @@ router.post(
 router.post(
   "/forgot_password",
   validateEmail,
-  verifyRecaptcha({version : 'v3',expectedAction : 'forgot_password',minScore: 0.5}),
   awaitHandlerFactory(userController.forgotPassword)
 ); // localhost:3000/api/v1/users/forgot_password
 
