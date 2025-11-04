@@ -71,12 +71,12 @@ class UserModel {
   };
 
   create = async (
-    { name, password, email, role = Role.NormalUser },
+    { name, password, email, role = Role.NormalUser, interest_enable = 0 },
     { securityCode }
   ) => {
     const sql = `
-    INSERT INTO ${this.tableName} (name, password, email, role, security_code)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO ${this.tableName} (name, password, email, role, security_code, interest_enable)
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
 
     const result = await coinQuery(sql, [
@@ -85,6 +85,7 @@ class UserModel {
       email,
       role,
       securityCode,
+      interest_enable,
     ]);
 
     // Get inserted ID (MySQL usually returns insertId)
@@ -94,6 +95,7 @@ class UserModel {
         name,
         email,
         role,
+        interest_enable,
         securityCode,
         createdAt: new Date().toISOString(),
       };

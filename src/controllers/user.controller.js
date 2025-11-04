@@ -181,7 +181,8 @@ class UserController {
         name: user.name,
         email: user.email,
         role: user.role,
-        twofa_enabled: user.twofa_enabled
+        twofa_enabled: user.twofa_enabled,
+        interest_enable: user.interest_enable
       };
 
       // If 2FA is enabled, include twofa_secret, otpauth_url, and qrCode
@@ -295,6 +296,7 @@ class UserController {
           name: user.name,
           email: user.email,
           role: user.role,
+          interest_enable: user.interest_enable,
         },
         tokens: tokens,
       },
@@ -513,6 +515,7 @@ class UserController {
           name: user.name,
           email: user.email,
           role: user.role,
+          interest_enable: user.interest_enable,
         },
         tokens: tokens,
       },
