@@ -9,6 +9,11 @@ const {
   validate2FALogin,
 } = require("../middleware/validators/twofaValidator.middleware");
 
+const {
+  twoFALoginLimiter,
+  twoFASetupLimiter,
+} = require("../middleware/rateLimiter.middleware");
+
 // Get 2FA status for current user
 router.get(
   "/status",
@@ -20,6 +25,7 @@ router.get(
 router.post(
   "/setup",
   auth(),
+  twoFASetupLimiter,
   awaitHandlerFactory(twofaController.setup2FA)
 );
 
@@ -27,6 +33,7 @@ router.post(
 router.post(
   "/verify",
   auth(),
+  twoFASetupLimiter,
   validate2FASetup,
   awaitHandlerFactory(twofaController.verify2FA)
 );
@@ -34,6 +41,7 @@ router.post(
 // Verify 2FA token during login (public endpoint - no auth required)
 router.post(
   "/verify-login",
+  twoFALoginLimiter,
   validate2FALogin,
   awaitHandlerFactory(twofaController.verifyLogin2FA)
 );
