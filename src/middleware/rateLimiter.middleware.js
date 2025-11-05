@@ -42,7 +42,7 @@ const twoFASetupLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => {
-    // Use authenticated user's ID
+    // Use authenticated user's ID as the key
     return req.currentUser?.id?.toString() || req.ip;
   },
   handler: (req, res) => {

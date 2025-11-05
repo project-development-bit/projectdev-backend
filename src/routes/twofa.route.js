@@ -29,7 +29,7 @@ router.post(
   awaitHandlerFactory(twofaController.setup2FA)
 );
 
-// Verify and enable 2FA
+// Verify and enable 2FA after setup
 router.post(
   "/verify",
   auth(),
