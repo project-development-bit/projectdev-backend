@@ -31,6 +31,10 @@ exports.createUserSchema = [
     .withMessage(
       "confirm_password field must have the same value as the password field"
     ),
+  body("interest_enable")
+    .optional()
+    .isInt({ min: 0, max: 1 })
+    .withMessage("interest_enable must be 0 or 1"),
   // body("recaptchaToken")
   //   .exists()
   //   .withMessage("reCAPTCHA token is required")
@@ -75,6 +79,10 @@ exports.updateUserSchema = [
     .optional()
     .isLength({ max: 5 })
     .withMessage("Language code must be max 5 characters"),
+  body("interest_enable")
+    .optional()
+    .isInt({ min: 0, max: 1 })
+    .withMessage("interest_enable must be 0 or 1"),
   body()
     .custom((value) => {
       return !!Object.keys(value).length;
@@ -90,6 +98,7 @@ exports.updateUserSchema = [
         "role",
         "country",
         "language",
+        "interest_enable",
       ];
       return updates.every((update) => allowUpdates.includes(update));
     })
