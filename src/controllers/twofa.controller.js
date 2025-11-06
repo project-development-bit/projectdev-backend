@@ -144,11 +144,21 @@ class TwoFAController {
         refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d",
       };
 
+      // Prepare user data (excluding sensitive information)
+      const userData = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        twofa_enabled: user.twofa_enabled,
+        interest_enable: user.interest_enable,
+      };
+
       res.status(200).json({
         success: true,
         message: "2FA verification successful.",
         data: {
-          verified: true,
+          user: userData,
           tokens: tokens,
         },
       });

@@ -183,14 +183,12 @@ class UserController {
         interest_enable: user.interest_enable
       };
 
-      // If 2FA is enabled, return only user data without tokens
+      // If 2FA is enabled, return only userId without tokens
       if (user.twofa_enabled === 1) {
         return res.status(200).json({
           success: true,
           message: "Login successful.",
-          data: {
-            user: userData,
-          },
+          userId: user.id,
         });
       }
 
