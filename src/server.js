@@ -10,6 +10,7 @@ const userRouter = require('./routes/user.route');
 const termsRouter = require('./routes/terms.route');
 const twofaRouter = require('./routes/twofa.route');
 const appSettingsRouter = require('./routes/appSettings.route');
+const contactUsRouter = require('./routes/contactUs.route');
 
 // Init express
 const app = express();
@@ -33,6 +34,7 @@ app.use(`/api/v1/users`, userRouter);
 app.use(`/api/v1/terms_and_privacy`, termsRouter);
 app.use(`/api/v1/2fa`, twofaRouter);
 app.use(`/api/v1/app_settings`, appSettingsRouter);
+app.use(`/api/v1/contact`, contactUsRouter);
 
 app.use((req, res, next) => {
   const err = new HttpException(404, 'Endpoint Not Found');

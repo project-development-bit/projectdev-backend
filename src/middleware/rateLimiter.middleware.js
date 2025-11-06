@@ -1,24 +1,21 @@
 const rateLimit = require("express-rate-limit");
 
+function keyByUserOrIp(req) {
+  if (req.currentUser?.id) return `uid:${req.currentUser.id}`;
+  if (req.body?.email)
+    return `email:${req.body.email}|ip:${rateLimit.ipKeyGenerator(req)}`;
+  return `ip:${rateLimit.ipKeyGenerator(req)}`;
+}
+
 // Rate limiter for 2FA verification during login
-// Limits based on userId from request body
 const twoFALoginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
   max: 5, // Limit each user to 5 requests per windowMs
-  message: {
-    success: false,
-    message: "Too many 2FA verification attempts. Please try again later.",
-    error: "TOO_MANY_ATTEMPTS",
-  },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  // Use userId from request body as the key
-  keyGenerator: (req) => {
-    return req.body.userId || req.ip;
-  },
-  // Skip successful requests from counting against the limit
-  skipSuccessfulRequests: false,
-  // Skip failed requests from counting against the limit
+  keyGenerator: keyByUserOrIp,
+  // Skip successful requests - only count failures
+  skipSuccessfulRequests: true,
   skipFailedRequests: false,
   handler: (req, res) => {
     res.status(429).json({
@@ -34,17 +31,12 @@ const twoFALoginLimiter = rateLimit({
 const twoFASetupLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
   max: 10, // Allow more attempts for setup since user is authenticated
-  message: {
-    success: false,
-    message: "Too many 2FA setup attempts. Please try again later.",
-    error: "TOO_MANY_ATTEMPTS",
-  },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => {
-    // Use authenticated user's ID as the key
-    return req.currentUser?.id?.toString() || req.ip;
-  },
+  keyGenerator: (req) =>
+    req.currentUser?.id
+      ? `uid:${req.currentUser.id}`
+      : `ip:${rateLimit.ipKeyGenerator(req)}`,
   handler: (req, res) => {
     res.status(429).json({
       success: false,

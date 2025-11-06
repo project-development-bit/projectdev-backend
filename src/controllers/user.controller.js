@@ -174,8 +174,6 @@ class UserController {
         throw new HttpException(401, "Invalid password", "INVALID_CREDENTIALS");
       }
 
-      const tokens = await this.generateToken(user);
-
       const userData = {
         id: user.id,
         name: user.name,
@@ -185,17 +183,19 @@ class UserController {
         interest_enable: user.interest_enable
       };
 
-      // If 2FA is enabled, include twofa_secret, otpauth_url, and qrCode
-      if (user.twofa_enabled === 1 && user.twofa_secret) {
-        // Use TwoFAController helper function to generate 2FA data
-        const twoFAData = await TwoFAController.generate2FAData(
-          user.twofa_secret,
-          user.email
-        );
-
-        // Add 2FA data to user response
-        Object.assign(userData, twoFAData);
+      // If 2FA is enabled, return only user data without tokens
+      if (user.twofa_enabled === 1) {
+        return res.status(200).json({
+          success: true,
+          message: "Login successful.",
+          data: {
+            user: userData,
+          },
+        });
       }
+
+      // For users without 2FA, generate and return tokens
+      const tokens = await this.generateToken(user);
 
       res.status(200).json({
         success: true,

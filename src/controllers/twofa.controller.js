@@ -96,7 +96,7 @@ class TwoFAController {
 
       const { userId, token } = req.body;
 
-      // Get user's 2FA secret
+      // Get user's 2FA secret and full user info
       const user = await TwoFAModel.get2FASecret(userId);
 
       if (!user || !user.twofa_secret) {
@@ -123,11 +123,33 @@ class TwoFAController {
         );
       }
 
+      // Generate tokens after successful 2FA verification
+      const UserModel = require("../models/user.model");
+      const { generateAccessToken, generateRefreshToken } = require("../utils/token.utils");
+
+      const accessToken = generateAccessToken(user);
+      const refreshToken = generateRefreshToken(user);
+
+      // Save refresh token to database
+      await UserModel.refreshToken({
+        refreshToken,
+        userID: user.id,
+      });
+
+      const tokens = {
+        accessToken,
+        refreshToken,
+        tokenType: "Bearer",
+        accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m",
+        refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d",
+      };
+
       res.status(200).json({
         success: true,
         message: "2FA verification successful.",
         data: {
           verified: true,
+          tokens: tokens,
         },
       });
     } catch (error) {
