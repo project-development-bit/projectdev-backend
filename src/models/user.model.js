@@ -151,7 +151,7 @@ class UserModel {
 
   updatePassword = async ({ email, password }) => {
     const sql = `UPDATE ${this.tableName}
-    SET password = ?, security_code = NULL, is_verified = 1
+    SET password = ?, security_code = NULL
     WHERE email = ?`;
 
     const result = await coinQuery(sql, [password, email]);

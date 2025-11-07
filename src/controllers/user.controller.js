@@ -137,6 +137,14 @@ class UserController {
         },
       });
     } catch (error) {
+      // Handle duplicate email error
+      if (error.status === 409 || error.code === 'ER_DUP_ENTRY') {
+        return next(new HttpException(
+          409,
+          "An account with this email already exists. Please use a different email or try logging in.",
+          "EMAIL_ALREADY_EXISTS"
+        ));
+      }
       next(error);
     }
   };
@@ -290,7 +298,8 @@ class UserController {
   savePassword = async (req, res, next) => {
     this.checkConfirmPassword(req);
 
-    const user = await this.checkUserExists(req.body.email);
+    // Allow password reset even if account is not verified
+    const user = await this.checkUserExists(req.body.email, true);
 
     if (!user) {
       throw new HttpException(401, "Something went wrong", "INVALID_REQUEST");
@@ -307,24 +316,35 @@ class UserController {
       throw new HttpException(500, "Something went wrong");
     }
 
-    // res.status(201).send("Password was saved successfully!");
+    // Only generate tokens if account is verified
+    if (user.is_verified === 1) {
+      const tokens = await this.generateToken(user);
 
-    const tokens = await this.generateToken(user);
-
-    res.status(201).json({
-      success: true,
-      message: "Password was saved successfully!",
-      data: {
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          interest_enable: user.interest_enable,
+      res.status(201).json({
+        success: true,
+        message: "Password was saved successfully!",
+        data: {
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            interest_enable: user.interest_enable,
+          },
+          tokens: tokens,
         },
-        tokens: tokens,
-      },
-    });
+      });
+    } else {
+      // Account not verified yet, don't return tokens
+      res.status(201).json({
+        success: true,
+        message: "Password was saved successfully! Please verify your account to login.",
+        data: {
+          email: user.email,
+          isVerified: false,
+        },
+      });
+    }
   };
 
   securityCode = () => {
