@@ -14,11 +14,7 @@ const generateReferralCode = (length = 8) => {
   return result;
 };
 
-/**
- * Generate a unique referral code that doesn't exist in the database
- * @param {number} maxAttempts - Maximum number of attempts to generate unique code
- * @returns {Promise<string>} - Unique referral code
- */
+//Generate a unique referral code that doesn't exist in the database
 const generateUniqueReferralCode = async (maxAttempts = 10) => {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const code = generateReferralCode();
