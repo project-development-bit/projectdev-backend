@@ -14,6 +14,9 @@ const {
   generateRefreshToken,
 } = require("../utils/token.utils");
 
+const { generateUniqueReferralCode } = require("../utils/referral.utils");
+const ReferralModel = require("../models/referral.model");
+
 /******************************************************************************
  *                              User Controller
  ******************************************************************************/
@@ -85,7 +88,23 @@ class UserController {
       this.checkValidation(req);
       await this.hashPassword(req);
 
+      // Handle referral code if provided
+      let referrerId = null;
+      if (req.body.referral_code) {
+        const referrer = await ReferralModel.getUserByReferralCode(req.body.referral_code);
+        if (referrer) {
+          referrerId = referrer.id;
+          req.body.referred_by = referrerId;
+        }
+      }
+
       const userData = await this.saveNewUser(req);
+
+      // Create referral relationship if user was referred
+      if (referrerId) {
+        await ReferralModel.createReferralRelationship(referrerId, userData.id);
+        await ReferralModel.updateUserReferredBy(userData.id, referrerId);
+      }
 
       const sendEmailResult = await this.sendRegistrationEmail(
         req,
@@ -108,7 +127,14 @@ class UserController {
       res.status(201).json({
         success: true,
         message: "User was created successfully.",
-        data: userData,
+        data: {
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          role: userData.role,
+          referralCode: userData.referralCode,
+          referredBy: referrerId,
+        },
       });
     } catch (error) {
       next(error);
@@ -312,9 +338,11 @@ class UserController {
 
   saveNewUser = async (req) => {
     const securityCode = this.securityCode();
+    const referralCode = await generateUniqueReferralCode();
 
     const userData = await UserModel.create(req.body, {
       securityCode: securityCode,
+      referralCode: referralCode,
     });
 
     if (!userData) {
@@ -662,6 +690,56 @@ class UserController {
       return res
         .status(403)
         .json({ message: "Invalid or expired refresh token" });
+    }
+  };
+
+  getReferralLink = async (req, res, next) => {
+    try {
+      const user = req.currentUser;
+
+      if (!user) {
+        throw new HttpException(404, "User not found");
+      }
+
+      // Check if user has a referral code
+      if (!user.referral_code) {
+        throw new HttpException(404, "Referral code not found for this user");
+      }
+
+      // Get configuration from model
+      const config = ReferralModel.getConfig();
+      const referralLink = `${config.frontendUrl}/r/${user.referral_code}`;
+
+      res.status(200).json({
+        success: true,
+        message: "Referral link retrieved successfully.",
+        data: {
+          referralCode: user.referral_code,
+          referralLink: referralLink,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getReferralStats = async (req, res, next) => {
+    try {
+      const user = req.currentUser;
+
+      if (!user) {
+        throw new HttpException(404, "User not found");
+      }
+
+      const stats = await ReferralModel.getReferralStats(user.id);
+
+      res.status(200).json({
+        success: true,
+        message: "Referral statistics retrieved successfully.",
+        data: stats,
+      });
+    } catch (error) {
+      next(error);
     }
   };
 }

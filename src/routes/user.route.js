@@ -44,6 +44,18 @@ router.get(
   awaitHandlerFactory(userController.getCurrentUser)
 ); // localhost:3000/api/v1/users/whoami
 
+router.get(
+  "/referral-link",
+  auth(),
+  awaitHandlerFactory(userController.getReferralLink)
+); // localhost:3000/api/v1/users/referral-link
+
+router.get(
+  "/referral-stats",
+  auth(),
+  awaitHandlerFactory(userController.getReferralStats)
+); // localhost:3000/api/v1/users/referral-stats
+
 router.post(
   "/",
   createUserSchema,
