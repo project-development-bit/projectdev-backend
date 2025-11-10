@@ -56,6 +56,12 @@ router.get(
   awaitHandlerFactory(userController.getReferralStats)
 ); // localhost:3000/api/v1/users/referral-stats
 
+router.get(
+  "/referred-users",
+  auth(),
+  awaitHandlerFactory(userController.getReferredUsersList)
+); // localhost:3000/api/v1/users/referred-users
+
 router.post(
   "/",
   createUserSchema,

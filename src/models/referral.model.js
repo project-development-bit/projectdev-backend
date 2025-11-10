@@ -169,6 +169,130 @@ class ReferralModel {
     const result = await coinQuery(sql, [revenueSharePct, referralId]);
     return result;
   };
+
+  //Get referred users list with filters and pagination
+  getReferredUsersList = async (referrerId, options = {}) => {
+    const {
+      page = 1,
+      limit = 10,
+      search = '',
+      sortBy = 'created_at',
+      sortOrder = 'DESC',
+      dateFrom = null,
+      dateTo = null,
+    } = options;
+
+    // Ensure page and limit are integers
+    const pageInt = parseInt(page, 10);
+    const limitInt = parseInt(limit, 10);
+    const offset = (pageInt - 1) * limitInt;
+
+    const validSortBy = ['created_at', 'name', 'email', 'revenue_share_pct'];
+    const validSortOrder = ['ASC', 'DESC'];
+
+    const sortColumn = validSortBy.includes(sortBy) ? sortBy : 'created_at';
+    const order = validSortOrder.includes(sortOrder.toUpperCase()) ? sortOrder.toUpperCase() : 'DESC';
+
+    // Build WHERE clause
+    let whereConditions = ['r.referrer_id = ?'];
+    let queryParams = [referrerId];
+
+    // Search filter (name or email)
+    if (search && search.trim() !== '') {
+      whereConditions.push('(u.name LIKE ? OR u.email LIKE ?)');
+      const searchPattern = `%${search.trim()}%`;
+      queryParams.push(searchPattern, searchPattern);
+    }
+
+    // Date range filter
+    if (dateFrom) {
+      whereConditions.push('r.created_at >= ?');
+      queryParams.push(dateFrom);
+    }
+
+    if (dateTo) {
+      whereConditions.push('r.created_at <= ?');
+      queryParams.push(dateTo);
+    }
+
+    const whereClause = whereConditions.join(' AND ');
+
+    // Get total count
+    const countSql = `
+      SELECT COUNT(*) as total
+      FROM ${this.referralsTable} r
+      JOIN ${this.usersTable} u ON u.id = r.referee_id
+      WHERE ${whereClause}
+    `;
+
+    // Get referred users with earnings
+    const dataSql = `
+      SELECT
+        u.id,
+        u.name,
+        u.email,
+        u.created_at as user_created_at,
+        u.is_verified,
+        r.id as referral_id,
+        r.revenue_share_pct,
+        r.created_at as referral_date,
+        COALESCE(
+          (SELECT SUM(le.amount)
+           FROM ledger_entries le
+           WHERE le.user_id = r.referrer_id
+             AND le.ref_type = 'referral'
+             AND le.ref_id = CAST(r.referee_id AS CHAR CHARACTER SET utf8mb4) COLLATE utf8mb4_0900_ai_ci
+             AND le.entry_type = 'credit'),
+          0
+        ) as total_earned_from_referee
+      FROM ${this.referralsTable} r
+      JOIN ${this.usersTable} u ON u.id = r.referee_id
+      WHERE ${whereClause}
+      ORDER BY ${sortColumn === 'created_at' ? 'r.created_at' :
+                 sortColumn === 'name' ? 'u.name' :
+                 sortColumn === 'email' ? 'u.email' :
+                 'r.revenue_share_pct'} ${order}
+      LIMIT ${limitInt} OFFSET ${offset}
+    `;
+
+    try {
+      const countParams = [...queryParams];
+      const dataParams = [...queryParams];
+
+      const [countResult, referredUsers] = await Promise.all([
+        coinQuery(countSql, countParams),
+        coinQuery(dataSql, dataParams),
+      ]);
+
+      const total = countResult[0].total;
+      const totalPages = Math.ceil(total / limitInt);
+
+      return {
+        data: referredUsers.map((user) => ({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          isVerified: user.is_verified === 1,
+          userCreatedAt: user.user_created_at,
+          referralId: user.referral_id,
+          revenueSharePct: parseFloat(user.revenue_share_pct),
+          referralDate: user.referral_date,
+          totalEarnedFromReferee: parseFloat(user.total_earned_from_referee),
+        })),
+        pagination: {
+          currentPage: pageInt,
+          limit: limitInt,
+          total: total,
+          totalPages: totalPages,
+          hasNextPage: pageInt < totalPages,
+          hasPrevPage: pageInt > 1,
+        },
+      };
+    } catch (error) {
+      console.error('Error getting referred users list:', error);
+      throw error;
+    }
+  };
 }
 
 module.exports = new ReferralModel();

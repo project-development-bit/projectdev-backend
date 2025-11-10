@@ -762,6 +762,52 @@ class UserController {
       next(error);
     }
   };
+
+  getReferredUsersList = async (req, res, next) => {
+    try {
+      const user = req.currentUser;
+
+      if (!user) {
+        throw new HttpException(404, "User not found");
+      }
+
+      // Extract query parameters
+      const {
+        page = 1,
+        limit = 10,
+        search = '',
+        sortBy = 'created_at',
+        sortOrder = 'DESC',
+        dateFrom = null,
+        dateTo = null,
+      } = req.query;
+
+      // Validate pagination parameters
+      const pageNum = Math.max(1, parseInt(page) || 1);
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 10));
+
+      const options = {
+        page: pageNum,
+        limit: limitNum,
+        search: search || '',
+        sortBy: sortBy || 'created_at',
+        sortOrder: sortOrder || 'DESC',
+        dateFrom: dateFrom || null,
+        dateTo: dateTo || null,
+      };
+
+      const result = await ReferralModel.getReferredUsersList(user.id, options);
+
+      res.status(200).json({
+        success: true,
+        message: "Referred users list retrieved successfully.",
+        data: result.data,
+        pagination: result.pagination,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 /******************************************************************************
