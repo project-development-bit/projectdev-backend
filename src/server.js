@@ -1,3 +1,6 @@
+// Set timezone to UTC for the entire Node.js process
+process.env.TZ = 'UTC';
+
 const express = require("express");
 const dotenv = require('dotenv');
 const cors = require("cors");
@@ -11,6 +14,11 @@ const termsRouter = require('./routes/terms.route');
 const twofaRouter = require('./routes/twofa.route');
 const appSettingsRouter = require('./routes/appSettings.route');
 const contactUsRouter = require('./routes/contactUs.route');
+const balanceRouter = require('./routes/balance.route');
+const transactionRouter = require('./routes/transaction.route');
+const addressRouter = require('./routes/address.route');
+const withdrawalRouter = require('./routes/withdrawal.route');
+const depositRouter = require('./routes/deposit.route');
 
 // Init express
 const app = express();
@@ -35,6 +43,11 @@ app.use(`/api/v1/terms_and_privacy`, termsRouter);
 app.use(`/api/v1/2fa`, twofaRouter);
 app.use(`/api/v1/app_settings`, appSettingsRouter);
 app.use(`/api/v1/contact`, contactUsRouter);
+app.use(`/api/v1/balance`, balanceRouter);
+app.use(`/api/v1/transactions`, transactionRouter);
+app.use(`/api/v1/addresses`, addressRouter);
+app.use(`/api/v1/withdrawals`, withdrawalRouter);
+app.use(`/api/v1/deposits`, depositRouter);
 
 app.use((req, res, next) => {
   const err = new HttpException(404, 'Endpoint Not Found');

@@ -9,13 +9,14 @@ class DBConnection {
     console.log(`DB_${database}_URL`);
 
     if (process.env[`DB_${database}_URL`]) {
-      this.db = mysql2.createPool(process.env[`DB_${database}_URL`]);
+      this.db = mysql2.createPool(process.env[`DB_${database}_URL`] + '?timezone=Z');
     } else {
       this.db = mysql2.createPool({
         host: process.env[`DB_${database}_HOST`],
         user: process.env[`DB_${database}_USERNAME`],
         password: process.env[`DB_${database}_PASSWORD`],
         database: process.env[`DB_${database}_DATABASE`],
+        timezone: 'Z', // Force UTC timezone
       });
     }
 

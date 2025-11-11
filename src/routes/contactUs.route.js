@@ -35,7 +35,7 @@ const contactFormLimiter = rateLimit({
 // POST /api/v1/contact
 router.post(
   "/",
-  contactFormLimiter, // Rate limiting to prevent spam
+  //contactFormLimiter, // Rate limiting to prevent spam
   createContactSchema, // Validation
   verifyTurnstile({ expectedAction: "contact_us", includeRemoteIp: true }), // Bot protection
   awaitHandlerFactory(contactUsController.createContact) // Controller

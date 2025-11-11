@@ -326,7 +326,7 @@ class ContactUsController {
           <h4 style="margin-top: 0; color: #333;">Technical Information</h4>
           <p style="margin: 5px 0;"><strong>IP Address:</strong> ${ip_address || 'N/A'}</p>
           <p style="margin: 5px 0;"><strong>User Agent:</strong> ${user_agent || 'N/A'}</p>
-          <p style="margin: 5px 0;"><strong>Submitted:</strong> ${new Date().toLocaleString()}</p>
+          <p style="margin: 5px 0;"><strong>Submitted:</strong> ${new Date().toISOString()}</p>
         </div>
 
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666; font-size: 12px;">
@@ -408,7 +408,7 @@ class ContactUsController {
             </tr>
             <tr>
               <td style="padding: 8px; font-weight: bold;">Submitted:</td>
-              <td style="padding: 8px;">${new Date().toLocaleString()}</td>
+              <td style="padding: 8px;">${new Date().toISOString()}</td>
             </tr>
           </table>
         </div>
