@@ -72,7 +72,7 @@ router.post(
 
 router.patch(
   "/id/:id",
-  auth(Role.Admin),
+  auth(),
   updateUserSchema,
   awaitHandlerFactory(userController.updateUser)
 ); // localhost:3000/api/v1/users/id/1 , using patch for partial update

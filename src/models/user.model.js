@@ -3,51 +3,72 @@ const { multipleColumnSet } = require("../utils/common.utils");
 const Role = require("../utils/userRoles.utils");
 class UserModel {
   tableName = "users";
+  profilesTableName = "user_profiles";
 
-  find = async (params = {}) => {
-    let sql = `SELECT * FROM ${this.tableName}`;
+  //Find users with optional profile data
+  find = async (params = {}, includeProfile = true) => {
+    let sql = includeProfile
+      ? `SELECT
+          u.*,
+          up.name,
+          up.country,
+          up.language,
+          up.interest_enable,
+          up.risk_score,
+          up.show_onboarding
+         FROM ${this.tableName} u
+         LEFT JOIN ${this.profilesTableName} up ON u.id = up.user_id`
+      : `SELECT * FROM ${this.tableName}`;
 
     if (!Object.keys(params).length) {
       return await coinQuery(sql);
     }
 
     const { columnSet, values } = multipleColumnSet(params);
-    sql += ` WHERE ${columnSet}`;
+    sql += ` WHERE ${includeProfile ? 'u.' : ''}${columnSet.replace(/,/g, includeProfile ? ' AND u.' : ' AND ')}`;
 
     return await coinQuery(sql, [...values]);
   };
 
-  findOne = async (params) => {
+  //Find a single user by parameters
+  findOne = async (params, includeProfile = true) => {
     const { columnSet, values } = multipleColumnSet(params);
 
-    const sql = `SELECT * FROM ${this.tableName}
-        WHERE ${columnSet}`;
+    const sql = includeProfile
+      ? `SELECT
+          u.*,
+          up.name,
+          up.country,
+          up.language,
+          up.interest_enable,
+          up.risk_score,
+          up.show_onboarding
+         FROM ${this.tableName} u
+         LEFT JOIN ${this.profilesTableName} up ON u.id = up.user_id
+         WHERE ${columnSet.split(',').map(col => 'u.' + col.trim()).join(' AND ')}`
+      : `SELECT * FROM ${this.tableName} WHERE ${columnSet}`;
 
     const result = await coinQuery(sql, [...values]);
-
-    // return back the first row (user)
     return result[0];
   };
 
   checkEmail = async ({ email }) => {
-    const sql = `SELECT 
-    name, email
-    FROM ${this.tableName}
-    where email = ?`;
+    const sql = `SELECT
+      u.id,
+      up.name,
+      u.email
+    FROM ${this.tableName} u
+    LEFT JOIN ${this.profilesTableName} up ON u.id = up.user_id
+    WHERE u.email = ?`;
 
     const result = await coinQuery(sql, [email]);
-
-    // return back the first row (user)
     return result[0];
   };
 
   savePassword = async ({ email }, { securityCode }) => {
     const sql = `UPDATE ${this.tableName} SET security_code = ? WHERE email = ?`;
-
     const result = await coinQuery(sql, [securityCode, email]);
-
     const affectedRows = result ? result.affectedRows : 0;
-
     return affectedRows;
   };
 
@@ -57,43 +78,58 @@ class UserModel {
 
     if (status == 0) {
       sql = `UPDATE users SET verification_code = ? WHERE username = ?`;
-
       result = await coinQuery(sql, [securityCode, email]);
     } else {
       sql = `INSERT INTO users (user_type,memberID,username,verification_code,status, password) VALUES (1, ?, ?, ?, 0, "-")`;
-
       result = await coinQuery(sql, [member_id, email, securityCode]);
     }
 
     const affectedRows = result ? result.affectedRows : 0;
-
     return affectedRows;
   };
 
   create = async (
-    { name, password, email, role = Role.NormalUser, interest_enable = 0, referred_by = null },
+    { name, password, email, role = Role.NormalUser, interest_enable = 0, referred_by = null, country = null, language = null, show_onboarding = 1 },
     { securityCode, referralCode }
   ) => {
-    const sql = `
-    INSERT INTO ${this.tableName} (name, password, email, role, security_code, interest_enable, referral_code, referred_by)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+    try {
+      // Insert into users table (core authentication data)
+      const userSql = `
+        INSERT INTO ${this.tableName}
+        (email, password, role, security_code, referral_code, referred_by, is_verified, is_banned)
+        VALUES (?, ?, ?, ?, ?, ?, 0, 0)
+      `;
 
-    const result = await coinQuery(sql, [
-      name,
-      password,
-      email,
-      role,
-      securityCode,
-      interest_enable,
-      referralCode,
-      referred_by,
-    ]);
+      const userResult = await coinQuery(userSql, [
+        email,
+        password,
+        role,
+        securityCode,
+        referralCode,
+        referred_by
+      ]);
 
-    // Get inserted ID (MySQL usually returns insertId)
-    if (result && result.insertId) {
+      const userId = userResult.insertId;
+
+      // Insert into user_profiles table
+      const profileSql = `
+        INSERT INTO ${this.profilesTableName}
+        (user_id, name, country, language, interest_enable, risk_score, show_onboarding)
+        VALUES (?, ?, ?, ?, ?, 0, ?)
+      `;
+
+      await coinQuery(profileSql, [
+        userId,
+        name || '',
+        country,
+        language,
+        interest_enable,
+        show_onboarding
+      ]);
+
+      // Return created user object
       return {
-        id: result.insertId,
+        id: userId,
         name,
         email,
         role,
@@ -101,72 +137,132 @@ class UserModel {
         referralCode,
         securityCode,
         referred_by,
+        country,
+        language,
+        show_onboarding,
         createdAt: new Date().toISOString(),
       };
-    }
 
-    return null;
+    } catch (error) {
+      console.error('User creation failed:', error);
+      throw error;
+    }
   };
 
+  //Update user (handles both users and user_profiles tables
+  update = async (params, id) => {
+    // Separate parameters into users table columns and profile columns
+    const userColumns = ['email', 'password', 'role', 'refresh_token', 'security_code',
+                        'twofa_enabled', 'twofa_secret', 'is_banned', 'is_verified',
+                        'referral_code', 'referred_by', 'last_login_at'];
+
+    const profileColumns = ['name', 'country', 'language', 'interest_enable', 'risk_score', 'show_onboarding'];
+
+    const userParams = {};
+    const profileParams = {};
+
+    Object.keys(params).forEach(key => {
+      if (userColumns.includes(key)) {
+        userParams[key] = params[key];
+      } else if (profileColumns.includes(key)) {
+        profileParams[key] = params[key];
+      }
+    });
+
+    try {
+      let userResult = null;
+      let profileResult = null;
+
+      // Update users table if there are user-related changes
+      if (Object.keys(userParams).length > 0) {
+        const { columnSet, values } = multipleColumnSet(userParams);
+        const userSql = `UPDATE ${this.tableName} SET ${columnSet} WHERE id = ?`;
+        userResult = await coinQuery(userSql, [...values, id]);
+
+      }
+
+      // Update user_profiles table if there are profile-related changes
+      if (Object.keys(profileParams).length > 0) {
+        // First check if profile exists, if not create it
+        const checkProfileSql = `SELECT user_id FROM ${this.profilesTableName} WHERE user_id = ?`;
+        const profileExists = await coinQuery(checkProfileSql, [id]);
+
+        if (!profileExists || profileExists.length === 0) {
+          // Create profile if it doesn't exist
+          const insertProfileSql = `INSERT INTO ${this.profilesTableName}
+            (user_id, name, country, language, interest_enable, risk_score, show_onboarding)
+            VALUES (?, '', NULL, NULL, 0, 0, 1)`;
+          await coinQuery(insertProfileSql, [id]);
+          console.log('Created missing user_profile for user_id:', id);
+        }
+
+        const { columnSet, values } = multipleColumnSet(profileParams);
+        const profileSql = `UPDATE ${this.profilesTableName} SET ${columnSet} WHERE user_id = ?`;
+        profileResult = await coinQuery(profileSql, [...values, id]);
+      }
+
+      // Return actual affected rows
+      const affectedRows = (userResult?.affectedRows || 0) + (profileResult?.affectedRows || 0);
+      const changedRows = (userResult?.changedRows || 0) + (profileResult?.changedRows || 0);
+
+      console.log('Final result - affectedRows:', affectedRows, 'changedRows:', changedRows);
+
+      return {
+        success: true,
+        affectedRows: affectedRows,
+        changedRows: changedRows
+      };
+
+    } catch (error) {
+      console.error('User update failed:', error);
+      throw error;
+    }
+  };
+
+  
   updateTerms = async (params, email) => {
     const { columnSet, values } = multipleColumnSet(params);
-
-    const sql = `UPDATE users SET ${columnSet} WHERE email = ?`;
-
+    const sql = `UPDATE ${this.tableName} SET ${columnSet} WHERE email = ?`;
     const result = await coinQuery(sql, [...values, email]);
-
-    return result;
-  };
-
-  update = async (params, id) => {
-    const { columnSet, values } = multipleColumnSet(params);
-
-    const sql = `UPDATE users SET ${columnSet} WHERE id = ?`;
-
-    const result = await coinQuery(sql, [...values, id]);
-
     return result;
   };
 
   checkSecurityCode = async ({ email, security_code }) => {
-    const sql = `
-    Select id from users where email = ? and security_code = ?
-  `;
-
+    const sql = `SELECT id FROM ${this.tableName} WHERE email = ? AND security_code = ?`;
     const result = await coinQuery(sql, [email, security_code]);
-
-    // return back the first row (user)
     return result[0];
   };
 
   updateRegistrationStatus = async (email) => {
-    const sql = `UPDATE users
-    SET is_verified = 1
-    where email = ?`;
-
+    const sql = `UPDATE ${this.tableName} SET is_verified = 1 WHERE email = ?`;
     const result = await coinQuery(sql, [email]);
-
     return result;
   };
 
   updatePassword = async ({ email, password }) => {
-    const sql = `UPDATE ${this.tableName}
-    SET password = ?, security_code = NULL
-    WHERE email = ?`;
-
+    const sql = `UPDATE ${this.tableName} SET password = ?, security_code = NULL WHERE email = ?`;
     const result = await coinQuery(sql, [password, email]);
-
     return result;
   };
 
   delete = async (id) => {
-    const sql = `DELETE FROM ${this.tableName}
-        WHERE id = ?`;
+    const sql = `DELETE FROM ${this.tableName} WHERE id = ?`;
     const result = await coinQuery(sql, [id]);
     const affectedRows = result ? result.affectedRows : 0;
-
     return affectedRows;
   };
+
+  refreshToken = async ({ refreshToken, userID }) => {
+    try {
+      const sql = `UPDATE ${this.tableName} SET refresh_token = ? WHERE id = ?`;
+      const result = await coinQuery(sql, [refreshToken, userID]);
+      return result;
+    } catch (error) {
+      console.error(error);
+      return { success: false, error: "Internal server error" };
+    }
+  };
+
 
   findPersonalInfo = async (params) => {
     const { columnSet, values } = multipleColumnSet(params);
@@ -207,8 +303,6 @@ class UserModel {
   `;
 
     const result = await coinQuery(sql, [values[1], values[0]]);
-
-    // return back the first row (user)
     return result[0];
   };
 
@@ -239,20 +333,7 @@ class UserModel {
   `;
 
     const result = await coinQuery(sql, [values[0], values[0]]);
-
     return result[0];
-  };
-
-  refreshToken = async ({ refreshToken, userID }) => {
-    try {
-      const sql = `UPDATE users SET refresh_token = ? WHERE id = ?`;
-      const result = await coinQuery(sql, [refreshToken, userID]);
-
-      return result;
-    } catch (error) {
-      console.error(error);
-      return { success: false, error: "Internal server error" };
-    }
   };
 }
 

@@ -52,10 +52,6 @@ exports.updateUserSchema = [
     .isEmail()
     .withMessage("Must be a valid email")
     .normalizeEmail(),
-  body("role")
-    .optional()
-    .isIn([Role.Admin, Role.SuperUser, Role.NormalUser, Role.Dev])
-    .withMessage("Invalid Role type"),
   body("password")
     .optional()
     .notEmpty()
@@ -83,26 +79,11 @@ exports.updateUserSchema = [
     .optional()
     .isInt({ min: 0, max: 1 })
     .withMessage("interest_enable must be 0 or 1"),
-  body()
-    .custom((value) => {
-      return !!Object.keys(value).length;
-    })
-    .withMessage("Please provide required field to update")
-    .custom((value) => {
-      const updates = Object.keys(value);
-      const allowUpdates = [
-        "name",
-        "password",
-        "confirm_password",
-        "email",
-        "role",
-        "country",
-        "language",
-        "interest_enable",
-      ];
-      return updates.every((update) => allowUpdates.includes(update));
-    })
-    .withMessage("Invalid updates!"),
+  body("show_onboarding")
+    .optional()
+    .isInt({ min: 0, max: 1 })
+    .withMessage("interest_enable must be 0 or 1"),
+ 
 ];
 
 exports.validateLogin = [

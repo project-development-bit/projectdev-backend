@@ -56,7 +56,7 @@ class UserController {
   };
 
   getUserById = async (req, res, next) => {
-    const user = await UserModel.findOne({ id: req.params.id });
+    const user = await UserModel.findOne({ id: req.params.id }, true); // Include profile
     if (!user) {
       throw new HttpException(404, "User not found");
     }
@@ -67,7 +67,7 @@ class UserController {
   };
 
   getUserByuserName = async (req, res, next) => {
-    const user = await UserModel.findOne({ name: req.params.username });
+    const user = await UserModel.findOne({ name: req.params.username }, true); // Include profile
     if (!user) {
       throw new HttpException(404, "User not found");
     }
@@ -153,12 +153,38 @@ class UserController {
     this.checkValidation(req);
 
     await this.hashPassword(req);
+    console.log("Update Request Body: ", req.body);
 
+    // Define allowed fields for update
+    const allowedFields = [
+      'name',
+      'email',
+      'password',
+      'confirm_password',
+      'country',
+      'language',
+      'interest_enable',
+      'show_onboarding'
+    ];
+
+    // Filter request body to only include allowed fields
     const { confirm_password, ...restOfUpdates } = req.body;
+    const filteredUpdates = {};
+
+    Object.keys(restOfUpdates).forEach(key => {
+      if (allowedFields.includes(key)) {
+        filteredUpdates[key] = restOfUpdates[key];
+      }
+    });
+
+    // Check if there are any valid fields to update
+    if (Object.keys(filteredUpdates).length === 0) {
+      throw new HttpException(400, "No valid fields provided for update");
+    }
 
     // do the update query and get the result
     // it can be partial edit
-    const result = await UserModel.update(restOfUpdates, req.params.id);
+    const result = await UserModel.update(filteredUpdates, req.params.id);
 
     if (!result) {
       throw new HttpException(500, "Something went wrong");
@@ -214,7 +240,8 @@ class UserController {
         email: user.email,
         role: user.role,
         twofa_enabled: user.twofa_enabled,
-        interest_enable: user.interest_enable
+        interest_enable: user.interest_enable,
+        show_onboarding: user.show_onboarding
       };
 
       // If 2FA is enabled, return only userId without tokens
@@ -330,6 +357,7 @@ class UserController {
             email: user.email,
             role: user.role,
             interest_enable: user.interest_enable,
+            show_onboarding: user.show_onboarding,
           },
           tokens: tokens,
         },
@@ -562,6 +590,7 @@ class UserController {
           email: user.email,
           role: user.role,
           interest_enable: user.interest_enable,
+          show_onboarding: user.show_onboarding,
         },
         tokens: tokens,
       },
