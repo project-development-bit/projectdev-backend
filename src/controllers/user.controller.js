@@ -597,6 +597,33 @@ class UserController {
     });
   };
 
+  verifyForgotPasswordCode = async (req, res) => {
+    const verification = await UserModel.checkSecurityCode({
+      email: req.params.email,
+      security_code: req.params.security_code,
+    });
+
+    if (!verification) {
+      throw new HttpException(
+        404,
+        "Verification code does not match.",
+        "INVALID_CODE"
+      );
+    }
+
+    // Don't update registration status for forgot password flow
+    // Just verify the code is valid
+
+    res.status(200).json({
+      success: true,
+      message: "Verification code is valid.",
+      data: {
+        email: req.params.email,
+        verified: true,
+      },
+    });
+  };
+
   resendVerificationCode = async (req, res, next) => {
     try {
       this.checkValidation(req);
@@ -647,6 +674,62 @@ class UserController {
         message: "Verification code sent.",
         data: {
           email: userData.email,
+          securityCode: securityCode,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  resendForgotPasswordCode = async (req, res, next) => {
+    try {
+      this.checkValidation(req);
+
+      const user = await UserModel.checkEmail(req.body);
+
+      if (!user) {
+        throw new HttpException(
+          401,
+          "Your Email is incorrect. Please try again.",
+          "INVALID_EMAIL"
+        );
+      }
+
+      const securityCode = this.securityCode();
+
+      const result = await UserModel.savePassword(req.body, {
+        securityCode: securityCode,
+      });
+
+      if (!result) {
+        throw new HttpException(500, "Something went wrong");
+      }
+
+      const sendEmailResult = await this.sendRegistrationEmail(
+        req,
+        res,
+        next,
+        user.name,
+        "",
+        req.body.email,
+        securityCode,
+        "forgot_password"
+      );
+
+      if (!sendEmailResult) {
+        throw new HttpException(
+          500,
+          "Something went wrong when sending email notification",
+          "EMAIL_NOT_SENT"
+        );
+      }
+
+      res.status(201).json({
+        success: true,
+        message: "Reset password code resent successfully!",
+        data: {
+          email: req.body.email,
           securityCode: securityCode,
         },
       });

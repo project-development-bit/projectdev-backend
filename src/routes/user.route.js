@@ -102,6 +102,11 @@ router.get(
   awaitHandlerFactory(userController.verifyUser)
 ); // localhost:3000/api/v1/users/verify/g.usertest01@gmail.com/1211
 
+router.get(
+  "/verify-forgot-password/:email/:security_code",
+  awaitHandlerFactory(userController.verifyForgotPasswordCode)
+); // localhost:3000/api/v1/users/verify-forgot-password/user@example.com/1234
+
 router.post(
   "/save_password",
   validatePassword,
@@ -113,6 +118,13 @@ router.post(
   validateEmail,
   awaitHandlerFactory(userController.resendVerificationCode)
 ); // localhost:3000/api/v1/users/resend-code
+
+router.post(
+  "/resend-forgot-password-code",
+  validateEmail,
+  verifyTurnstile({ expectedAction: 'resend_forgot_password', includeRemoteIp: true }),
+  awaitHandlerFactory(userController.resendForgotPasswordCode)
+); // localhost:3000/api/v1/users/resend-forgot-password-code
 
 router.post(
   "/refresh-token",
