@@ -46,7 +46,28 @@ const twoFASetupLimiter = rateLimit({
   },
 });
 
+// Rate limiter for wallet balances
+// 60 requests per minute per user
+const walletBalancesLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 60, // 60 requests per minute per user
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) =>
+    req.currentUser?.id
+      ? `wallet:uid:${req.currentUser.id}`
+      : `wallet:ip:${rateLimit.ipKeyGenerator(req)}`,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: "Too many requests. Please try again after 1 minute.",
+      error: "RATE_LIMIT_EXCEEDED",
+    });
+  },
+});
+
 module.exports = {
   twoFALoginLimiter,
   twoFASetupLimiter,
+  walletBalancesLimiter,
 };
