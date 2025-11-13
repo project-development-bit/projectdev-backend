@@ -22,7 +22,7 @@ class TwoFAModel {
   };
 
   get2FASecret = async (userId) => {
-    const sql = `SELECT id, email, role, name, twofa_enabled, twofa_secret, interest_enable FROM ${this.tableName} WHERE id = ? AND twofa_enabled = 1`;
+    const sql = `SELECT id, email, role, twofa_enabled, twofa_secret FROM ${this.tableName} WHERE id = ? AND twofa_enabled = 1`;
     const result = await coinQuery(sql, [userId]);
     return result[0];
   };
