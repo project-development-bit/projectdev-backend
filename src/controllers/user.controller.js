@@ -16,6 +16,7 @@ const {
 
 const { generateUniqueReferralCode } = require("../utils/referral.utils");
 const ReferralModel = require("../models/referral.model");
+const referralConfig = require("../config/referral.config");
 
 /******************************************************************************
  *                              User Controller
@@ -838,9 +839,8 @@ class UserController {
         throw new HttpException(404, "Referral code not found for this user");
       }
 
-      // Get configuration from model
-      const config = ReferralModel.getConfig();
-      const referralLink = `${config.frontendUrl}/r/${user.referral_code}`;
+      // Use referral config
+      const referralLink = `${referralConfig.frontendUrl}/r/${user.referral_code}`;
 
       res.status(200).json({
         success: true,

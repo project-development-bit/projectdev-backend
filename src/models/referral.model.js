@@ -1,18 +1,9 @@
 const { coinQuery } = require("../config/db");
-const dotenv = require("dotenv");
-dotenv.config();
+const referralConfig = require("../config/referral.config");
 
 class ReferralModel {
   referralsTable = "referrals";
   usersTable = "users";
-
-  //Get referral configuration from environment
-  getConfig = () => {
-    return {
-      revenueSharePct: parseFloat(process.env.REFERRAL_REVENUE_SHARE_PCT) || 10.0,
-      frontendUrl: process.env.FRONTEND_URL || "https://gigafaucet.com",
-    };
-  };
 
   //Check if a referral code already exists in the database
   isReferralCodeExists = async (code) => {
@@ -33,7 +24,7 @@ class ReferralModel {
     // Use environment variable or default to 10%
     const sharePercentage = revenueSharePct !== null
       ? revenueSharePct
-      : parseFloat(process.env.REFERRAL_REVENUE_SHARE_PCT) || 10.0;
+      : referralConfig.revenueSharePct;
 
     const sql = `
       INSERT INTO ${this.referralsTable} (referrer_id, referee_id, revenue_share_pct)
