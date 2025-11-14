@@ -11,6 +11,7 @@ class UserModel {
       ? `SELECT
           u.*,
           up.name,
+          up.avatar_url,
           up.country,
           up.language,
           up.interest_enable,
@@ -38,6 +39,7 @@ class UserModel {
       ? `SELECT
           u.*,
           up.name,
+          up.avatar_url,
           up.country,
           up.language,
           up.interest_enable,
@@ -156,7 +158,7 @@ class UserModel {
                         'twofa_enabled', 'twofa_secret', 'is_banned', 'is_verified',
                         'referral_code', 'referred_by', 'last_login_at'];
 
-    const profileColumns = ['name', 'country', 'language', 'interest_enable', 'risk_score', 'show_onboarding'];
+    const profileColumns = ['name', 'avatar_url', 'country', 'language', 'interest_enable', 'risk_score', 'show_onboarding'];
 
     const userParams = {};
     const profileParams = {};
