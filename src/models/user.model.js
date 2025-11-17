@@ -12,11 +12,14 @@ class UserModel {
           u.*,
           up.name,
           up.avatar_url,
-          up.country,
+          up.country_id,
           up.language,
           up.interest_enable,
           up.risk_score,
-          up.show_onboarding
+          up.show_onboarding,
+          up.notifications_enabled,
+          up.show_stats_enabled,
+          up.anonymous_in_contests
          FROM ${this.tableName} u
          LEFT JOIN ${this.profilesTableName} up ON u.id = up.user_id`
       : `SELECT * FROM ${this.tableName}`;
@@ -40,11 +43,14 @@ class UserModel {
           u.*,
           up.name,
           up.avatar_url,
-          up.country,
+          up.country_id,
           up.language,
           up.interest_enable,
           up.risk_score,
-          up.show_onboarding
+          up.show_onboarding,
+          up.notifications_enabled,
+          up.show_stats_enabled,
+          up.anonymous_in_contests
          FROM ${this.tableName} u
          LEFT JOIN ${this.profilesTableName} up ON u.id = up.user_id
          WHERE ${columnSet.split(',').map(col => 'u.' + col.trim()).join(' AND ')}`
@@ -91,7 +97,7 @@ class UserModel {
   };
 
   create = async (
-    { name, password, email, role = Role.NormalUser, interest_enable = 0, referred_by = null, country = null, language = null, show_onboarding = 1 },
+    { name, password, email, role = Role.NormalUser, interest_enable = 0, referred_by = null, country_id = null, language = null, show_onboarding = 1 },
     { securityCode, referralCode }
   ) => {
     try {
@@ -116,14 +122,14 @@ class UserModel {
       // Insert into user_profiles table
       const profileSql = `
         INSERT INTO ${this.profilesTableName}
-        (user_id, name, country, language, interest_enable, risk_score, show_onboarding)
-        VALUES (?, ?, ?, ?, ?, 0, ?)
+        (user_id, name, country_id, language, interest_enable, risk_score, show_onboarding, notifications_enabled, show_stats_enabled, anonymous_in_contests)
+        VALUES (?, ?, ?, ?, ?, 0, ?, 1, 1, 0)
       `;
 
       await coinQuery(profileSql, [
         userId,
         name || '',
-        country,
+        country_id,
         language,
         interest_enable,
         show_onboarding
@@ -139,7 +145,7 @@ class UserModel {
         referralCode,
         securityCode,
         referred_by,
-        country,
+        country_id,
         language,
         show_onboarding,
         createdAt: new Date().toISOString(),
@@ -156,9 +162,9 @@ class UserModel {
     // Separate parameters into users table columns and profile columns
     const userColumns = ['email', 'password', 'role', 'refresh_token', 'security_code',
                         'twofa_enabled', 'twofa_secret', 'is_banned', 'is_verified',
-                        'referral_code', 'referred_by', 'last_login_at'];
+                        'referral_code', 'referred_by', 'last_login_at', 'offer_token', 'security_pin_enabled'];
 
-    const profileColumns = ['name', 'avatar_url', 'country', 'language', 'interest_enable', 'risk_score', 'show_onboarding'];
+    const profileColumns = ['name', 'avatar_url', 'country_id', 'language', 'interest_enable', 'risk_score', 'show_onboarding', 'notifications_enabled', 'show_stats_enabled', 'anonymous_in_contests'];
 
     const userParams = {};
     const profileParams = {};
@@ -192,8 +198,8 @@ class UserModel {
         if (!profileExists || profileExists.length === 0) {
           // Create profile if it doesn't exist
           const insertProfileSql = `INSERT INTO ${this.profilesTableName}
-            (user_id, name, country, language, interest_enable, risk_score, show_onboarding)
-            VALUES (?, '', NULL, NULL, 0, 0, 1)`;
+            (user_id, name, country_id, language, interest_enable, risk_score, show_onboarding, notifications_enabled, show_stats_enabled, anonymous_in_contests)
+            VALUES (?, '', NULL, NULL, 0, 0, 1, 1, 1, 0)`;
           await coinQuery(insertProfileSql, [id]);
           console.log('Created missing user_profile for user_id:', id);
         }
@@ -265,6 +271,36 @@ class UserModel {
     }
   };
 
+
+  // Get complete user profile with country information
+  getProfileWithCountry = async (userId) => {
+    const sql = `
+      SELECT
+        u.id,
+        u.email,
+        u.offer_token,
+        u.twofa_enabled,
+        u.security_pin_enabled,
+        u.created_at,
+        up.name as username,
+        up.avatar_url,
+        up.country_id,
+        up.language,
+        up.notifications_enabled,
+        up.show_stats_enabled,
+        up.anonymous_in_contests,
+        c.code as country_code,
+        c.name as country_name,
+        c.flag as country_flag
+      FROM ${this.tableName} u
+      LEFT JOIN ${this.profilesTableName} up ON u.id = up.user_id
+      LEFT JOIN countries c ON up.country_id = c.id
+      WHERE u.id = ?
+    `;
+
+    const result = await coinQuery(sql, [userId]);
+    return result[0];
+  };
 
   findPersonalInfo = async (params) => {
     const { columnSet, values } = multipleColumnSet(params);

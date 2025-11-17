@@ -3,6 +3,54 @@ const { uploadImageToS3, deleteImageFromS3, validateImageFile } = require('../ut
 const HttpException = require('../utils/HttpException.utils');
 
 class ProfileController {
+  //Get complete user profile with all related data
+  getProfile = async (req, res, next) => {
+    try {
+      const userId = req.currentUser.id;
+
+      const userData = await UserModel.getProfileWithCountry(userId);
+
+      if (!userData) {
+        throw new HttpException(404, "User profile not found");
+      }
+
+      // Format response
+      const profile = {
+        account: {
+          username: userData.username || '',
+          email: userData.email,
+          avatar_url: userData.avatar_url || null,
+          country: userData.country_id ? {
+            id: userData.country_id,
+            code: userData.country_code,
+            name: userData.country_name,
+            flag: userData.country_flag || null
+          } : null,
+          offer_token: userData.offer_token || null,
+          created_at: userData.created_at
+        },
+        security: {
+          twofa_enabled: Boolean(userData.twofa_enabled),
+          security_pin_enabled: Boolean(userData.security_pin_enabled)
+        },
+        settings: {
+          language: userData.language || 'en',
+          notifications_enabled: Boolean(userData.notifications_enabled),
+          show_stats_enabled: Boolean(userData.show_stats_enabled),
+          anonymous_in_contests: Boolean(userData.anonymous_in_contests)
+        }
+      };
+
+      res.status(200).json({
+        success: true,
+        message: "Profile retrieved successfully",
+        data: profile
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   //Upload or update user avatar
   uploadAvatar = async (req, res, next) => {
     try {

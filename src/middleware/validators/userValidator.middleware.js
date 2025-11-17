@@ -67,10 +67,10 @@ exports.updateUserSchema = [
     .withMessage(
       "confirm_password field must have the same value as the password field"
     ),
-  body("country")
+  body("country_id")
     .optional()
-    .isLength({ min: 2, max: 2 })
-    .withMessage("Country code must be 2 characters"),
+    .isInt()
+    .withMessage("Country ID must be an integer"),
   body("language")
     .optional()
     .isLength({ max: 5 })
