@@ -1,0 +1,20 @@
+[
+  {
+    "code": "en",
+    "name": "English",
+    "flag": "flags/uk.png",
+    "default": true
+  },
+  {
+    "code": "fr",
+    "name": "French",
+    "flag": "flags/fr.png",
+    "default": false
+  },
+  {
+    "code": "my",
+    "name": "Myanmar",
+    "flag": "flags/mm.png",
+    "default": false
+  }
+]

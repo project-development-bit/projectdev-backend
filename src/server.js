@@ -21,6 +21,7 @@ const addressRouter = require('./routes/address.route');
 const withdrawalRouter = require('./routes/withdrawal.route');
 const depositRouter = require('./routes/deposit.route');
 const walletRouter = require('./routes/wallet.route');
+const languagesRouter = require('./routes/languages.route');
 
 // Init express
 const app = express();
@@ -52,6 +53,7 @@ app.use(`/api/v1/addresses`, addressRouter);
 app.use(`/api/v1/withdrawals`, withdrawalRouter);
 app.use(`/api/v1/deposits`, depositRouter);
 app.use(`/api/v1/wallet`, walletRouter);
+app.use(`/api/v1/languages`, languagesRouter);
 
 app.use((req, res, next) => {
   const err = new HttpException(404, 'Endpoint Not Found');
