@@ -5,6 +5,7 @@ const auth = require("../middleware/auth.middleware");
 const Role = require("../utils/userRoles.utils");
 const awaitHandlerFactory = require("../middleware/awaitHandlerFactory.middleware");
 const verifyTurnstile = require("../middleware/turnstile.middleware");
+const { uploadAvatar } = require('../middleware/avatarUpload.middleware');
 
 const {
   createUserSchema,
@@ -133,5 +134,25 @@ router.post(
 ); // POST localhost:3000/api/v1/users/refresh-token
 
 router.get("/id/:id", auth(), awaitHandlerFactory(userController.getUserById)); // localhost:3000/api/v1/users/id/1
+
+// Profile routes (moved from profile.route.js)
+router.get(
+  "/profile",
+  auth(),
+  awaitHandlerFactory(userController.getProfile)
+); // GET /api/v1/users/profile
+
+router.post(
+  "/profile/avatar",
+  auth(),
+  uploadAvatar,
+  awaitHandlerFactory(userController.uploadAvatar)
+); // POST /api/v1/users/profile/avatar
+
+router.delete(
+  "/profile/avatar",
+  auth(),
+  awaitHandlerFactory(userController.deleteAvatar)
+); // DELETE /api/v1/users/profile/avatar
 
 module.exports = router;
