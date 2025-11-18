@@ -47,34 +47,32 @@ exports.updateUserSchema = [
     .optional()
     .isLength({ min: 3 })
     .withMessage("Must be at least 3 chars long"),
-  body("email")
-    .optional()
-    .isEmail()
-    .withMessage("Must be a valid email")
-    .normalizeEmail(),
-  body("password")
-    .optional()
-    .notEmpty()
-    .isLength({ min: 6 })
-    .withMessage("Password must contain at least 6 characters")
-    .isLength({ max: 10 })
-    .withMessage("Password can contain max 10 characters")
-    .custom((value, { req }) => !!req.body.confirm_password)
-    .withMessage("Please confirm your password"),
-  body("confirm_password")
-    .optional()
-    .custom((value, { req }) => value === req.body.password)
-    .withMessage(
-      "confirm_password field must have the same value as the password field"
-    ),
   body("country_id")
     .optional()
     .isInt()
     .withMessage("Country ID must be an integer"),
   body("language")
     .optional()
-    .isLength({ max: 5 })
-    .withMessage("Language code must be max 5 characters"),
+    .isLength({ min: 2, max: 5 })
+    .withMessage("Language code must be between 2-5 characters")
+    .matches(/^[a-zA-Z]{2,5}$/)
+    .withMessage("Language code must contain only letters "),
+  body("notifications_enabled")
+    .optional()
+    .isInt({ min: 0, max: 1 })
+    .withMessage("notifications_enabled must be 0 or 1"),
+  body("show_stats_enabled")
+    .optional()
+    .isInt({ min: 0, max: 1 })
+    .withMessage("show_stats_enabled must be 0 or 1"),
+  body("anonymous_in_contests")
+    .optional()
+    .isInt({ min: 0, max: 1 })
+    .withMessage("anonymous_in_contests must be 0 or 1"),
+  body("security_pin_enabled")
+    .optional()
+    .isInt({ min: 0, max: 1 })
+    .withMessage("security_pin_enabled must be 0 or 1"),
   body("interest_enable")
     .optional()
     .isInt({ min: 0, max: 1 })
@@ -82,8 +80,7 @@ exports.updateUserSchema = [
   body("show_onboarding")
     .optional()
     .isInt({ min: 0, max: 1 })
-    .withMessage("interest_enable must be 0 or 1"),
- 
+    .withMessage("show_onboarding must be 0 or 1"),
 ];
 
 exports.validateLogin = [

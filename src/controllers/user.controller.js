@@ -160,18 +160,14 @@ class UserController {
     // Define allowed fields for update
     const allowedFields = [
       'name',
-      'email',
-      'password',
-      'confirm_password',
       'country_id',
       'language',
-      'interest_enable',
-      'show_onboarding',
       'notifications_enabled',
       'show_stats_enabled',
       'anonymous_in_contests',
-      'offer_token',
-      'security_pin_enabled'
+      'security_pin_enabled',
+      'interest_enable',
+      'show_onboarding'
     ];
 
     // Filter request body to only include allowed fields
