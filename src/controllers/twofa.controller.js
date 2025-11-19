@@ -150,8 +150,8 @@ class TwoFAController {
         name: user.name,
         email: user.email,
         role: user.role,
-        twofa_enabled: user.twofa_enabled,
-        interest_enable: user.interest_enable,
+        twofa_enabled: Boolean(user.twofa_enabled),
+        interest_enable: Boolean(user.interest_enable),
       };
 
       res.status(200).json({

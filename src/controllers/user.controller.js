@@ -65,7 +65,21 @@ class UserController {
 
     const { password, ...userWithoutPassword } = user;
 
-    res.send(userWithoutPassword);
+    // Convert boolean fields
+    const formattedUser = {
+      ...userWithoutPassword,
+      twofa_enabled: Boolean(userWithoutPassword.twofa_enabled),
+      security_pin_enabled: Boolean(userWithoutPassword.security_pin_enabled),
+      is_banned: Boolean(userWithoutPassword.is_banned),
+      is_verified: Boolean(userWithoutPassword.is_verified),
+      interest_enable: Boolean(userWithoutPassword.interest_enable),
+      show_onboarding: Boolean(userWithoutPassword.show_onboarding),
+      notifications_enabled: Boolean(userWithoutPassword.notifications_enabled),
+      show_stats_enabled: Boolean(userWithoutPassword.show_stats_enabled),
+      anonymous_in_contests: Boolean(userWithoutPassword.anonymous_in_contests),
+    };
+
+    res.send(formattedUser);
   };
 
   getUserByuserName = async (req, res, next) => {
@@ -82,7 +96,21 @@ class UserController {
   getCurrentUser = async (req, res, next) => {
     const { password, ...userWithoutPassword } = req.currentUser;
 
-    res.send(userWithoutPassword);
+    // Convert boolean fields
+    const formattedUser = {
+      ...userWithoutPassword,
+      twofa_enabled: Boolean(userWithoutPassword.twofa_enabled),
+      security_pin_enabled: Boolean(userWithoutPassword.security_pin_enabled),
+      is_banned: Boolean(userWithoutPassword.is_banned),
+      is_verified: Boolean(userWithoutPassword.is_verified),
+      interest_enable: Boolean(userWithoutPassword.interest_enable),
+      show_onboarding: Boolean(userWithoutPassword.show_onboarding),
+      notifications_enabled: Boolean(userWithoutPassword.notifications_enabled),
+      show_stats_enabled: Boolean(userWithoutPassword.show_stats_enabled),
+      anonymous_in_contests: Boolean(userWithoutPassword.anonymous_in_contests),
+    };
+
+    res.send(formattedUser);
   };
 
   createUser = async (req, res, next) => {
@@ -178,9 +206,24 @@ class UserController {
     const { confirm_password, ...restOfUpdates } = req.body;
     const filteredUpdates = {};
 
+    // Boolean fields that need to be converted to 0/1 for database
+    const booleanFields = [
+      'interest_enable',
+      'show_onboarding',
+      'notifications_enabled',
+      'show_stats_enabled',
+      'anonymous_in_contests',
+      'security_pin_enabled'
+    ];
+
     Object.keys(restOfUpdates).forEach(key => {
       if (allowedFields.includes(key)) {
-        filteredUpdates[key] = restOfUpdates[key];
+        // Convert boolean values to 0/1 for database storage
+        if (booleanFields.includes(key)) {
+          filteredUpdates[key] = restOfUpdates[key] ? 1 : 0;
+        } else {
+          filteredUpdates[key] = restOfUpdates[key];
+        }
       }
     });
 
@@ -246,9 +289,9 @@ class UserController {
         name: user.name,
         email: user.email,
         role: user.role,
-        twofa_enabled: user.twofa_enabled,
-        interest_enable: user.interest_enable,
-        show_onboarding: user.show_onboarding
+        twofa_enabled: Boolean(user.twofa_enabled),
+        interest_enable: Boolean(user.interest_enable),
+        show_onboarding: Boolean(user.show_onboarding)
       };
 
       // If 2FA is enabled, return only userId without tokens
@@ -363,8 +406,8 @@ class UserController {
             name: user.name,
             email: user.email,
             role: user.role,
-            interest_enable: user.interest_enable,
-            show_onboarding: user.show_onboarding,
+            interest_enable: Boolean(user.interest_enable),
+            show_onboarding: Boolean(user.show_onboarding),
           },
           tokens: tokens,
         },
@@ -596,8 +639,8 @@ class UserController {
           name: user.name,
           email: user.email,
           role: user.role,
-          interest_enable: user.interest_enable,
-          show_onboarding: user.show_onboarding,
+          interest_enable: Boolean(user.interest_enable),
+          show_onboarding: Boolean(user.show_onboarding),
         },
         tokens: tokens,
       },
@@ -941,6 +984,7 @@ class UserController {
       // Format response
       const profile = {
         account: {
+          id: userData.id,
           username: userData.username || '',
           email: userData.email,
           avatar_url: userData.avatar_url || null,

@@ -33,8 +33,9 @@ exports.createUserSchema = [
     ),
   body("interest_enable")
     .optional()
-    .isInt({ min: 0, max: 1 })
-    .withMessage("interest_enable must be 0 or 1"),
+    .isBoolean()
+    .withMessage("interest_enable must be a boolean (true/false)")
+    .toBoolean(),
   // body("recaptchaToken")
   //   .exists()
   //   .withMessage("reCAPTCHA token is required")
@@ -77,13 +78,34 @@ exports.updateUserSchema = [
     .withMessage("Language code must be max 5 characters"),
   body("interest_enable")
     .optional()
-    .isInt({ min: 0, max: 1 })
-    .withMessage("interest_enable must be 0 or 1"),
+    .isBoolean()
+    .withMessage("interest_enable must be a boolean (true/false)")
+    .toBoolean(),
   body("show_onboarding")
     .optional()
-    .isInt({ min: 0, max: 1 })
-    .withMessage("interest_enable must be 0 or 1"),
- 
+    .isBoolean()
+    .withMessage("show_onboarding must be a boolean (true/false)")
+    .toBoolean(),
+  body("notifications_enabled")
+    .optional()
+    .isBoolean()
+    .withMessage("notifications_enabled must be a boolean (true/false)")
+    .toBoolean(),
+  body("show_stats_enabled")
+    .optional()
+    .isBoolean()
+    .withMessage("show_stats_enabled must be a boolean (true/false)")
+    .toBoolean(),
+  body("anonymous_in_contests")
+    .optional()
+    .isBoolean()
+    .withMessage("anonymous_in_contests must be a boolean (true/false)")
+    .toBoolean(),
+  body("security_pin_enabled")
+    .optional()
+    .isBoolean()
+    .withMessage("security_pin_enabled must be a boolean (true/false)")
+    .toBoolean(),
 ];
 
 exports.validateLogin = [
