@@ -79,7 +79,7 @@ router.patch(
 ); // localhost:3000/api/v1/users/id/1 , using patch for partial update
 router.delete(
   "/id/:id",
-  auth(Role.Admin),
+  auth(),
   awaitHandlerFactory(userController.deleteUser)
 ); // localhost:3000/api/v1/users/id/1
 

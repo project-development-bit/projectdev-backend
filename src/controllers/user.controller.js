@@ -214,14 +214,36 @@ class UserController {
   };
 
   deleteUser = async (req, res, next) => {
-    const result = await UserModel.delete(req.params.id);
-    if (!result) {
-      throw new HttpException(404, "User not found");
-    }
-    res.status(200).json({
+    try {
+      const userId = req.params.id;
+
+      const result = await UserModel.deleteWithAllData(userId);
+
+      if (!result.success) {
+        throw new HttpException(404, result.error || "User not found");
+      }
+
+      // Delete avatar from S3 if exists
+      if (result.deletedUser && result.deletedUser.avatar_url) {
+        try {
+          await deleteImageFromS3(result.deletedUser.avatar_url);
+        } catch (s3Error) {
+          // Log but don't fail the request if S3 delete fails
+          console.error('Failed to delete avatar from S3:', s3Error);
+        }
+      }
+
+      res.status(200).json({
         success: true,
-        message: "User has been deleted.",
-    });
+        message: "User and all associated data have been deleted.",
+        data: {
+          deletedUserId: result.deletedUser.id,
+          deletedEmail: result.deletedUser.email
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
   };
 
   userLogin = async (req, res, next) => {
