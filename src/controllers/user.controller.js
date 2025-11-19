@@ -1084,6 +1084,73 @@ class UserController {
       next(error);
     }
   };
+
+  // Change user email
+  changeEmail = async (req, res, next) => {
+    try {
+      this.checkValidation(req);
+
+      const { current_email, new_email, repeat_new_email } = req.body;
+      const userId = req.currentUser.id;
+      const user = req.currentUser;
+
+      // User must have a verified account
+      if (user.is_verified !== 1) {
+        throw new HttpException(
+          403,
+          "Your account must be verified to change email.",
+          "UNVERIFIED_ACCOUNT"
+        );
+      }
+
+      // Current Email must match the authenticated user's email
+      if (user.email.toLowerCase() !== current_email.toLowerCase()) {
+        throw new HttpException(
+          400,
+          "Current email does not match your account email.",
+          "CURRENT_EMAIL_MISMATCH"
+        );
+      }
+
+      // New Email must NOT equal current email
+      if (user.email.toLowerCase() === new_email.toLowerCase()) {
+        throw new HttpException(
+          400,
+          "New email must be different from current email.",
+          "SAME_EMAIL"
+        );
+      }
+
+      // New Email must be unique (not used by any other account)
+      const emailExists = await UserModel.emailExists(new_email, userId);
+      if (emailExists) {
+        throw new HttpException(
+          409,
+          "This email is already in use by another account.",
+          "EMAIL_ALREADY_EXISTS"
+        );
+      }
+
+      // Update the email
+      const result = await UserModel.updateEmail(userId, new_email);
+
+      if (!result || result.affectedRows === 0) {
+        throw new HttpException(500, "Failed to update email.", "UPDATE_FAILED");
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Email updated successfully.",
+        data: {
+          old_email: current_email,
+          new_email: new_email,
+        },
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 /******************************************************************************

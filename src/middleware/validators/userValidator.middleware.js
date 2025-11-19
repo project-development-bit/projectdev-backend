@@ -157,3 +157,26 @@ exports.validateRefreshToken = [
     .notEmpty()
     .withMessage("Refresh token must not be empty")
 ];
+
+exports.validateEmailChange = [
+  body("current_email")
+    .exists()
+    .withMessage("Current email is required")
+    .isEmail()
+    .withMessage("Current email must be a valid email")
+    .normalizeEmail(),
+  body("new_email")
+    .exists()
+    .withMessage("New email is required")
+    .isEmail()
+    .withMessage("New email must be a valid email")
+    .normalizeEmail(),
+  body("repeat_new_email")
+    .exists()
+    .withMessage("Repeat new email is required")
+    .isEmail()
+    .withMessage("Repeat new email must be a valid email")
+    .normalizeEmail()
+    .custom((value, { req }) => value === req.body.new_email)
+    .withMessage("Repeat new email must match new email")
+];

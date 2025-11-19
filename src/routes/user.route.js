@@ -16,7 +16,10 @@ const {
   validateTerms,
   validatePassword,
   validateRefreshToken,
+  validateEmailChange,
 } = require("../middleware/validators/userValidator.middleware");
+
+const { emailChangeLimiter } = require("../middleware/rateLimiter.middleware");
 
 router.get(
   "/personal_info/:email/:member_id",
@@ -154,5 +157,13 @@ router.delete(
   auth(),
   awaitHandlerFactory(userController.deleteAvatar)
 ); // DELETE /api/v1/users/profile/avatar
+
+router.patch(
+  "/email",
+  auth(),
+  emailChangeLimiter,
+  validateEmailChange,
+  awaitHandlerFactory(userController.changeEmail)
+); // PATCH /api/v1/users/email
 
 module.exports = router;
