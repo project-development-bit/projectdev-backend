@@ -373,6 +373,20 @@ class UserModel {
     const result = await coinQuery(sql, [values[0], values[0]]);
     return result[0];
   };
+
+  // Update user password by ID and invalidate refresh token
+  updatePasswordById = async (userId, hashedPassword) => {
+    const sql = `UPDATE ${this.tableName} SET password = ?, refresh_token = NULL WHERE id = ?`;
+    const result = await coinQuery(sql, [hashedPassword, userId]);
+    return result;
+  };
+
+  // Get user password hash for verification
+  getPasswordHash = async (userId) => {
+    const sql = `SELECT password FROM ${this.tableName} WHERE id = ?`;
+    const result = await coinQuery(sql, [userId]);
+    return result[0];
+  };
 }
 
 module.exports = new UserModel();

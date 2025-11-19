@@ -16,7 +16,10 @@ const {
   validateTerms,
   validatePassword,
   validateRefreshToken,
+  validatePasswordChange,
 } = require("../middleware/validators/userValidator.middleware");
+
+const { passwordChangeLimiter } = require("../middleware/rateLimiter.middleware");
 
 router.get(
   "/personal_info/:email/:member_id",
@@ -154,5 +157,14 @@ router.delete(
   auth(),
   awaitHandlerFactory(userController.deleteAvatar)
 ); // DELETE /api/v1/users/profile/avatar
+
+// Password change route
+router.patch(
+  "/password",
+  auth(),
+  passwordChangeLimiter,
+  validatePasswordChange,
+  awaitHandlerFactory(userController.changePassword)
+); // PATCH /api/v1/users/password
 
 module.exports = router;
