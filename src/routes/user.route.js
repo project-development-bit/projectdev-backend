@@ -155,4 +155,10 @@ router.delete(
   awaitHandlerFactory(userController.deleteAvatar)
 ); // DELETE /api/v1/users/profile/avatar
 
+router.get(
+  "/rewards",
+  auth(),
+  awaitHandlerFactory(userController.getUserRewards)
+); // GET /api/v1/users/rewards
+
 module.exports = router;
