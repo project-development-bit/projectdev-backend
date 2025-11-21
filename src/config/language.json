@@ -1,20 +1,20 @@
 [
   {
-    "code": "en",
+    "code": "EN",
     "name": "English",
-    "flag": "flags/uk.png",
+    "flag": "https://flagsapi.com/EN/flat/64.png",
     "default": true
   },
   {
-    "code": "fr",
+    "code": "FR",
     "name": "French",
-    "flag": "flags/fr.png",
+    "flag": "https://flagsapi.com/FR/flat/64.png",
     "default": false
   },
   {
-    "code": "my",
+    "code": "MM",
     "name": "Myanmar",
-    "flag": "flags/mm.png",
+    "flag": "https://flagsapi.com/MM/flat/64.png",
     "default": false
   }
 ]
