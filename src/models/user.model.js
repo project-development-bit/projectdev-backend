@@ -391,6 +391,26 @@ class UserModel {
     return result[0];
   };
 
+  // Check if email exists (for another user)
+  emailExists = async (email, excludeUserId = null) => {
+    let sql = `SELECT id FROM ${this.tableName} WHERE email = ?`;
+    const params = [email];
+
+    if (excludeUserId) {
+      sql += ` AND id != ?`;
+      params.push(excludeUserId);
+    }
+
+    const result = await coinQuery(sql, params);
+    return result.length > 0;
+  };
+
+  // Update user email
+  updateEmail = async (userId, newEmail) => {
+    const sql = `UPDATE ${this.tableName} SET email = ? WHERE id = ?`;
+    const result = await coinQuery(sql, [newEmail, userId]);
+    return result;
+  };
 }
 
 module.exports = new UserModel();

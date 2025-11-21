@@ -7,7 +7,11 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const TwoFAController = require("./twofa.controller");
-const { uploadImageToS3, deleteImageFromS3, validateImageFile } = require('../utils/imageUpload.utils');
+const {
+  uploadImageToS3,
+  deleteImageFromS3,
+  validateImageFile,
+} = require("../utils/imageUpload.utils");
 dotenv.config();
 
 const {
@@ -18,8 +22,8 @@ const {
 const { generateUniqueReferralCode } = require("../utils/referral.utils");
 const ReferralModel = require("../models/referral.model");
 const referralConfig = require("../config/referral.config");
-const { getRewardsConfig } = require('../config/rewards.config');
-const { computeUserRewards } = require('../services/rewards.service');
+const { getRewardsConfig } = require("../config/rewards.config");
+const { computeUserRewards } = require("../services/rewards.service");
 
 /******************************************************************************
  *                              User Controller
@@ -95,7 +99,9 @@ class UserController {
       // Handle referral code if provided
       let referrerId = null;
       if (req.body.referral_code) {
-        const referrer = await ReferralModel.getUserByReferralCode(req.body.referral_code);
+        const referrer = await ReferralModel.getUserByReferralCode(
+          req.body.referral_code
+        );
         if (referrer) {
           referrerId = referrer.id;
           req.body.referred_by = referrerId;
@@ -142,12 +148,14 @@ class UserController {
       });
     } catch (error) {
       // Handle duplicate email error
-      if (error.status === 409 || error.code === 'ER_DUP_ENTRY') {
-        return next(new HttpException(
-          409,
-          "An account with this email already exists. Please use a different email or try logging in.",
-          "EMAIL_ALREADY_EXISTS"
-        ));
+      if (error.status === 409 || error.code === "ER_DUP_ENTRY") {
+        return next(
+          new HttpException(
+            409,
+            "An account with this email already exists. Please use a different email or try logging in.",
+            "EMAIL_ALREADY_EXISTS"
+          )
+        );
       }
       next(error);
     }
@@ -161,22 +169,22 @@ class UserController {
 
     // Define allowed fields for update
     const allowedFields = [
-      'name',
-      'country_id',
-      'language',
-      'notifications_enabled',
-      'show_stats_enabled',
-      'anonymous_in_contests',
-      'security_pin_enabled',
-      'interest_enable',
-      'show_onboarding'
+      "name",
+      "country_id",
+      "language",
+      "notifications_enabled",
+      "show_stats_enabled",
+      "anonymous_in_contests",
+      "security_pin_enabled",
+      "interest_enable",
+      "show_onboarding",
     ];
 
     // Filter request body to only include allowed fields
     const { confirm_password, ...restOfUpdates } = req.body;
     const filteredUpdates = {};
 
-    Object.keys(restOfUpdates).forEach(key => {
+    Object.keys(restOfUpdates).forEach((key) => {
       if (allowedFields.includes(key)) {
         filteredUpdates[key] = restOfUpdates[key];
       }
@@ -201,9 +209,10 @@ class UserController {
       throw new HttpException(404, "User not found");
     }
 
-    const message = affectedRows && changedRows
-      ? "User updated successfully"
-      : "No changes made";
+    const message =
+      affectedRows && changedRows
+        ? "User updated successfully"
+        : "No changes made";
 
     res.status(200).json({
       success: true,
@@ -217,8 +226,8 @@ class UserController {
       throw new HttpException(404, "User not found");
     }
     res.status(200).json({
-        success: true,
-        message: "User has been deleted.",
+      success: true,
+      message: "User has been deleted.",
     });
   };
 
@@ -246,7 +255,7 @@ class UserController {
         role: user.role,
         twofa_enabled: user.twofa_enabled,
         interest_enable: user.interest_enable,
-        show_onboarding: user.show_onboarding
+        show_onboarding: user.show_onboarding,
       };
 
       // If 2FA is enabled, return only userId without tokens
@@ -371,7 +380,8 @@ class UserController {
       // Account not verified yet, don't return tokens
       res.status(201).json({
         success: true,
-        message: "Password was saved successfully! Please verify your account to login.",
+        message:
+          "Password was saved successfully! Please verify your account to login.",
         data: {
           email: user.email,
           isVerified: false,
@@ -891,9 +901,9 @@ class UserController {
       const {
         page = 1,
         limit = 10,
-        search = '',
-        sortBy = 'created_at',
-        sortOrder = 'DESC',
+        search = "",
+        sortBy = "created_at",
+        sortOrder = "DESC",
         dateFrom = null,
         dateTo = null,
       } = req.query;
@@ -905,9 +915,9 @@ class UserController {
       const options = {
         page: pageNum,
         limit: limitNum,
-        search: search || '',
-        sortBy: sortBy || 'created_at',
-        sortOrder: sortOrder || 'DESC',
+        search: search || "",
+        sortBy: sortBy || "created_at",
+        sortOrder: sortOrder || "DESC",
         dateFrom: dateFrom || null,
         dateTo: dateTo || null,
       };
@@ -939,34 +949,36 @@ class UserController {
       // Format response
       const profile = {
         account: {
-          username: userData.username || '',
+          username: userData.username || "",
           email: userData.email,
           avatar_url: userData.avatar_url || null,
-          country: userData.country_id ? {
-            id: userData.country_id,
-            code: userData.country_code,
-            name: userData.country_name,
-            flag: userData.country_flag || null
-          } : null,
+          country: userData.country_id
+            ? {
+                id: userData.country_id,
+                code: userData.country_code,
+                name: userData.country_name,
+                flag: userData.country_flag || null,
+              }
+            : null,
           offer_token: userData.offer_token || null,
-          created_at: userData.created_at
+          created_at: userData.created_at,
         },
         security: {
           twofa_enabled: Boolean(userData.twofa_enabled),
-          security_pin_enabled: Boolean(userData.security_pin_enabled)
+          security_pin_enabled: Boolean(userData.security_pin_enabled),
         },
         settings: {
-          language: userData.language || 'en',
+          language: userData.language || "en",
           notifications_enabled: Boolean(userData.notifications_enabled),
           show_stats_enabled: Boolean(userData.show_stats_enabled),
-          anonymous_in_contests: Boolean(userData.anonymous_in_contests)
-        }
+          anonymous_in_contests: Boolean(userData.anonymous_in_contests),
+        },
       };
 
       res.status(200).json({
         success: true,
         message: "Profile retrieved successfully",
-        data: profile
+        data: profile,
       });
     } catch (error) {
       next(error);
@@ -980,22 +992,28 @@ class UserController {
 
       // Check if file was uploaded
       if (!req.file) {
-        throw new HttpException(400, 'No avatar file uploaded. Please provide an image file.', 'NO_FILE_UPLOADED');
+        throw new HttpException(
+          400,
+          "No avatar file uploaded. Please provide an image file.",
+          "NO_FILE_UPLOADED"
+        );
       }
 
       // Validate file
-      const maxSizeBytes = parseInt(process.env.AVATAR_MAX_SIZE_BYTES || 2097152); // Default 2MB
+      const maxSizeBytes = parseInt(
+        process.env.AVATAR_MAX_SIZE_BYTES || 2097152
+      ); // Default 2MB
       const validation = validateImageFile(req.file, maxSizeBytes);
 
       if (!validation.valid) {
-        throw new HttpException(400, validation.error, 'INVALID_AVATAR_FILE');
+        throw new HttpException(400, validation.error, "INVALID_AVATAR_FILE");
       }
 
       // Get current user to check for existing avatar
       const currentUser = await UserModel.findOne({ id: userId }, true);
 
       if (!currentUser) {
-        throw new HttpException(404, 'User not found', 'USER_NOT_FOUND');
+        throw new HttpException(404, "User not found", "USER_NOT_FOUND");
       }
 
       const oldAvatarUrl = currentUser.avatar_url;
@@ -1005,24 +1023,35 @@ class UserController {
       try {
         avatarUrl = await uploadImageToS3(
           req.file.buffer,
-          'avatars',
+          "avatars",
           userId,
           req.file.mimetype,
           req.file.originalname
         );
       } catch (error) {
-        console.error('S3 upload failed:', error);
-        throw new HttpException(500, 'Failed to upload avatar. Please try again.', 'S3_UPLOAD_FAILED');
+        console.error("S3 upload failed:", error);
+        throw new HttpException(
+          500,
+          "Failed to upload avatar. Please try again.",
+          "S3_UPLOAD_FAILED"
+        );
       }
 
       // Update database with new avatar URL
       try {
-        const updateResult = await UserModel.update({ avatar_url: avatarUrl }, userId);
+        const updateResult = await UserModel.update(
+          { avatar_url: avatarUrl },
+          userId
+        );
 
         if (!updateResult || updateResult.affectedRows === 0) {
           // Rollback: delete uploaded S3 file
           await deleteImageFromS3(avatarUrl);
-          throw new HttpException(500, 'Failed to update avatar. Please try again.', 'DB_UPDATE_FAILED');
+          throw new HttpException(
+            500,
+            "Failed to update avatar. Please try again.",
+            "DB_UPDATE_FAILED"
+          );
         }
       } catch (error) {
         // Rollback: delete uploaded S3 file
@@ -1040,7 +1069,6 @@ class UserController {
         success: true,
         avatarUrl: avatarUrl,
       });
-
     } catch (error) {
       next(error);
     }
@@ -1055,7 +1083,7 @@ class UserController {
       const currentUser = await UserModel.findOne({ id: userId }, true);
 
       if (!currentUser) {
-        throw new HttpException(404, 'User not found', 'USER_NOT_FOUND');
+        throw new HttpException(404, "User not found", "USER_NOT_FOUND");
       }
 
       const avatarUrl = currentUser.avatar_url;
@@ -1063,7 +1091,7 @@ class UserController {
       if (!avatarUrl) {
         return res.status(200).json({
           success: true,
-          message: 'No avatar to delete',
+          message: "No avatar to delete",
         });
       }
 
@@ -1075,9 +1103,8 @@ class UserController {
 
       return res.status(200).json({
         success: true,
-        message: 'Avatar deleted successfully',
+        message: "Avatar deleted successfully",
       });
-
     } catch (error) {
       next(error);
     }
@@ -1089,13 +1116,17 @@ class UserController {
 
     const config = getRewardsConfig();
     if (!config) {
-      throw new HttpException(500, 'Rewards configuration not available', 'CONFIG_ERROR');
+      throw new HttpException(
+        500,
+        "Rewards configuration not available",
+        "CONFIG_ERROR"
+      );
     }
 
     // Get user XP from database
     const userData = await UserModel.getUserXp(userId);
     if (!userData) {
-      throw new HttpException(404, 'User not found', 'USER_NOT_FOUND');
+      throw new HttpException(404, "User not found", "USER_NOT_FOUND");
     }
 
     const currentXp = userData.xp || 0;
@@ -1105,8 +1136,77 @@ class UserController {
 
     res.status(200).json({
       success: true,
-      data: rewards
+      data: rewards,
     });
+  };
+  // Change user email
+  changeEmail = async (req, res, next) => {
+    try {
+      this.checkValidation(req);
+
+      const { current_email, new_email, repeat_new_email } = req.body;
+      const userId = req.currentUser.id;
+      const user = req.currentUser;
+
+      // User must have a verified account
+      if (user.is_verified !== 1) {
+        throw new HttpException(
+          403,
+          "Your account must be verified to change email.",
+          "UNVERIFIED_ACCOUNT"
+        );
+      }
+
+      // Current Email must match the authenticated user's email
+      if (user.email.toLowerCase() !== current_email.toLowerCase()) {
+        throw new HttpException(
+          400,
+          "Current email does not match your account email.",
+          "CURRENT_EMAIL_MISMATCH"
+        );
+      }
+
+      // New Email must NOT equal current email
+      if (user.email.toLowerCase() === new_email.toLowerCase()) {
+        throw new HttpException(
+          400,
+          "New email must be different from current email.",
+          "SAME_EMAIL"
+        );
+      }
+
+      // New Email must be unique (not used by any other account)
+      const emailExists = await UserModel.emailExists(new_email, userId);
+      if (emailExists) {
+        throw new HttpException(
+          409,
+          "This email is already in use by another account.",
+          "EMAIL_ALREADY_EXISTS"
+        );
+      }
+
+      // Update the email
+      const result = await UserModel.updateEmail(userId, new_email);
+
+      if (!result || result.affectedRows === 0) {
+        throw new HttpException(
+          500,
+          "Failed to update email.",
+          "UPDATE_FAILED"
+        );
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Email updated successfully.",
+        data: {
+          old_email: current_email,
+          new_email: new_email,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   };
 }
 

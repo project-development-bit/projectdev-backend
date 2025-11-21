@@ -66,8 +66,29 @@ const walletBalancesLimiter = rateLimit({
   },
 });
 
+// Rate limiter for email change
+// 3 requests per hour per user
+const emailChangeLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3, // 3 requests per hour per user
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) =>
+    req.currentUser?.id
+      ? `emailchange:uid:${req.currentUser.id}`
+      : `emailchange:ip:${rateLimit.ipKeyGenerator(req)}`,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: "Too many email change requests. Please try again after 1 hour.",
+      error: "EMAIL_CHANGE_RATE_LIMIT_EXCEEDED",
+    });
+  },
+});
+
 module.exports = {
   twoFALoginLimiter,
   twoFASetupLimiter,
   walletBalancesLimiter,
+  emailChangeLimiter,
 };

@@ -16,7 +16,10 @@ const {
   validateTerms,
   validatePassword,
   validateRefreshToken,
+  validateEmailChange,
 } = require("../middleware/validators/userValidator.middleware");
+
+const { emailChangeLimiter } = require("../middleware/rateLimiter.middleware");
 
 router.get(
   "/personal_info/:email/:member_id",
@@ -160,5 +163,13 @@ router.get(
   auth(),
   awaitHandlerFactory(userController.getUserRewards)
 ); // GET /api/v1/users/rewards
+
+router.patch(
+  "/email",
+  auth(),
+  emailChangeLimiter,
+  validateEmailChange,
+  awaitHandlerFactory(userController.changeEmail)
+); // PATCH /api/v1/users/email
 
 module.exports = router;
