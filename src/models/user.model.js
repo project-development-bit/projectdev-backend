@@ -373,6 +373,24 @@ class UserModel {
     const result = await coinQuery(sql, [values[0], values[0]]);
     return result[0];
   };
+
+  //Get user's XP by user ID
+  getUserXp = async (userId) => {
+    const sql = `
+      SELECT id, xp
+      FROM ${this.tableName}
+      WHERE id = ?
+    `;
+
+    const result = await coinQuery(sql, [userId]);
+
+    if (!result || result.length === 0) {
+      return null;
+    }
+
+    return result[0];
+  };
+
 }
 
 module.exports = new UserModel();
