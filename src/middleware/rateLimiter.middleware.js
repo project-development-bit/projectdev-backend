@@ -20,7 +20,8 @@ const twoFALoginLimiter = rateLimit({
   handler: (req, res) => {
     res.status(429).json({
       success: false,
-      message: "Too many 2FA verification attempts. Please try again after 5 minutes.",
+      message:
+        "Too many 2FA verification attempts. Please try again after 5 minutes.",
       error: "TOO_MANY_ATTEMPTS",
     });
   },
@@ -86,9 +87,31 @@ const emailChangeLimiter = rateLimit({
   },
 });
 
+// Rate limiter for password change
+// 5 requests per 15 minutes per user
+const passwordChangeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 requests per 15 minutes per user
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) =>
+    req.currentUser?.id
+      ? `pwdchange:uid:${req.currentUser.id}`
+      : `pwdchange:ip:${rateLimit.ipKeyGenerator(req)}`,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message:
+        "Too many password change attempts. Please try again after 15 minutes.",
+      error: "PASSWORD_CHANGE_RATE_LIMIT_EXCEEDED",
+    });
+  },
+});
+
 module.exports = {
   twoFALoginLimiter,
   twoFASetupLimiter,
   walletBalancesLimiter,
   emailChangeLimiter,
+  passwordChangeLimiter,
 };

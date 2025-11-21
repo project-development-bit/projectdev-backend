@@ -152,7 +152,7 @@ exports.validateRefreshToken = [
     .isString()
     .withMessage("Refresh token must be a string")
     .notEmpty()
-    .withMessage("Refresh token must not be empty")
+    .withMessage("Refresh token must not be empty"),
 ];
 
 exports.validateEmailChange = [
@@ -175,5 +175,33 @@ exports.validateEmailChange = [
     .withMessage("Repeat new email must be a valid email")
     .normalizeEmail()
     .custom((value, { req }) => value === req.body.new_email)
-    .withMessage("Repeat new email must match new email")
+    .withMessage("Repeat new email must match new email"),
+];
+
+exports.validatePasswordChange = [
+  body("current_password")
+    .exists()
+    .withMessage("Current password is required")
+    .notEmpty()
+    .withMessage("Current password must not be empty"),
+  body("new_password")
+    .exists()
+    .withMessage("New password is required")
+    .notEmpty()
+    .withMessage("New password must not be empty")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters long")
+    .matches(/[a-z]/)
+    .withMessage("Password must contain at least one lowercase letter")
+    .matches(/[A-Z]/)
+    .withMessage("Password must contain at least one uppercase letter")
+    .matches(/[0-9]/)
+    .withMessage("Password must contain at least one number"),
+  body("repeat_new_password")
+    .exists()
+    .withMessage("Repeat new password is required")
+    .notEmpty()
+    .withMessage("Repeat new password must not be empty")
+    .custom((value, { req }) => value === req.body.new_password)
+    .withMessage("Repeat new password must match new password"),
 ];

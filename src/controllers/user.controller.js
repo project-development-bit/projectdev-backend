@@ -1208,6 +1208,66 @@ class UserController {
       next(error);
     }
   };
+
+  // Change user password
+  changePassword = async (req, res, next) => {
+    try {
+      this.checkValidation(req);
+
+      const { current_password, new_password, repeat_new_password } = req.body;
+      const userId = req.currentUser.id;
+
+      // Get user's current password hash
+      const userPasswordData = await UserModel.getPasswordHash(userId);
+
+      if (!userPasswordData) {
+        throw new HttpException(404, "User not found", "USER_NOT_FOUND");
+      }
+
+      // Convert password buffer to string if needed
+      const currentHashedPassword = Buffer.isBuffer(userPasswordData.password)
+        ? userPasswordData.password.toString()
+        : userPasswordData.password;
+
+      // Verify current password
+      const isCurrentPasswordValid = await bcrypt.compare(current_password, currentHashedPassword);
+      if (!isCurrentPasswordValid) {
+        throw new HttpException(
+          400,
+          "Current password is incorrect.",
+          "INVALID_CURRENT_PASSWORD"
+        );
+      }
+
+      // New password must not be the same as current password
+      const isSameAsOld = await bcrypt.compare(new_password, currentHashedPassword);
+      if (isSameAsOld) {
+        throw new HttpException(
+          400,
+          "New password must be different from current password.",
+          "SAME_PASSWORD"
+        );
+      }
+
+      // Hash the new password
+      const hashedNewPassword = await bcrypt.hash(new_password, 8);
+
+      // Update password and invalidate refresh token (logout all sessions)
+      const result = await UserModel.updatePasswordById(userId, hashedNewPassword);
+
+      if (!result || result.affectedRows === 0) {
+        throw new HttpException(500, "Failed to update password.", "UPDATE_FAILED");
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Password updated successfully. Please login again with your new password.",
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 /******************************************************************************
