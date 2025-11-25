@@ -39,6 +39,19 @@ class CountryModel {
     return result[0]?.count > 0;
   };
 
+  //Get country ID by country code
+  getCountryIdByCode = async (countryCode) => {
+    if (!countryCode) {
+      return null;
+    }
+
+    const sql = `SELECT id FROM ${this.tableName}
+      WHERE code = ? AND is_active = 1`;
+
+    const result = await coinQuery(sql, [countryCode.toUpperCase()]);
+    return result[0]?.id || null;
+  };
+
 }
 
 module.exports = new CountryModel();

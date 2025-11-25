@@ -69,8 +69,8 @@ class RiskDetectionService {
         7
       );
 
-      // If 5 or more devices, create risk event
-      if (deviceCount >= 5) {
+      // If 3 or more devices, create risk event
+      if (deviceCount >= 3) {
         await RiskEventModel.create({
           user_id: user_id,
           type: RISK_EVENT_TYPES.MULTI_DEVICE_SAME_ACCOUNT,
@@ -152,17 +152,17 @@ class RiskDetectionService {
         high: 0,
       };
 
-      // Calculate risk score
+      // Calculate risk score using severity values directly
       riskSummary.forEach((event) => {
         if (event.severity === RISK_SEVERITY.LOW) {
           eventCounts.low += event.count;
-          riskScore += event.count * 1;
+          riskScore += event.count * event.severity; // 1 point per event
         } else if (event.severity === RISK_SEVERITY.MEDIUM) {
           eventCounts.medium += event.count;
-          riskScore += event.count * 5;
+          riskScore += event.count * event.severity; // 2 points per event
         } else if (event.severity === RISK_SEVERITY.HIGH) {
           eventCounts.high += event.count;
-          riskScore += event.count * 10;
+          riskScore += event.count * event.severity; // 3 points per event
         }
       });
 
@@ -187,8 +187,8 @@ class RiskDetectionService {
 
   //Determine risk level based on score
   getRiskLevel(score) {
-    if (score >= 20) return "HIGH";
-    if (score >= 10) return "MEDIUM";
+    if (score >= 10) return "HIGH";   // ~3-4 MEDIUM events or 10 LOW events
+    if (score >= 5) return "MEDIUM";  // ~2-3 MEDIUM events or 5 LOW events
     if (score > 0) return "LOW";
     return "NONE";
   }
