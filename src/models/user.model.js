@@ -424,6 +424,15 @@ class UserModel {
     const result = await coinQuery(sql, [userId]);
     return result[0];
   };
+
+  // Update last login fields (timestamp, IP, device fingerprint)
+  updateLastLogin = async (userId, ip, deviceFp) => {
+    const sql = `UPDATE ${this.tableName}
+      SET last_login_at = NOW(), last_login_ip = ?, last_login_device_fp = ?
+      WHERE id = ?`;
+    const result = await coinQuery(sql, [ip, deviceFp, userId]);
+    return result;
+  };
 }
 
 module.exports = new UserModel();

@@ -26,6 +26,19 @@ class CountryModel {
     return await coinQuery(sql, values);
   };
 
+  //Check if a country code exists and is active
+  isValidCountryCode = async (countryCode) => {
+    if (!countryCode) {
+      return false;
+    }
+
+    const sql = `SELECT COUNT(*) as count FROM ${this.tableName}
+      WHERE code = ? AND is_active = 1`;
+
+    const result = await coinQuery(sql, [countryCode.toUpperCase()]);
+    return result[0]?.count > 0;
+  };
+
 }
 
 module.exports = new CountryModel();

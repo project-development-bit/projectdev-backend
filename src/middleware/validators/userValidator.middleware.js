@@ -40,6 +40,27 @@ exports.createUserSchema = [
   //   .withMessage("reCAPTCHA token is required")
   //   .notEmpty()
   //   .withMessage("reCAPTCHA token must not be empty"),
+  body("device_fingerprint")
+    .optional()
+    .isString()
+    .withMessage("Device fingerprint must be a string")
+    .isLength({ min: 1, max: 255 })
+    .withMessage("Device fingerprint must be between 1-255 characters"),
+  body("user_agent")
+    .optional()
+    .isString()
+    .withMessage("User agent must be a string")
+    .isLength({ max: 255 })
+    .withMessage("User agent must not exceed 255 characters"),
+  body("country_code")
+    .optional()
+    .isString()
+    .withMessage("Country code must be a string")
+    .isLength({ min: 2, max: 2 })
+    .withMessage("Country code must be exactly 2 characters (ISO 3166-1 alpha-2)")
+    .matches(/^[A-Z]{2}$/i)
+    .withMessage("Country code must contain only letters")
+    .toUpperCase(),  
 ];
 
 exports.updateUserSchema = [
@@ -95,6 +116,27 @@ exports.validateLogin = [
     .withMessage("Password is required")
     .notEmpty()
     .withMessage("Password must be filled"),
+  body("device_fingerprint")
+    .optional()
+    .isString()
+    .withMessage("Device fingerprint must be a string")
+    .isLength({ min: 1, max: 255 })
+    .withMessage("Device fingerprint must be between 1-255 characters"),
+  body("user_agent")
+    .optional()
+    .isString()
+    .withMessage("User agent must be a string")
+    .isLength({ max: 255 })
+    .withMessage("User agent must not exceed 255 characters"),
+  body("country_code")
+    .optional()
+    .isString()
+    .withMessage("Country code must be a string")
+    .isLength({ min: 2, max: 2 })
+    .withMessage("Country code must be exactly 2 characters (ISO 3166-1 alpha-2)")
+    .matches(/^[A-Z]{2}$/i)
+    .withMessage("Country code must contain only letters")
+    .toUpperCase(),
   // body("recaptchaToken")
   //   .exists()
   //   .withMessage("reCAPTCHA token is required")

@@ -147,6 +147,12 @@ router.get(
   awaitHandlerFactory(userController.getProfile)
 ); // GET /api/v1/users/profile
 
+router.get(
+  "/risk-score",
+  auth(),
+  awaitHandlerFactory(userController.getUserRiskScore)
+); // GET /api/v1/users/profile
+
 router.post(
   "/profile/avatar",
   auth(),

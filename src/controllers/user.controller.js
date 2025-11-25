@@ -25,6 +25,11 @@ const referralConfig = require("../config/referral.config");
 const { getRewardsConfig } = require("../config/rewards.config");
 const { computeUserRewards } = require("../services/rewards.service");
 
+const { getClientIp } = require("../utils/ip.utils");
+const UserSessionModel = require("../models/userSession.model");
+const riskDetectionService = require("../services/riskDetection.service");
+const CountryModel = require("../models/country.model");
+
 /******************************************************************************
  *                              User Controller
  ******************************************************************************/
@@ -96,6 +101,20 @@ class UserController {
       this.checkValidation(req);
       await this.hashPassword(req);
 
+      const { device_fingerprint, user_agent, country_code } = req.body;
+
+      // // Validate country code if provided
+      // if (country_code) {
+      //   const isValidCountry = await CountryModel.isValidCountryCode(country_code);
+      //   if (!isValidCountry) {
+      //     throw new HttpException(
+      //       400,
+      //       "Invalid or unsupported country code. Please select a valid country.",
+      //       "INVALID_COUNTRY_CODE"
+      //     );
+      //   }
+      // }
+
       // Handle referral code if provided
       let referrerId = null;
       if (req.body.referral_code) {
@@ -109,6 +128,31 @@ class UserController {
       }
 
       const userData = await this.saveNewUser(req);
+
+      // Extract client IP and device fingerprint for risk detection
+      const clientIp = getClientIp(req);
+      console.log("Client IP detected during registration:", clientIp);
+      const deviceFp = device_fingerprint || "unknown";
+      const userAgent = user_agent || null;
+
+      // Create session data object for risk detection
+      const sessionData = {
+        user_id: userData.id,
+        ip: clientIp,
+        device_fp: deviceFp,
+        user_agent: userAgent,
+        country: country_code,
+      };
+
+      // Insert user_sessions record
+      UserSessionModel.create(sessionData).catch((err) => {
+        console.error("Failed to create user session during registration:", err.message);
+      });
+
+      // Run risk detection checks
+      riskDetectionService.runRiskChecks(sessionData).catch((err) => {
+        console.error("Risk detection failed during registration:", err.message);
+      });
 
       // Create referral relationship if user was referred
       if (referrerId) {
@@ -235,7 +279,25 @@ class UserController {
     try {
       this.checkValidation(req);
 
-      const { email, password: pass } = req.body;
+      const { email, password: pass, device_fingerprint, user_agent, country_code } = req.body;
+
+      // Validate country code if provided
+      if (country_code) {
+        const isValidCountry = await CountryModel.isValidCountryCode(country_code);
+        if (!isValidCountry) {
+          throw new HttpException(
+            400,
+            "Invalid or unsupported country code. Please select a valid country.",
+            "INVALID_COUNTRY_CODE"
+          );
+        }
+      }
+
+      // Extract client IP and device fingerprint
+      const clientIp = getClientIp(req);
+      console.log("Client IP detected:", clientIp);
+      const deviceFp = device_fingerprint || "unknown";
+      const userAgent = user_agent || null;
 
       const user = await this.checkUserExists(email);
 
@@ -247,6 +309,30 @@ class UserController {
       if (!ok) {
         throw new HttpException(401, "Invalid password", "INVALID_CREDENTIALS");
       }
+
+      // Create session data object
+      const sessionData = {
+        user_id: user.id,
+        ip: clientIp,
+        device_fp: deviceFp,
+        user_agent: userAgent,
+        country: country_code,
+      };
+
+      // Insert user_sessions record
+      UserSessionModel.create(sessionData).catch((err) => {
+        console.error("Failed to create user session:", err.message);
+      });
+
+      // Update users table with last login info
+      UserModel.updateLastLogin(user.id, clientIp, deviceFp).catch((err) => {
+        console.error("Failed to update last login:", err.message);
+      });
+
+      // Run risk detection checks
+      riskDetectionService.runRiskChecks(sessionData).catch((err) => {
+        console.error("Risk detection failed:", err.message);
+      });
 
       const userData = {
         id: user.id,
@@ -281,6 +367,17 @@ class UserController {
     } catch (err) {
       next(err);
     }
+  };
+
+  //get user riskDetection
+  getUserRiskScore = async (req, res, next) => {
+    const userId = req.currentUser.id;
+    const riskScore = await riskDetectionService.getUserRiskScore(userId);
+    res.status(200).json({
+      success: true,
+      message: "User risk summary retrieved successfully.",
+      data: riskScore,
+    });
   };
 
   forgotPassword = async (req, res, next) => {
