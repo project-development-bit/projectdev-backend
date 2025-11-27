@@ -4,7 +4,7 @@ const earningsController = require("../controllers/earnings.controller");
 const auth = require("../middleware/auth.middleware");
 const awaitHandlerFactory = require("../middleware/awaitHandlerFactory.middleware");
 
-// Get earnings statistics
+// Get earnings statistics with optional days filter
 router.get(
   "/statistics",
   auth(),

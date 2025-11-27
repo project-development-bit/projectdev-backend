@@ -2,7 +2,7 @@ const EarningsModel = require("../models/earnings.model");
 const HttpException = require("../utils/HttpException.utils");
 
 class EarningsController {
-  //Get earnings history with filters
+  //Get earnings history with filters category, days, page, limit
   getEarningsHistory = async (req, res, next) => {
     try {
       const user = req.currentUser;
