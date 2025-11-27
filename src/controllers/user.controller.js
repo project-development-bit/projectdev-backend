@@ -575,6 +575,63 @@ class UserController {
     return true;
   };
 
+  sendEmailChangeVerification = async (
+    req,
+    res,
+    next,
+    memberName,
+    newEmail,
+    securityCode,
+    currentEmail
+  ) => {
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAIL_NO_REPLY_HOST,
+      port: process.env.MAIL_NO_REPLY_PORT,
+      secure: true,
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    const subject = "Email Change Verification - Gigafaucet";
+    const html =
+      `<div>` +
+      "Dear " +
+      memberName +
+      ",<br /><br />" +
+      "We received a request to change your email address from <b>" +
+      currentEmail +
+      "</b> to <b>" +
+      newEmail +
+      "</b>." +
+      "<br/><br/>" +
+      `Please use the following verification code to complete the email change: <br /><b><font style="font-size: 25px;">` +
+      securityCode +
+      `</font></b><br/><br/>` +
+      "If you did not make this request, please ignore this email and your email address will remain unchanged." +
+      "<br/><br/>" +
+      "Yours Sincerely,<br/>" +
+      "Gigafaucet Team<br/><br/>" +
+      "<b>Gigafaucet</b><br/>" +
+      `95/87, Moo 7, Soi Saiyuan,<br/>` +
+      `A.Mueang, T.Rawai, Phuket, 83130<br/>` +
+      "<div>" +
+      "<br/><hr/>";
+
+    const info = await transporter.sendMail({
+      from: '"Gigafaucet" <projectdev.bit@gmail.com>',
+      to: newEmail, // Send to NEW email address
+      subject: subject,
+      text: "(TESTING) Email change verification",
+      html: html,
+    });
+
+    console.log("Email change verification sent: %s", info.messageId);
+
+    return true;
+  };
+
   verifyUser = async (req, res) => {
     const verification = await UserModel.checkSecurityCode({
       email: req.params.email,
@@ -1139,7 +1196,6 @@ class UserController {
       data: rewards,
     });
   };
-  // Change user email
   changeEmail = async (req, res, next) => {
     try {
       this.checkValidation(req);
@@ -1185,7 +1241,83 @@ class UserController {
         );
       }
 
-      // Update the email
+      // Generate verification code
+      const verificationCode = this.securityCode();
+
+      // Store verification code in security_code field temporarily
+      const result = await UserModel.savePassword(
+        { email: user.email },
+        { securityCode: verificationCode }
+      );
+
+      if (!result) {
+        throw new HttpException(500, "Something went wrong");
+      }
+
+      // Send verification email to NEW email address
+      const sendEmailResult = await this.sendEmailChangeVerification(
+        req,
+        res,
+        next,
+        user.name || "User",
+        new_email,
+        verificationCode,
+        current_email
+      );
+
+      if (!sendEmailResult) {
+        throw new HttpException(
+          500,
+          "Something went wrong when sending email verification"
+        );
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Verification code sent to your new email address. Please check your inbox.",
+        data: {
+          current_email: current_email,
+          new_email: new_email,
+          verification_code: verificationCode, // For testing, remove in production
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // Verify email change and update email
+  verifyEmailChange = async (req, res, next) => {
+    try {
+      const { new_email, verification_code } = req.params;
+      const userId = req.currentUser.id;
+      const user = req.currentUser;
+
+      // Verify the code
+      const verification = await UserModel.checkSecurityCode({
+        email: user.email,
+        security_code: verification_code,
+      });
+
+      if (!verification) {
+        throw new HttpException(
+          404,
+          "Verification code does not match.",
+          "INVALID_CODE"
+        );
+      }
+
+      // Check if new email is still available
+      const emailExists = await UserModel.emailExists(new_email, userId);
+      if (emailExists) {
+        throw new HttpException(
+          409,
+          "This email is already in use by another account.",
+          "EMAIL_ALREADY_EXISTS"
+        );
+      }
+
+      // Update the email and clear security code
       const result = await UserModel.updateEmail(userId, new_email);
 
       if (!result || result.affectedRows === 0) {
@@ -1196,11 +1328,14 @@ class UserController {
         );
       }
 
+      // Clear the security code
+      await UserModel.savePassword({ email: new_email }, { securityCode: null });
+
       res.status(200).json({
         success: true,
         message: "Email updated successfully.",
         data: {
-          old_email: current_email,
+          old_email: user.email,
           new_email: new_email,
         },
       });

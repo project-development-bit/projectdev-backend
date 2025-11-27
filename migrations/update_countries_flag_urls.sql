@@ -2,5 +2,5 @@
 
 -- Update flag URLs for all countries using their country code
 UPDATE `countries`
-SET `flag` = CONCAT('https://flagsapi.com/', UPPER(`code`), '/flat/64.png')
+SET `flag` = CONCAT('https://flagcdn.com/w80/', LOWER(`code`), '.png')
 WHERE `code` IS NOT NULL;

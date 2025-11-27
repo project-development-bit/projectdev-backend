@@ -5,7 +5,7 @@ class CountryModel {
 
   //Find countries with optional filters
   find = async (params = {}) => {
-    let sql = `SELECT code, name, flag FROM ${this.tableName}`;
+    let sql = `SELECT id, code, name, flag FROM ${this.tableName}`;
     const values = [];
 
     // Build WHERE clause

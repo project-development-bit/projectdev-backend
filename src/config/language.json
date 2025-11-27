@@ -2,19 +2,19 @@
   {
     "code": "EN",
     "name": "English",
-    "flag": "https://flagsapi.com/EN/flat/64.png",
+    "flag": "https://flagcdn.com/w80/en.png",
     "default": true
   },
   {
     "code": "FR",
     "name": "French",
-    "flag": "https://flagsapi.com/FR/flat/64.png",
+    "flag": "https://flagcdn.com/w80/fr.png",
     "default": false
   },
   {
     "code": "MM",
     "name": "Myanmar",
-    "flag": "https://flagsapi.com/MM/flat/64.png",
+    "flag": "https://flagcdn.com/w80/mm.png",
     "default": false
   }
 ]
