@@ -22,9 +22,9 @@ class EarningsModel {
     let whereConditions = [
       "oc.user_id = ?",
       "oc.status = 'credited'",
-      "oc.created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)",
+      `oc.created_at >= DATE_SUB(NOW(), INTERVAL ${daysInt} DAY)`,
     ];
-    let queryParams = [userId, daysInt];
+    let queryParams = [userId];
 
     // Filter by category if specified
     if (category) {
@@ -56,10 +56,10 @@ class EarningsModel {
       INNER JOIN ${this.offersTable} o ON oc.offer_id = o.id
       WHERE ${whereClause}
       ORDER BY oc.created_at DESC
-      LIMIT ? OFFSET ?
+      LIMIT ${limitInt} OFFSET ${offset}
     `;
 
-    const dataQueryParams = [...queryParams, limitInt, offset];
+    const dataQueryParams = [...queryParams];
 
     const [countResult, earnings] = await Promise.all([
       coinQuery(countSql, queryParams),
@@ -124,12 +124,12 @@ class EarningsModel {
       INNER JOIN ${this.offersTable} o ON oc.offer_id = o.id
       WHERE oc.user_id = ?
         AND oc.status = 'credited'
-        AND oc.created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
+        AND oc.created_at >= DATE_SUB(NOW(), INTERVAL ${daysInt} DAY)
         AND o.category IN ('app', 'survey', 'offerwall')
       GROUP BY o.category
     `;
 
-    const results = await coinQuery(sql, [userId, daysInt]);
+    const results = await coinQuery(sql, [userId]);
 
     // Initialize response with default values
     const statistics = {
