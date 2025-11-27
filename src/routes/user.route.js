@@ -18,6 +18,7 @@ const {
   validateRefreshToken,
   validateEmailChange,
   validatePasswordChange,
+  validateVerifyEmailChange,
 } = require("../middleware/validators/userValidator.middleware");
 
 const { emailChangeLimiter } = require("../middleware/rateLimiter.middleware");
@@ -169,10 +170,16 @@ router.get(
 router.patch(
   "/email",
   auth(),
-  emailChangeLimiter,
+  //emailChangeLimiter,
   validateEmailChange,
   awaitHandlerFactory(userController.changeEmail)
 ); // PATCH /api/v1/users/email
+
+router.get(
+  "/verify-email-change/:new_email/:verification_code",
+  auth(),
+  awaitHandlerFactory(userController.verifyEmailChange)
+); // GET /api/v1/users/verify-email-change/:new_email/:verification_code
 
 // Password change route
 router.patch(
