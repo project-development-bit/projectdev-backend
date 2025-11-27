@@ -19,7 +19,7 @@ const computeUserRewards = (currentXp, config) => {
   // If user hasn't reached level 1 yet (xp < 100)
   if (!currentLevelData) {
     currentLevelData = {
-      level: 0,
+      level: 1,
       xp_total: 0,
       tier: 'Bronze',
       tier_rank: 1
