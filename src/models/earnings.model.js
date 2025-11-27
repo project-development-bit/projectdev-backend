@@ -14,10 +14,10 @@ class EarningsModel {
       category = null, // 'app', 'survey', or null for all
     } = options;
 
-    const pageInt = parseInt(page, 10);
-    const limitInt = parseInt(limit, 10);
+    const pageInt = Math.max(1, parseInt(page, 10) || 1);
+    const limitInt = Math.max(1, Math.min(100, parseInt(limit, 10) || 20));
     const offset = (pageInt - 1) * limitInt;
-    const daysInt = parseInt(days, 10);
+    const daysInt = Math.max(1, parseInt(days, 10) || 30);
 
     let whereConditions = [
       "oc.user_id = ?",
@@ -38,7 +38,7 @@ class EarningsModel {
     const countSql = `
       SELECT COUNT(*) as total
       FROM ${this.offerConversionsTable} oc
-      LEFT JOIN ${this.offersTable} o ON oc.offer_id = o.id
+      INNER JOIN ${this.offersTable} o ON oc.offer_id = o.id
       WHERE ${whereClause}
     `;
 
@@ -53,15 +53,17 @@ class EarningsModel {
         o.category as offer_category,
         o.provider
       FROM ${this.offerConversionsTable} oc
-      LEFT JOIN ${this.offersTable} o ON oc.offer_id = o.id
+      INNER JOIN ${this.offersTable} o ON oc.offer_id = o.id
       WHERE ${whereClause}
       ORDER BY oc.created_at DESC
-      LIMIT ${limitInt} OFFSET ${offset}
+      LIMIT ? OFFSET ?
     `;
+
+    const dataQueryParams = [...queryParams, limitInt, offset];
 
     const [countResult, earnings] = await Promise.all([
       coinQuery(countSql, queryParams),
-      coinQuery(dataSql, queryParams),
+      coinQuery(dataSql, dataQueryParams),
     ]);
 
     const total = countResult[0].total;
@@ -93,7 +95,7 @@ class EarningsModel {
           type: "offer",
           category: earning.offer_category || "unknown",
           title: earning.offer_title || "Offer Completion",
-          amount: parseFloat(earning.amount),
+          amount: Number(earning.amount) || 0,
           currency: earning.currency,
           timeAgo: timeAgo,
           createdAt: earning.created_at,
@@ -111,19 +113,19 @@ class EarningsModel {
   //Get earnings statistics by category
   getEarningsStatistics = async (userId, options = {}) => {
     const { days = 30 } = options;
-    const daysInt = parseInt(days, 10);
+    const daysInt = Math.max(1, parseInt(days, 10) || 30);
 
     const sql = `
       SELECT
         o.category,
         COUNT(*) as count,
-        SUM(oc.credited_amount) as total_earned
+        COALESCE(SUM(oc.credited_amount), 0) as total_earned
       FROM ${this.offerConversionsTable} oc
-      LEFT JOIN ${this.offersTable} o ON oc.offer_id = o.id
+      INNER JOIN ${this.offersTable} o ON oc.offer_id = o.id
       WHERE oc.user_id = ?
         AND oc.status = 'credited'
         AND oc.created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)
-        AND o.category IN ('app', 'survey')
+        AND o.category IN ('app', 'survey', 'offerwall')
       GROUP BY o.category
     `;
 
@@ -139,14 +141,18 @@ class EarningsModel {
         count: 0,
         totalEarned: 0,
       },
+      offerwalls: {
+        count: 0,
+        totalEarned: 0,
+      },
       totalEarned: 0,
       period: `Last ${daysInt} days`,
     };
 
     // Map database results to response format
     results.forEach((row) => {
-      const count = parseInt(row.count);
-      const totalEarned = parseFloat(row.total_earned) || 0;
+      const count = Number(row.count) || 0;
+      const totalEarned = Number(row.total_earned) || 0;
 
       if (row.category === "survey") {
         statistics.surveys.count = count;
@@ -154,6 +160,9 @@ class EarningsModel {
       } else if (row.category === "app") {
         statistics.gameApps.count = count;
         statistics.gameApps.totalEarned = totalEarned;
+      } else if (row.category === "offerwall") {
+        statistics.offerwalls.count = count;
+        statistics.offerwalls.totalEarned = totalEarned;
       }
 
       statistics.totalEarned += totalEarned;
