@@ -19,6 +19,7 @@ const {
   validateEmailChange,
   validatePasswordChange,
   validateVerifyEmailChange,
+  validateSecurityPinToggle,
 } = require("../middleware/validators/userValidator.middleware");
 
 const { emailChangeLimiter } = require("../middleware/rateLimiter.middleware");
@@ -189,5 +190,12 @@ router.patch(
   validatePasswordChange,
   awaitHandlerFactory(userController.changePassword)
 ); // PATCH /api/v1/users/password
+
+router.post(
+  "/security-pin",
+  auth(),
+  validateSecurityPinToggle,
+  awaitHandlerFactory(userController.toggleSecurityPin)
+); // POST /api/v1/users/security-pin
 
 module.exports = router;

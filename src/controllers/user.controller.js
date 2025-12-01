@@ -1403,6 +1403,97 @@ class UserController {
       next(error);
     }
   };
+
+  // Toggle Security PIN (Enable/Disable)
+  toggleSecurityPin = async (req, res, next) => {
+    try {
+      this.checkValidation(req);
+
+      const userId = req.currentUser.id;
+      const { security_pin, enable } = req.body;
+
+      // Convert to string in case it's a number
+      const pinString = String(security_pin);
+
+      // Validate PIN is exactly 4 digits
+      if (!/^\d{4}$/.test(pinString)) {
+        throw new HttpException(
+          400,
+          "Security PIN must be exactly 4 digits.",
+          "INVALID_PIN_FORMAT"
+        );
+      }
+
+      // Get current security PIN status
+      const status = await UserModel.checkSecurityPinStatus(userId);
+
+      if (enable) {
+        // ENABLE security PIN
+        if (status && status.security_pin_enabled) {
+          throw new HttpException(
+            400,
+            "Security PIN is already enabled for this account.",
+            "SECURITY_PIN_ALREADY_ENABLED"
+          );
+        }
+
+        // Hash the security PIN (ensure it's a string)
+        const hashedPin = await bcrypt.hash(pinString, 8);
+
+        // Enable security PIN with hashed value
+        await UserModel.enableSecurityPin(userId, hashedPin);
+
+        res.status(200).json({
+          success: true,
+          message: "Security PIN has been successfully enabled for your account.",
+          data: {
+            security_pin_enabled: true,
+          },
+        });
+      } else {
+        // DISABLE security PIN
+        if (!status || !status.security_pin_enabled) {
+          throw new HttpException(
+            400,
+            "Security PIN is not enabled for this account.",
+            "SECURITY_PIN_NOT_ENABLED"
+          );
+        }
+
+        // Get user's security PIN hash
+        const pinData = await UserModel.getSecurityPinHash(userId);
+
+        // Convert security_pin buffer to string if needed
+        const hashedPin = Buffer.isBuffer(pinData.security_pin)
+          ? pinData.security_pin.toString()
+          : pinData.security_pin;
+
+        // Verify the provided PIN matches the hash
+        const isPinValid = await bcrypt.compare(pinString, hashedPin);
+        if (!isPinValid) {
+          throw new HttpException(
+            401,
+            "Invalid security PIN. Please try again.",
+            "INVALID_SECURITY_PIN"
+          );
+        }
+
+        // Disable security PIN
+        await UserModel.disableSecurityPin(userId);
+
+        res.status(200).json({
+          success: true,
+          message: "Security PIN has been successfully disabled for your account.",
+          data: {
+            security_pin_enabled: false,
+          },
+        });
+      }
+    } catch (error) {
+      next(error);
+    }
+  };
+
 }
 
 /******************************************************************************

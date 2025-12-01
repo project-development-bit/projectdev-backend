@@ -424,6 +424,31 @@ class UserModel {
     const result = await coinQuery(sql, [userId]);
     return result[0];
   };
+
+  // Security PIN methods
+  enableSecurityPin = async (userId, hashedPin) => {
+    const sql = `UPDATE ${this.tableName} SET security_pin_enabled = 1, security_pin = ? WHERE id = ?`;
+    const result = await coinQuery(sql, [hashedPin, userId]);
+    return result;
+  };
+
+  disableSecurityPin = async (userId) => {
+    const sql = `UPDATE ${this.tableName} SET security_pin_enabled = 0, security_pin = NULL WHERE id = ?`;
+    const result = await coinQuery(sql, [userId]);
+    return result;
+  };
+
+  getSecurityPinHash = async (userId) => {
+    const sql = `SELECT security_pin, security_pin_enabled FROM ${this.tableName} WHERE id = ?`;
+    const result = await coinQuery(sql, [userId]);
+    return result[0];
+  };
+
+  checkSecurityPinStatus = async (userId) => {
+    const sql = `SELECT security_pin_enabled FROM ${this.tableName} WHERE id = ?`;
+    const result = await coinQuery(sql, [userId]);
+    return result[0];
+  };
 }
 
 module.exports = new UserModel();

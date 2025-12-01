@@ -205,3 +205,20 @@ exports.validatePasswordChange = [
     .custom((value, { req }) => value === req.body.new_password)
     .withMessage("Repeat new password must match new password"),
 ];
+
+exports.validateSecurityPinToggle = [
+  body("security_pin")
+    .exists()
+    .withMessage("Security PIN is required")
+    .notEmpty()
+    .withMessage("Security PIN must not be empty")
+    .isLength({ min: 4, max: 4 })
+    .withMessage("Security PIN must be exactly 4 digits")
+    .matches(/^\d{4}$/)
+    .withMessage("Security PIN must contain only digits"),
+  body("enable")
+    .exists()
+    .withMessage("enable field is required")
+    .isBoolean()
+    .withMessage("enable must be a boolean (true or false)"),
+];
