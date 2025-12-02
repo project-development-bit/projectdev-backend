@@ -221,14 +221,75 @@ class UserController {
   };
 
   deleteUser = async (req, res, next) => {
-    const result = await UserModel.delete(req.params.id);
-    if (!result) {
-      throw new HttpException(404, "User not found");
+    try {
+      const userId = req.params.id;
+      const currentUser = req.currentUser;
+
+      // Check if user is trying to delete their own account or is an admin
+      if (currentUser.id !== parseInt(userId) && currentUser.role !== 'Admin') {
+        throw new HttpException(
+          403,
+          "You can only delete your own account.",
+          "FORBIDDEN"
+        );
+      }
+
+      // Get user data
+      const user = await UserModel.findOne({ id: userId });
+      if (!user) {
+        throw new HttpException(404, "User not found", "USER_NOT_FOUND");
+      }
+
+      // User must have a verified account
+      if (user.is_verified !== 1) {
+        throw new HttpException(
+          403,
+          "Your account must be verified to delete it.",
+          "UNVERIFIED_ACCOUNT"
+        );
+      }
+
+      // Generate verification code
+      const verificationCode = this.securityCode();
+
+      // Store verification code in security_code field
+      const result = await UserModel.savePassword(
+        { email: user.email },
+        { securityCode: verificationCode }
+      );
+
+      if (!result) {
+        throw new HttpException(500, "Something went wrong");
+      }
+
+      // Send verification email
+      const sendEmailResult = await this.sendDeleteAccountEmail(
+        req,
+        res,
+        next,
+        user.name || "User",
+        user.email,
+        verificationCode
+      );
+
+      if (!sendEmailResult) {
+        throw new HttpException(
+          500,
+          "Something went wrong when sending email verification"
+        );
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Verification code sent to your email address. Please check your inbox and use the verify endpoint to complete account deletion.",
+        data: {
+          email: user.email,
+          verification_code: verificationCode, // For testing, remove in production
+        },
+      });
+    } catch (error) {
+      next(error);
     }
-    res.status(200).json({
-      success: true,
-      message: "User has been deleted.",
-    });
   };
 
   userLogin = async (req, res, next) => {
@@ -1492,6 +1553,117 @@ class UserController {
     } catch (error) {
       next(error);
     }
+  };
+
+  // Verify code and delete account
+  verifyAndDeleteAccount = async (req, res, next) => {
+    try {
+      const { verification_code } = req.params;
+      const userId = req.currentUser.id;
+      const user = req.currentUser;
+
+      // Verify the code
+      const verification = await UserModel.checkSecurityCode({
+        email: user.email,
+        security_code: verification_code,
+      });
+
+      if (!verification) {
+        throw new HttpException(
+          404,
+          "Verification code does not match.",
+          "INVALID_CODE"
+        );
+      }
+
+      // Delete user account with all associated data
+      const result = await UserModel.deleteWithAllData(userId);
+
+      if (!result.success) {
+        throw new HttpException(
+          500,
+          result.error || "Failed to delete account.",
+          "DELETE_FAILED"
+        );
+      }
+
+      // Delete avatar from S3 if exists
+      if (result.deletedUser && result.deletedUser.avatar_url) {
+        try {
+          await deleteImageFromS3(result.deletedUser.avatar_url);
+        } catch (s3Error) {
+          // Log but don't fail the request if S3 delete fails
+          console.error('Failed to delete avatar from S3:', s3Error);
+        }
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Your account and all associated data have been successfully deleted.",
+        data: {
+          deleted_user_id: result.deletedUser.id,
+          deleted_email: result.deletedUser.email,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // Send delete account verification email
+  sendDeleteAccountEmail = async (
+    req,
+    res,
+    next,
+    memberName,
+    recieverEmail,
+    securityCode
+  ) => {
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAIL_NO_REPLY_HOST,
+      port: process.env.MAIL_NO_REPLY_PORT,
+      secure: true,
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    const subject = "Delete Account Verification - Gigafaucet";
+    const html =
+      `<div>` +
+      "Dear " +
+      memberName +
+      ",<br /><br />" +
+      "We received a request to delete your Gigafaucet account." +
+      "<br/><br/>" +
+      "<strong>WARNING: This action is permanent and cannot be undone. All your data will be deleted.</strong>" +
+      "<br/><br/>" +
+      `Please use the following verification code to confirm account deletion: <br /><b><font style="font-size: 25px;">` +
+      securityCode +
+      `</font></b><br/><br/>` +
+      "If you did not make this request, please ignore this email and your account will remain active. " +
+      "We also recommend changing your password immediately if you did not request this." +
+      "<br/><br/>" +
+      "Yours Sincerely,<br/>" +
+      "Gigafaucet Team<br/><br/>" +
+      "<b>Gigafaucet</b><br/>" +
+      `95/87, Moo 7, Soi Saiyuan,<br/>` +
+      `A.Mueang, T.Rawai, Phuket, 83130<br/>` +
+      "<div>" +
+      "<br/><hr/>";
+
+    const info = await transporter.sendMail({
+      from: '"Gigafaucet" <projectdev.bit@gmail.com>',
+      to: recieverEmail,
+      subject: subject,
+      text: "(TESTING) Delete account verification",
+      html: html,
+    });
+
+    console.log("Delete account verification sent: %s", info.messageId);
+
+    return true;
   };
 
 }

@@ -86,9 +86,9 @@ router.patch(
 ); // localhost:3000/api/v1/users/id/1 , using patch for partial update
 router.delete(
   "/id/:id",
-  auth(Role.Admin),
+  auth(),
   awaitHandlerFactory(userController.deleteUser)
-); // localhost:3000/api/v1/users/id/1
+); // DELETE localhost:3000/api/v1/users/id/1 
 
 router.post(
   "/login",
@@ -197,5 +197,12 @@ router.post(
   validateSecurityPinToggle,
   awaitHandlerFactory(userController.toggleSecurityPin)
 ); // POST /api/v1/users/security-pin
+
+// Verify and complete account deletion
+router.get(
+  "/verify-delete-account/:verification_code",
+  auth(),
+  awaitHandlerFactory(userController.verifyAndDeleteAccount)
+); // GET /api/v1/users/verify-delete-account/:verification_code
 
 module.exports = router;

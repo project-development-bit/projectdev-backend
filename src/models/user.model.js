@@ -260,6 +260,79 @@ class UserModel {
     return affectedRows;
   };
 
+  deleteWithAllData = async (id) => {
+    try {
+      const user = await this.findOne({ id }, true);
+
+      if (!user) {
+        return { success: false, error: 'User not found' };
+      }
+
+      // Delete all related data
+
+      // Delete balances
+      await coinQuery('DELETE FROM balances WHERE user_id = ?', [id]);
+
+      // Delete deposits
+      await coinQuery('DELETE FROM deposits WHERE user_id = ?', [id]);
+
+      // Delete faucet claims
+      await coinQuery('DELETE FROM faucet_claims WHERE user_id = ?', [id]);
+
+      // Delete withdrawals
+      await coinQuery('DELETE FROM withdrawals WHERE user_id = ?', [id]);
+
+      // Delete user addresses
+      await coinQuery('DELETE FROM user_addresses WHERE user_id = ?', [id]);
+
+      // Delete user promotions
+      await coinQuery('DELETE FROM user_promotions WHERE user_id = ?', [id]);
+
+      // Update risk_events - set user_id to NULL (has ON DELETE SET NULL)
+      await coinQuery('UPDATE risk_events SET user_id = NULL WHERE user_id = ?', [id]);
+
+      // Delete offer_conversions (has ON DELETE CASCADE, but explicit delete for safety)
+      await coinQuery('DELETE FROM offer_conversions WHERE user_id = ?', [id]);
+
+      // Delete user_sessions (has ON DELETE CASCADE, but explicit delete for safety)
+      await coinQuery('DELETE FROM user_sessions WHERE user_id = ?', [id]);
+
+      // Update referrals - set referred_by to NULL for users referred by this user
+      await coinQuery(`UPDATE ${this.tableName} SET referred_by = NULL WHERE referred_by = ?`, [id]);
+
+      // Delete from referrals table (where user is referrer or referee)
+      await coinQuery('DELETE FROM referrals WHERE referrer_id = ? OR referee_id = ?', [id, id]);
+
+      // Delete user_profiles (has ON DELETE CASCADE, but explicit delete for safety)
+      await coinQuery(`DELETE FROM ${this.profilesTableName} WHERE user_id = ?`, [id]);
+
+      // Finally, delete the user record
+      const deleteUserSql = `DELETE FROM ${this.tableName} WHERE id = ?`;
+      const result = await coinQuery(deleteUserSql, [id]);
+
+      const affectedRows = result ? result.affectedRows : 0;
+
+      if (affectedRows === 0) {
+        return { success: false, error: 'Failed to delete user' };
+      }
+
+      return {
+        success: true,
+        affectedRows: affectedRows,
+        deletedUser: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          avatar_url: user.avatar_url
+        }
+      };
+
+    } catch (error) {
+      console.error('User deletion failed:', error);
+      throw error;
+    }
+  };
+
   refreshToken = async ({ refreshToken, userID }) => {
     try {
       const sql = `UPDATE ${this.tableName} SET refresh_token = ? WHERE id = ?`;
