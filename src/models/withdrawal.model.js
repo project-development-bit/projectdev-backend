@@ -163,137 +163,58 @@ class WithdrawalModel {
     };
   };
 
-  //Create a withdrawal request
-  createWithdrawal = async (withdrawalData) => {
+  //Get user's stored payout address for a currency
+  getUserPayoutAddress = async (userId, currency) => {
+    const sql = `
+      SELECT address
+      FROM ${this.addressesTable}
+      WHERE user_id = ? AND currency = ?
+      ORDER BY created_at DESC
+      LIMIT 1
+    `;
+
+    const result = await coinQuery(sql, [userId, currency]);
+    return result.length > 0 ? result[0].address : null;
+  };
+
+  //Get count of pending/requested withdrawals for a user
+  getPendingWithdrawalCount = async (userId) => {
+    const sql = `
+      SELECT COUNT(*) as count
+      FROM ${this.withdrawalsTable}
+      WHERE user_id = ? AND status IN ('requested', 'queued')
+    `;
+
+    const result = await coinQuery(sql, [userId]);
+    return result[0].count;
+  };
+
+  //Create a coin-based withdrawal request
+  createCoinWithdrawal = async (withdrawalData) => {
     const {
       userId,
-      currency,
-      amount,
-      fee,
-      address,
-      payoutProvider = 'nowpayments',
-      txid = null,
+      method,
+      amountCoins,
+      payoutAddress,
     } = withdrawalData;
 
     const sql = `
       INSERT INTO ${this.withdrawalsTable}
-      (user_id, currency, amount, fee, address, payout_provider, txid, status)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 'requested')
+      (user_id, currency, amount, fee, address, payout_provider, status)
+      VALUES (?, ?, ?, 0, ?, 'crypto', 'requested')
     `;
 
     const result = await coinQuery(sql, [
       userId,
-      currency,
-      amount,
-      fee,
-      address,
-      payoutProvider,
-      txid,
+      method,
+      amountCoins,
+      payoutAddress,
     ]);
 
     return {
       success: true,
       withdrawalId: result.insertId,
     };
-  };
-
-  //Update withdrawal status
-  updateWithdrawalStatus = async (withdrawalId, updates) => {
-    const {
-      status,
-      txid = null,
-      errorCode = null,
-      errorMessage = null,
-      processedAt = null,
-    } = updates;
-
-    let updateFields = ['status = ?'];
-    let values = [status];
-
-    if (txid !== null) {
-      updateFields.push('txid = ?');
-      values.push(txid);
-    }
-
-    if (errorCode !== null) {
-      updateFields.push('error_code = ?');
-      values.push(errorCode);
-    }
-
-    if (errorMessage !== null) {
-      updateFields.push('error_message = ?');
-      values.push(errorMessage);
-    }
-
-    if (processedAt !== null) {
-      updateFields.push('processed_at = ?');
-      values.push(processedAt);
-    } else if (status === 'sent' || status === 'failed') {
-      updateFields.push('processed_at = NOW()');
-    }
-
-    values.push(withdrawalId);
-
-    const sql = `
-      UPDATE ${this.withdrawalsTable}
-      SET ${updateFields.join(', ')}
-      WHERE id = ?
-    `;
-
-    const result = await coinQuery(sql, values);
-    return result;
-  };
-
-  //Cancel withdrawal (only if status is 'requested')
-  cancelWithdrawal = async (withdrawalId, userId) => {
-    // Check current status
-    const withdrawal = await this.getWithdrawalById(withdrawalId, userId);
-
-    if (!withdrawal) {
-      return {
-        success: false,
-        error: 'Withdrawal not found',
-      };
-    }
-
-    if (withdrawal.status !== 'requested') {
-      return {
-        success: false,
-        error: `Cannot cancel withdrawal with status '${withdrawal.status}'`,
-      };
-    }
-
-    const sql = `
-      UPDATE ${this.withdrawalsTable}
-      SET status = 'cancelled', updated_at = NOW()
-      WHERE id = ? AND user_id = ? AND status = 'requested'
-    `;
-
-    const result = await coinQuery(sql, [withdrawalId, userId]);
-
-    if (result.affectedRows === 0) {
-      return {
-        success: false,
-        error: 'Failed to cancel withdrawal',
-      };
-    }
-
-    return {
-      success: true,
-      withdrawal: withdrawal,
-    };
-  };
-
-  //Verify user's address exists
-  verifyUserAddress = async (userId, currency, address) => {
-    const sql = `
-      SELECT id
-      FROM ${this.addressesTable}
-      WHERE user_id = ? AND currency = ? AND address = ?
-    `;
-
-    const result = await coinQuery(sql, [userId, currency, address]);
-    return result.length > 0;
   };
 }
 

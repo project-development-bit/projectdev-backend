@@ -5,53 +5,28 @@ const auth = require("../middleware/auth.middleware");
 const awaitHandlerFactory = require("../middleware/awaitHandlerFactory.middleware");
 const { body } = require("express-validator");
 
-// Validation middleware for withdrawal request
-const createWithdrawalSchema = [
-  body("currency")
+// Validation middleware 
+const createCoinWithdrawalSchema = [
+  body("method")
     .exists()
-    .withMessage("Currency is required")
+    .withMessage("Withdrawal method is required")
     .isString()
-    .isLength({ min: 2, max: 10 })
-    .withMessage("Currency must be between 2 and 10 characters")
+    .isIn(["BTC", "DASH", "DOGE", "LTC"])
+    .withMessage("Method must be one of: BTC, DASH, DOGE, LTC")
     .toUpperCase(),
-  body("amount")
+  body("amount_coins")
     .exists()
-    .withMessage("Amount is required")
-    .isFloat({ min: 0.00000001 })
-    .withMessage("Amount must be a positive number"),
-  body("address")
-    .exists()
-    .withMessage("Withdrawal address is required")
-    .isString()
-    .isLength({ min: 10, max: 128 })
-    .withMessage("Address must be between 10 and 128 characters")
-    .trim(),
-  body("fee")
-    .optional()
-    .isFloat({ min: 0 })
-    .withMessage("Fee must be a non-negative number"),
-  body("payoutProvider")
+    .withMessage("Amount in coins is required")
+    .isInt({ min: 1 })
+    .withMessage("Amount must be a positive integer"),
+  body("payout_address")
     .optional()
     .isString()
-    .isLength({ max: 50 })
-    .withMessage("Payout provider must not exceed 50 characters")
-    .trim(),
-  body("txid")
-    .optional()
-    .isString()
-    .isLength({ max: 128 })
-    .withMessage("Transaction ID must not exceed 128 characters")
+    .isLength({ min: 26, max: 128 })
+    .withMessage("Payout address must be between 26 and 128 characters")
     .trim(),
 ];
 
-// Validation middleware for confirming withdrawal
-const confirmWithdrawalSchema = [
-  body("status")
-    .exists()
-    .withMessage("Status is required")
-    .isIn(['sent', 'failed'])
-    .withMessage("Status must be either 'sent' or 'failed'"),
-];
 
 // Get user's withdrawal history
 router.get(
@@ -67,27 +42,12 @@ router.get(
   awaitHandlerFactory(withdrawalController.getWithdrawalById)
 ); // GET /api/v1/withdrawals/:id
 
-// Create withdrawal request (Authenticated users)
+// Create withdrawal request
 router.post(
   "/",
   auth(),
-  createWithdrawalSchema,
-  awaitHandlerFactory(withdrawalController.createWithdrawal)
+  createCoinWithdrawalSchema,
+  awaitHandlerFactory(withdrawalController.createCoinWithdrawal)
 ); // POST /api/v1/withdrawals
-
-// Cancel withdrawal
-router.delete(
-  "/:id",
-  auth(),
-  awaitHandlerFactory(withdrawalController.cancelWithdrawal)
-); // DELETE /api/v1/withdrawals/:id
-
-// Confirm withdrawal - Update status (Admin only)
-router.patch(
-  "/:id/confirm",
-  auth('Admin'),
-  confirmWithdrawalSchema,
-  awaitHandlerFactory(withdrawalController.confirmWithdrawal)
-); // PATCH /api/v1/withdrawals/:id/confirm
 
 module.exports = router;
