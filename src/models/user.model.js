@@ -449,6 +449,52 @@ class UserModel {
     const result = await coinQuery(sql, [userId]);
     return result[0];
   };
+
+  // Password History
+  getPasswordHistory = async (userId, limit = 5) => {
+    // Ensure limit is an integer to prevent SQL injection
+    const limitValue = parseInt(limit) || 5;
+
+    const sql = `
+      SELECT password_hash, created_at
+      FROM password_history
+      WHERE user_id = ?
+      ORDER BY created_at DESC
+      LIMIT ${limitValue}
+    `;
+    const result = await coinQuery(sql, [userId]);
+    return result;
+  };
+
+  // Add password to history
+  addPasswordToHistory = async (userId, passwordHash) => {
+    const sql = `
+      INSERT INTO password_history (user_id, password_hash)
+      VALUES (?, ?)
+    `;
+    const result = await coinQuery(sql, [userId, passwordHash]);
+    return result;
+  };
+
+  cleanOldPasswordHistory = async (userId, keepCount = 5) => {
+    const keepValue = parseInt(keepCount) || 5;
+
+    const sql = `
+      DELETE FROM password_history
+      WHERE user_id = ?
+      AND id NOT IN (
+        SELECT id FROM (
+          SELECT id
+          FROM password_history
+          WHERE user_id = ?
+          ORDER BY created_at DESC
+          LIMIT ${keepValue}
+        ) AS keep_passwords
+      )
+    `;
+    const result = await coinQuery(sql, [userId, userId]);
+    return result;
+  };
 }
 
 module.exports = new UserModel();

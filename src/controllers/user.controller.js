@@ -1384,10 +1384,34 @@ class UserController {
         );
       }
 
+      // Check against password history (last 5 passwords)
+      const passwordHistory = await UserModel.getPasswordHistory(userId, 5);
+
+      for (const historyEntry of passwordHistory) {
+        const historicalHash = Buffer.isBuffer(historyEntry.password_hash)
+          ? historyEntry.password_hash.toString()
+          : historyEntry.password_hash;
+
+        const matchesHistoricalPassword = await bcrypt.compare(new_password, historicalHash);
+        if (matchesHistoricalPassword) {
+          throw new HttpException(
+            400,
+            "You cannot reuse any of your last 5 passwords. Please choose a different password.",
+            "PASSWORD_REUSED"
+          );
+        }
+      }
+
       // Hash the new password
       const hashedNewPassword = await bcrypt.hash(new_password, 8);
 
-      // Update password and invalidate refresh token (logout all sessions)
+      // Add current password to history before updating
+      await UserModel.addPasswordToHistory(userId, currentHashedPassword);
+
+      // Clean old password history (keep only last 5)
+      await UserModel.cleanOldPasswordHistory(userId, 5);
+
+      // Update password (logout all sessions)
       const result = await UserModel.updatePasswordById(userId, hashedNewPassword);
 
       if (!result || result.affectedRows === 0) {
