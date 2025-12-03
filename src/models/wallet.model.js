@@ -50,6 +50,9 @@ class WalletModel {
     // Check if interest feature is enabled
     const interestEnabled = await this.isInterestEnabled(userId);
 
+    // Get interest configuration
+    const interestConfig = await this.getInterestConfig();
+
     // Calculate interest earned (within window)
     let interestEarned = null;
     if (interestEnabled) {
@@ -75,6 +78,12 @@ class WalletModel {
       asOfDate.toISOString()
     );
 
+    // Determine if user is eligible for interest
+    const isEligible = coinBalance >= interestConfig.minimumBalanceRequired;
+
+    // Calculate next payout date (assuming weekly payouts every Monday at 00:00 UTC)
+    const nextPayoutDate = this.calculateNextPayoutDate(asOfDate);
+
     return {
       coinBalance: Math.floor(coinBalance), // integer coins
       usdBalance,
@@ -82,6 +91,13 @@ class WalletModel {
       interestEarned,
       coinsToday,
       coinsLast7Days: Math.floor(coinsLast7Days),
+      interestInfo: {
+        interestEnabled,
+        interestRate: interestConfig.interestRate,
+        minimumBalanceRequired: interestConfig.minimumBalanceRequired,
+        isEligible,
+        nextPayoutDate,
+      },
       meta: {
         asOf: asOfDate.toISOString(),
         windowDays: clampedWindowDays,
@@ -278,6 +294,52 @@ class WalletModel {
     const rounded = Math.round(value * multiplier) / multiplier;
     // Convert to fixed decimals to avoid scientific notation
     return parseFloat(rounded.toFixed(decimals));
+  };
+
+  //Get interest configuration from app_config table
+  getInterestConfig = async () => {
+    const sql = `
+      SELECT name, value
+      FROM ${this.appConfigTable}
+      WHERE name IN ('INTEREST_RATE', 'MIN_BALANCE_FOR_INTEREST')
+    `;
+
+    try {
+      const result = await coinQuery(sql);
+
+      let interestRate = 5; // default 5%
+      let minimumBalanceRequired = 35000; // default 35,000 coins
+
+      result.forEach((row) => {
+        if (row.name === 'INTEREST_RATE') {
+          interestRate = parseFloat(row.value);
+        } else if (row.name === 'MIN_BALANCE_FOR_INTEREST') {
+          minimumBalanceRequired = parseFloat(row.value);
+        }
+      });
+
+      return { interestRate, minimumBalanceRequired };
+    } catch (error) {
+      // Return defaults if config not available
+      return { interestRate: 5, minimumBalanceRequired: 35000 };
+    }
+  };
+
+  calculateNextPayoutDate = (asOfDate) => {
+    const date = new Date(asOfDate);
+
+    // Get current day of week (0 = Sunday, 1 = Monday, etc.)
+    const currentDay = date.getUTCDay();
+
+    // Calculate days until next Monday
+    const daysUntilMonday = currentDay === 0 ? 1 : (8 - currentDay) % 7 || 7;
+
+    // Calculate next Monday
+    const nextMonday = new Date(date);
+    nextMonday.setUTCDate(date.getUTCDate() + daysUntilMonday);
+    nextMonday.setUTCHours(0, 0, 0, 0);
+
+    return nextMonday.toISOString().split('T')[0]; // Return YYYY-MM-DD format
   };
 }
 
