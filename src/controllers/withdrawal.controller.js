@@ -198,14 +198,7 @@ class WithdrawalController {
 
   getWithdrawalOptions = async (req, res, next) => {
     try {
-      const user = req.currentUser;
-
-      if (!user) {
-        throw new HttpException(404, "User not found", "USER_NOT_FOUND");
-      }
-
       const options = await WithdrawalModel.getWithdrawalOptions(true);
-
       res.status(200).json({
         success: true,
         data: options,
