@@ -53,6 +53,13 @@ const confirmWithdrawalSchema = [
     .withMessage("Status must be either 'sent' or 'failed'"),
 ];
 
+// Get withdrawal options
+router.get(
+  "/options",
+  auth(),
+  awaitHandlerFactory(withdrawalController.getWithdrawalOptions)
+); // GET /api/v1/withdrawals/options
+
 // Get user's withdrawal history
 router.get(
   "/",

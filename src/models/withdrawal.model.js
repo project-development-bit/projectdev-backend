@@ -5,6 +5,7 @@ class WithdrawalModel {
   balancesTable = "balances";
   currenciesTable = "currencies";
   addressesTable = "user_addresses";
+  withdrawalMethodsTable = "withdrawal_methods";
 
   //Get user's withdrawal history with pagination
   getUserWithdrawals = async (userId, options = {}) => {
@@ -294,6 +295,38 @@ class WithdrawalModel {
 
     const result = await coinQuery(sql, [userId, currency, address]);
     return result.length > 0;
+  };
+
+  getWithdrawalOptions = async (enabledOnly = true) => {
+    let sql = `
+      SELECT
+        code,
+        name,
+        network,
+        icon_url,
+        min_amount_coins,
+        fee_coins,
+        is_enabled
+      FROM ${this.withdrawalMethodsTable}
+    `;
+
+    if (enabledOnly) {
+      sql += ` WHERE is_enabled = 1`;
+    }
+
+    sql += ` ORDER BY sort_order ASC, code ASC`;
+
+    const result = await coinQuery(sql);
+
+    return (result || []).map(method => ({
+      code: method.code,
+      name: method.name,
+      icon_url: method.icon_url || null,
+      min_amount_coins: parseFloat(method.min_amount_coins),
+      fee_coins: parseFloat(method.fee_coins),
+      is_available: method.is_enabled === 1,
+      network: method.network || null,
+    }));
   };
 }
 
