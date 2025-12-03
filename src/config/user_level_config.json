@@ -1,0 +1,178 @@
+{
+  "xp_rules": {
+    "coins_per_xp": 5,
+    "description": "Player gains 1 XP for every 5 coins earned.",
+    "notes": "XP needed for level N = round(base_xp_for_level_2 * growth_factor_per_level^(N-2)). Levels are unlimited.",
+    "config": {
+      "xp_per_coin": 0.2,
+      "base_xp_for_level_2": 100,
+      "growth_factor_per_level": 1.15
+    }
+  },
+
+  "statuses": [
+    {
+      "id": "bronze",
+      "label": "Bronze",
+      "min_level": 1,
+      "max_level": 29,
+      "sub_levels": [
+        {
+          "id": "bronze_1",
+          "label": "Bronze 1",
+          "min_level": 1,
+          "daily_spin_free": 1,
+          "weekly_chest_free": 1,
+          "offer_boost_percent": 0,
+          "ptc_discount_percent": 0
+        },
+        {
+          "id": "bronze_2",
+          "label": "Bronze 2",
+          "min_level": 10,
+          "daily_spin_free": 1,
+          "weekly_chest_free": 1,
+          "offer_boost_percent": 2,
+          "ptc_discount_percent": 0
+        },
+        {
+          "id": "bronze_3",
+          "label": "Bronze 3",
+          "min_level": 20,
+          "daily_spin_free": 1,
+          "weekly_chest_free": 1,
+          "offer_boost_percent": 3,
+          "ptc_discount_percent": 0
+        }
+      ]
+    },
+    {
+      "id": "silver",
+      "label": "Silver",
+      "min_level": 30,
+      "max_level": 59,
+      "sub_levels": [
+        {
+          "id": "silver_1",
+          "label": "Silver 1",
+          "min_level": 30,
+          "daily_spin_free": 1,
+          "weekly_chest_free": 1,
+          "offer_boost_percent": 4,
+          "ptc_discount_percent": 0
+        },
+        {
+          "id": "silver_2",
+          "label": "Silver 2",
+          "min_level": 40,
+          "daily_spin_free": 1,
+          "weekly_chest_free": 1,
+          "offer_boost_percent": 5,
+          "ptc_discount_percent": 1
+        },
+        {
+          "id": "silver_3",
+          "label": "Silver 3",
+          "min_level": 50,
+          "daily_spin_free": 1,
+          "weekly_chest_free": 1,
+          "offer_boost_percent": 6,
+          "ptc_discount_percent": 1
+        }
+      ]
+    },
+    {
+      "id": "gold",
+      "label": "Gold",
+      "min_level": 60,
+      "max_level": 89,
+      "sub_levels": [
+        {
+          "id": "gold_1",
+          "label": "Gold 1",
+          "min_level": 60,
+          "daily_spin_free": 1,
+          "weekly_chest_free": 1,
+          "offer_boost_percent": 7,
+          "ptc_discount_percent": 1
+        },
+        {
+          "id": "gold_2",
+          "label": "Gold 2",
+          "min_level": 70,
+          "daily_spin_free": 1,
+          "weekly_chest_free": 1,
+          "offer_boost_percent": 8,
+          "ptc_discount_percent": 2
+        },
+        {
+          "id": "gold_3",
+          "label": "Gold 3",
+          "min_level": 80,
+          "daily_spin_free": 1,
+          "weekly_chest_free": 1,
+          "offer_boost_percent": 9,
+          "ptc_discount_percent": 2
+        }
+      ]
+    },
+    {
+      "id": "diamond",
+      "label": "Diamond",
+      "min_level": 90,
+      "max_level": 119,
+      "sub_levels": [
+        {
+          "id": "diamond_1",
+          "label": "Diamond 1",
+          "min_level": 90,
+          "daily_spin_free": 1,
+          "weekly_chest_free": 1,
+          "offer_boost_percent": 10,
+          "ptc_discount_percent": 3
+        },
+        {
+          "id": "diamond_2",
+          "label": "Diamond 2",
+          "min_level": 100,
+          "daily_spin_free": 1,
+          "weekly_chest_free": 1,
+          "offer_boost_percent": 11,
+          "ptc_discount_percent": 3
+        },
+        {
+          "id": "diamond_3",
+          "label": "Diamond 3",
+          "min_level": 110,
+          "daily_spin_free": 1,
+          "weekly_chest_free": 1,
+          "offer_boost_percent": 12,
+          "ptc_discount_percent": 4
+        }
+      ]
+    },
+    {
+      "id": "legend",
+      "label": "Legend",
+      "min_level": 120,
+      "max_level": null,
+      "sub_levels": [
+        {
+          "id": "legend_1",
+          "label": "Legend 1",
+          "min_level": 120,
+          "daily_spin_free": 1,
+          "weekly_chest_free": 1,
+          "offer_boost_percent": 13,
+          "ptc_discount_percent": 4
+        }
+      ]
+    }
+  ],
+
+  "ui_rules": {
+    "max_sub_levels_to_display_per_status": 3,
+    "show_all_levels_list_view": false,
+    "notes": "Popup shows only three sub-levels (e.g. Bronze 1-3). A separate 'Full table' page can list every level if needed."
+  }
+}

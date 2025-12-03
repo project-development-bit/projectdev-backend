@@ -22,8 +22,8 @@ const {
 const { generateUniqueReferralCode } = require("../utils/referral.utils");
 const ReferralModel = require("../models/referral.model");
 const referralConfig = require("../config/referral.config");
-const { getRewardsConfig } = require("../config/rewards.config");
-const { computeUserRewards } = require("../services/rewards.service");
+const { getUserLevelConfig } = require("../config/rewards.config");
+const { computeUserLevelState } = require("../services/rewards.service");
 
 /******************************************************************************
  *                              User Controller
@@ -1231,16 +1231,6 @@ class UserController {
   //Get user rewards information
   getUserRewards = async (req, res) => {
     const userId = req.currentUser.id;
-
-    const config = getRewardsConfig();
-    if (!config) {
-      throw new HttpException(
-        500,
-        "Rewards configuration not available",
-        "CONFIG_ERROR"
-      );
-    }
-
     // Get user XP from database
     const userData = await UserModel.getUserXp(userId);
     if (!userData) {
@@ -1249,12 +1239,11 @@ class UserController {
 
     const currentXp = userData.xp || 0;
 
-    // Compute rewards using service
-    const rewards = computeUserRewards(currentXp, config);
+    const userLevelState = computeUserLevelState(currentXp);
 
     res.status(200).json({
       success: true,
-      data: rewards,
+      ...userLevelState,
     });
   };
   changeEmail = async (req, res, next) => {

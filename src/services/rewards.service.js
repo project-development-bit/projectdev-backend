@@ -1,79 +1,98 @@
-const { getTiers } = require('../config/rewards.config');
+const { getUserLevelConfig, calculateXpForLevel} = require('../config/rewards.config');
 
-const computeUserRewards = (currentXp, config) => {
-  const levels = config.levels;
+// Find the user's current level based on total XP
+const findCurrentLevel = (totalXp, config) => {
+  let level = 1;
+  let totalamountXp = 0;
 
-  // Find current level (highest level where xp_total <= user_xp)
-  // For users with 0 XP, they are at level 0 (before level 1)
-  let currentLevelData = null;
-  let currentLevelIndex = -1;
+  // Find the highest level the user has reached
+  while (true) {
+    const xpForNextLevel = calculateXpForLevel(level + 1, config);
+    const nextTotalAmountXp = totalamountXp + xpForNextLevel;
 
-  for (let i = levels.length - 1; i >= 0; i--) {
-    if (levels[i].xp_total <= currentXp) {
-      currentLevelData = levels[i];
-      currentLevelIndex = i;
+    if (totalXp < nextTotalAmountXp) {
       break;
     }
+
+    totalamountXp = nextTotalAmountXp;
+    level++;
   }
 
-  // If user hasn't reached level 1 yet (xp < 100)
-  if (!currentLevelData) {
-    currentLevelData = {
-      level: 1,
-      xp_total: 0,
-      tier: 'Bronze',
-      tier_rank: 1
-    };
-    currentLevelIndex = -1;
-  }
+  return {
+    level,
+    xpCurrentLevel: totalamountXp
+  };
+};
 
-  // Find next level
-  const nextLevelIndex = currentLevelIndex + 1;
-  const nextLevelData = nextLevelIndex < levels.length ? levels[nextLevelIndex] : null;
-  const nextLevel = nextLevelData ? nextLevelData.level : null;
+// Find status and sub-level based on current level
+const findStatusAndSubLevel = (level, config) => {
+  for (const status of config.statuses) {
+    if (level >= status.min_level && (status.max_level === null || level <= status.max_level)) {
+      // Find the appropriate sub-level
+      let currentSubLevel = status.sub_levels[0];
 
-  // Calculate XP to next level and progress percentage
-  let xpToNextLevel = 0;
-  let levelProgressPct = 100;
+      for (const subLevel of status.sub_levels) {
+        if (level >= subLevel.min_level) {
+          currentSubLevel = subLevel;
+        } else {
+          break;
+        }
+      }
 
-  if (nextLevelData) {
-    xpToNextLevel = nextLevelData.xp_total - currentXp;
-
-    // Calculate progress percentage within current level
-    const xpAtCurrentLevel = currentLevelData.xp_total;
-    const xpAtNextLevel = nextLevelData.xp_total;
-    const xpNeededForLevel = xpAtNextLevel - xpAtCurrentLevel;
-    const xpInCurrentLevel = currentXp - xpAtCurrentLevel;
-
-    if (xpNeededForLevel > 0) {
-      levelProgressPct = (xpInCurrentLevel / xpNeededForLevel) * 100;
-      // Clamp between 0 and 100
-      levelProgressPct = Math.min(100, Math.max(0, levelProgressPct));
-    } else {
-      levelProgressPct = 100;
+      return {
+        currentStatus: status.id,
+        currentSubLevel: currentSubLevel.id,
+        subLevelData: currentSubLevel
+      };
     }
   }
 
-  // Round progress percentage to integer (0-100)
-  levelProgressPct = Math.round(levelProgressPct);
+  // Default to first status if no match found
+  const defaultStatus = config.statuses[0];
+  return {
+    currentStatus: defaultStatus.id,
+    currentSubLevel: defaultStatus.sub_levels[0].id,
+    subLevelData: defaultStatus.sub_levels[0]
+  };
+};
 
-  // Get all tiers
-  const tiers = getTiers();
+// Compute user level state
+const computeUserLevelState = (totalXp) => {
+  const config = getUserLevelConfig();
+  if (!config) {
+    throw new Error('User level configuration not available');
+  }
+
+  // Find current level
+  const { level, xpCurrentLevel } = findCurrentLevel(totalXp, config);
+
+  // Find status and sub-level
+  const { currentStatus, currentSubLevel, subLevelData } = findStatusAndSubLevel(level, config);
+
+  // Calculate XP for next level
+  const xpNextLevel = xpCurrentLevel + calculateXpForLevel(level + 1, config);
+  const xpInLevel = totalXp - xpCurrentLevel;
+  const xpNeededInLevel = xpNextLevel - xpCurrentLevel;
+  const progressPercent = xpNeededInLevel > 0
+    ? Math.round((xpInLevel / xpNeededInLevel) * 100 * 10) / 10 // Round to 1 decimal
+    : 100;
 
   return {
-    current_level: currentLevelData.level,
-    next_level: nextLevel,
-    current_xp: currentXp,
-    xp_per_coin: config.xp_per_coin,
-    xp_to_next_level: Math.max(0, xpToNextLevel),
-    level_progress_pct: levelProgressPct,
-    current_tier: currentLevelData.tier,
-    current_tier_rank: currentLevelData.tier_rank,
-    tiers: tiers,
-    levels: levels
+    user_level_state: {
+      level,
+      current_status: currentStatus,
+      current_sub_level: currentSubLevel,
+      xp_total: totalXp,
+      xp_current_level: xpCurrentLevel,
+      xp_next_level: xpNextLevel,
+      xp_in_level: xpInLevel,
+      xp_needed_in_level: xpNeededInLevel,
+      progress_percent: progressPercent
+    },
+    statuses: config.statuses
   };
 };
 
 module.exports = {
-  computeUserRewards
+  computeUserLevelState
 };
