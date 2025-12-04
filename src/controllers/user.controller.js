@@ -148,7 +148,7 @@ class UserController {
       });
     } catch (error) {
       // Handle duplicate email error
-      if (error.status === 409 || error.code === "ER_DUP_ENTRY") {
+      if (error.code === "ER_DUP_ENTRY") {
         return next(
           new HttpException(
             409,
