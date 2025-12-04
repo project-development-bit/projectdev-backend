@@ -198,6 +198,12 @@ router.post(
   awaitHandlerFactory(userController.toggleSecurityPin)
 ); // POST /api/v1/users/security-pin
 
+router.get(
+  "/verify-security-pin/:security_pin",
+  auth(),
+  awaitHandlerFactory(userController.verifySecurityPin)
+); // GET /api/v1/users/verify-security-pin/:security_pin
+
 // Verify and complete account deletion
 router.get(
   "/verify-delete-account/:verification_code",

@@ -1637,6 +1637,66 @@ class UserController {
     }
   };
 
+  verifySecurityPin = async (req, res, next) => {
+    try {
+      const userId = req.currentUser.id;
+      const { security_pin } = req.params;
+
+      const pinString = String(security_pin);
+
+      // Validate PIN is exactly 4 digits
+      if (!/^\d{4}$/.test(pinString)) {
+        throw new HttpException(
+          400,
+          "Security PIN must be exactly 4 digits.",
+          "INVALID_PIN_FORMAT"
+        );
+      }
+
+      const status = await UserModel.checkSecurityPinStatus(userId);
+      if (!status || !status.security_pin_enabled) {
+        throw new HttpException(
+          400,
+          "Security PIN is not enabled for this account.",
+          "SECURITY_PIN_NOT_ENABLED"
+        );
+      }
+
+      const pinData = await UserModel.getSecurityPinHash(userId);
+
+      if (!pinData || !pinData.security_pin) {
+        throw new HttpException(
+          500,
+          "Security PIN data not found.",
+          "SECURITY_PIN_DATA_NOT_FOUND"
+        );
+      }
+
+      const hashedPin = Buffer.isBuffer(pinData.security_pin)
+        ? pinData.security_pin.toString()
+        : pinData.security_pin;
+
+      const isPinValid = await bcrypt.compare(pinString, hashedPin);
+      if (!isPinValid) {
+        throw new HttpException(
+          401,
+          "Invalid security PIN. Please try again.",
+          "INVALID_SECURITY_PIN"
+        );
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Security PIN verified successfully.",
+        data: {
+          verified: true,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   // Send delete account verification email
   sendDeleteAccountEmail = async (
     req,

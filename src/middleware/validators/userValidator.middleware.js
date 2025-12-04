@@ -237,3 +237,15 @@ exports.validateSecurityPinToggle = [
     .isBoolean()
     .withMessage("enable must be a boolean (true or false)"),
 ];
+
+exports.validateSecurityPinVerify = [
+  body("security_pin")
+    .exists()
+    .withMessage("Security PIN is required")
+    .notEmpty()
+    .withMessage("Security PIN must not be empty")
+    .isLength({ min: 4, max: 4 })
+    .withMessage("Security PIN must be exactly 4 digits")
+    .matches(/^\d{4}$/)
+    .withMessage("Security PIN must contain only digits"),
+];
