@@ -98,10 +98,9 @@ class WithdrawalController {
         throw new HttpException(404, "User not found", "USER_NOT_FOUND");
       }
 
-      const { currency, amount, address, fee, payoutProvider, txid } = req.body;
-      const currencyUpper = currency.toUpperCase();
-      const amountNum = parseFloat(amount);
-      const feeNum = fee ? parseFloat(fee) : 0;
+      const { method, amount_coins, payout_address } = req.body;
+      const currencyUpper = method.toUpperCase();
+      const amountNum = parseFloat(amount_coins);
 
       // Validate amount
       if (amountNum <= 0) {
@@ -112,15 +111,39 @@ class WithdrawalController {
         );
       }
 
+      const withdrawalOptions = await WithdrawalModel.getWithdrawalOptions(true);
+      const withdrawalMethod = withdrawalOptions.find(
+        (m) => m.code.toUpperCase() === currencyUpper
+      );
+
+      if (!withdrawalMethod) {
+        throw new HttpException(
+          400,
+          `Withdrawal not available for currency: ${currencyUpper}`,
+          "CURRENCY_NOT_SUPPORTED"
+        );
+      }
+
+      // Validate minimum amount
+      if (amountNum < withdrawalMethod.min_amount_coins) {
+        throw new HttpException(
+          400,
+          `Minimum withdrawal amount is ${withdrawalMethod.min_amount_coins} ${currencyUpper}`,
+          "AMOUNT_BELOW_MINIMUM"
+        );
+      }
+
+      const feeNum = withdrawalMethod.fee_coins;
+
       // Create withdrawal record with requested status
       const withdrawal = await WithdrawalModel.createWithdrawal({
         userId: user.id,
         currency: currencyUpper,
         amount: amountNum,
         fee: feeNum,
-        address: address.trim(),
-        payoutProvider: payoutProvider || 'manual',
-        txid: txid || null,
+        address: payout_address.trim(),
+        payoutProvider: 'manual',
+        txid: null,
       });
 
       if (!withdrawal.success) {

@@ -60,7 +60,7 @@ class TransactionModel {
       WHERE ${whereClause}
     `;
 
-    // Get data with withdrawal details
+    // Get data
     const dataSql = `
       SELECT
         le.id,
@@ -69,19 +69,8 @@ class TransactionModel {
         le.currency,
         le.ref_type,
         le.ref_id,
-        le.created_at,
-        w.status AS withdrawal_status,
-        w.txid,
-        w.address AS withdrawal_address,
-        w.fee AS withdrawal_fee,
-        w.payout_provider,
-        w.error_message,
-        w.requested_at,
-        w.processed_at
+        le.created_at
       FROM ${this.ledgerTable} le
-      LEFT JOIN ${this.withdrawalsTable} w
-        ON le.ref_type = 'withdrawal'
-        AND le.ref_id = CAST(w.id AS CHAR) COLLATE utf8mb4_unicode_ci
       WHERE ${whereClause}
       ORDER BY le.created_at DESC
       LIMIT ${limitInt} OFFSET ${offset}
@@ -104,15 +93,6 @@ class TransactionModel {
         refType: tx.ref_type,
         refId: tx.ref_id,
         createdAt: tx.created_at,
-        // Withdrawal details (if applicable)
-        withdrawalStatus: tx.withdrawal_status || null,
-        txid: tx.txid || null,
-        withdrawalAddress: tx.withdrawal_address || null,
-        withdrawalFee: tx.withdrawal_fee ? parseFloat(tx.withdrawal_fee) : null,
-        payoutProvider: tx.payout_provider || null,
-        errorMessage: tx.error_message || null,
-        requestedAt: tx.requested_at || null,
-        processedAt: tx.processed_at || null,
       })),
       pagination: {
         currentPage: pageInt,

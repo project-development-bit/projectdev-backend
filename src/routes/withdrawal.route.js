@@ -7,40 +7,24 @@ const { body } = require("express-validator");
 
 // Validation middleware for withdrawal request
 const createWithdrawalSchema = [
-  body("currency")
+  body("method")
     .exists()
-    .withMessage("Currency is required")
+    .withMessage("Method is required")
     .isString()
     .isLength({ min: 2, max: 10 })
-    .withMessage("Currency must be between 2 and 10 characters")
+    .withMessage("Method must be between 2 and 10 characters")
     .toUpperCase(),
-  body("amount")
+  body("amount_coins")
     .exists()
     .withMessage("Amount is required")
     .isFloat({ min: 0.00000001 })
     .withMessage("Amount must be a positive number"),
-  body("address")
+  body("payout_address")
     .exists()
-    .withMessage("Withdrawal address is required")
+    .withMessage("Payout address is required")
     .isString()
     .isLength({ min: 10, max: 128 })
-    .withMessage("Address must be between 10 and 128 characters")
-    .trim(),
-  body("fee")
-    .optional()
-    .isFloat({ min: 0 })
-    .withMessage("Fee must be a non-negative number"),
-  body("payoutProvider")
-    .optional()
-    .isString()
-    .isLength({ max: 50 })
-    .withMessage("Payout provider must not exceed 50 characters")
-    .trim(),
-  body("txid")
-    .optional()
-    .isString()
-    .isLength({ max: 128 })
-    .withMessage("Transaction ID must not exceed 128 characters")
+    .withMessage("Payout address must be between 10 and 128 characters")
     .trim(),
 ];
 
