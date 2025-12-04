@@ -6,7 +6,8 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-const TwoFAController = require("./twofa.controller");
+const BalanceModel = require('../models/balance.model');
+
 const {
   uploadImageToS3,
   deleteImageFromS3,
@@ -86,9 +87,22 @@ class UserController {
   };
 
   getCurrentUser = async (req, res, next) => {
-    const { password, ...userWithoutPassword } = req.currentUser;
+    const { password, security_pin_enabled, ...userWithoutPassword } = req.currentUser;
 
-    res.send(userWithoutPassword);
+    // Get user's XP and compute level state
+    const userData = await UserModel.getUserXp(userWithoutPassword.id);
+    const currentXp = userData?.xp || 0;
+    const userLevelState = computeUserLevelState(currentXp);
+
+    // Get user's COIN balance
+    const coinBalance = await BalanceModel.getBalanceByCurrency(userWithoutPassword.id, 'COIN');
+
+    res.send({
+      ...userWithoutPassword,
+      current_status: userLevelState.user_level_state.current_status,
+      coin_balance: coinBalance ? coinBalance.available : 0,
+      security_pin_required: security_pin_enabled
+    });
   };
 
   createUser = async (req, res, next) => {
