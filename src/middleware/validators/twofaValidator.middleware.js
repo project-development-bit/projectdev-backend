@@ -37,3 +37,15 @@ exports.validate2FALogin = [
     .isNumeric()
     .withMessage("Token must contain only numbers"),
 ];
+
+exports.validate2FADisable = [
+  body("token")
+    .exists()
+    .withMessage("Token is required")
+    .notEmpty()
+    .withMessage("Token cannot be empty")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("Token must be 6 digits")
+    .isNumeric()
+    .withMessage("Token must contain only numbers"),
+];

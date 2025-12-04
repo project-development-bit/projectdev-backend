@@ -172,6 +172,7 @@ class TwoFAController {
     try {
       this.checkValidation(req);
       const userId = req.currentUser.id;
+      const { token } = req.body;
 
       // Get user's 2FA secret
       const user = await TwoFAModel.get2FASecret(userId);
@@ -181,6 +182,21 @@ class TwoFAController {
           400,
           "2FA is not enabled for this account.",
           "2FA_NOT_ENABLED"
+        );
+      }
+
+      const verified = speakeasy.totp.verify({
+        secret: user.twofa_secret,
+        encoding: "base32",
+        token: token,
+        window: 2,
+      });
+
+      if (!verified) {
+        throw new HttpException(
+          401,
+          "Invalid 2FA code. Please try again.",
+          "INVALID_2FA_TOKEN"
         );
       }
 

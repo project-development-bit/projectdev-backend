@@ -7,6 +7,7 @@ const awaitHandlerFactory = require("../middleware/awaitHandlerFactory.middlewar
 const {
   validate2FASetup,
   validate2FALogin,
+  validate2FADisable,
 } = require("../middleware/validators/twofaValidator.middleware");
 
 const {
@@ -50,6 +51,8 @@ router.post(
 router.post(
   "/disable",
   auth(),
+  twoFASetupLimiter,
+  validate2FADisable,
   awaitHandlerFactory(twofaController.disable2FA)
 );
 
