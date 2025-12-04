@@ -11,8 +11,7 @@ exports.createUserSchema = [
     .exists()
     .withMessage("Email is required")
     .isEmail()
-    .withMessage("Must be a valid email")
-    .normalizeEmail(),
+    .withMessage("Must be a valid email"),
   body("role")
     .optional()
     .isIn([Role.Admin, Role.SuperUser, Role.NormalUser, Role.Dev])
@@ -177,20 +176,17 @@ exports.validateEmailChange = [
     .exists()
     .withMessage("Current email is required")
     .isEmail()
-    .withMessage("Current email must be a valid email")
-    .normalizeEmail(),
+    .withMessage("Current email must be a valid email"),
   body("new_email")
     .exists()
     .withMessage("New email is required")
     .isEmail()
-    .withMessage("New email must be a valid email")
-    .normalizeEmail(),
+    .withMessage("New email must be a valid email"),
   body("repeat_new_email")
     .exists()
     .withMessage("Repeat new email is required")
     .isEmail()
     .withMessage("Repeat new email must be a valid email")
-    .normalizeEmail()
     .custom((value, { req }) => value === req.body.new_email)
     .withMessage("Repeat new email must match new email"),
 ];
