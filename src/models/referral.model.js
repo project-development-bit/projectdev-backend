@@ -14,7 +14,7 @@ class ReferralModel {
 
   //Get user by referral code
   getUserByReferralCode = async (referralCode) => {
-    const sql = `SELECT id, name, email, referral_code FROM ${this.usersTable} WHERE referral_code = ?`;
+    const sql = `SELECT id, email, referral_code FROM ${this.usersTable} WHERE referral_code = ?`;
     const result = await coinQuery(sql, [referralCode]);
     return result[0] || null;
   };
@@ -79,7 +79,6 @@ class ReferralModel {
     const referredUsersSql = `
       SELECT
         u.id,
-        u.name,
         u.email,
         u.created_at,
         r.revenue_share_pct,
@@ -102,7 +101,6 @@ class ReferralModel {
         totalEarnings: parseFloat(earningsResult[0].total_earnings),
         referredUsers: referredUsers.map((user) => ({
           id: user.id,
-          name: user.name,
           email: user.email,
           joinedAt: user.created_at,
           revenueSharePct: parseFloat(user.revenue_share_pct),
@@ -120,7 +118,6 @@ class ReferralModel {
     const sql = `
       SELECT
         r.*,
-        u.name as referee_name,
         u.email as referee_email
       FROM ${this.referralsTable} r
       JOIN ${this.usersTable} u ON u.id = r.referee_id
@@ -137,7 +134,6 @@ class ReferralModel {
     const sql = `
       SELECT
         r.*,
-        u.name as referrer_name,
         u.email as referrer_email,
         u.referral_code as referrer_code
       FROM ${this.referralsTable} r
@@ -178,7 +174,7 @@ class ReferralModel {
     const limitInt = parseInt(limit, 10);
     const offset = (pageInt - 1) * limitInt;
 
-    const validSortBy = ['created_at', 'name', 'email', 'revenue_share_pct'];
+    const validSortBy = ['created_at', 'email', 'revenue_share_pct'];
     const validSortOrder = ['ASC', 'DESC'];
 
     const sortColumn = validSortBy.includes(sortBy) ? sortBy : 'created_at';
@@ -188,11 +184,11 @@ class ReferralModel {
     let whereConditions = ['r.referrer_id = ?'];
     let queryParams = [referrerId];
 
-    // Search filter (name or email)
+    // Search filter (email only)
     if (search && search.trim() !== '') {
-      whereConditions.push('(u.name LIKE ? OR u.email LIKE ?)');
+      whereConditions.push('u.email LIKE ?');
       const searchPattern = `%${search.trim()}%`;
-      queryParams.push(searchPattern, searchPattern);
+      queryParams.push(searchPattern);
     }
 
     // Date range filter
@@ -220,7 +216,6 @@ class ReferralModel {
     const dataSql = `
       SELECT
         u.id,
-        u.name,
         u.email,
         u.created_at as user_created_at,
         u.is_verified,
@@ -240,7 +235,6 @@ class ReferralModel {
       JOIN ${this.usersTable} u ON u.id = r.referee_id
       WHERE ${whereClause}
       ORDER BY ${sortColumn === 'created_at' ? 'r.created_at' :
-                 sortColumn === 'name' ? 'u.name' :
                  sortColumn === 'email' ? 'u.email' :
                  'r.revenue_share_pct'} ${order}
       LIMIT ${limitInt} OFFSET ${offset}
@@ -261,7 +255,6 @@ class ReferralModel {
       return {
         data: referredUsers.map((user) => ({
           id: user.id,
-          name: user.name,
           email: user.email,
           isVerified: user.is_verified === 1,
           userCreatedAt: user.user_created_at,
