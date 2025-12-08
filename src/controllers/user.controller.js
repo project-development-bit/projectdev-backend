@@ -310,7 +310,7 @@ class UserController {
     try {
       this.checkValidation(req);
 
-      const { email, password: pass } = req.body;
+      const { email, password: pass, device_fingerprint, country_code, user_agent } = req.body;
 
       const user = await this.checkUserExists(email);
 
@@ -322,6 +322,28 @@ class UserController {
       if (!ok) {
         throw new HttpException(401, "Invalid password", "INVALID_CREDENTIALS");
       }
+
+      const loginMetadata = {
+        ip: req.ip || req.connection.remoteAddress || "unknown",
+        userAgent: user_agent || req.get("user-agent") || null,
+        deviceFp: device_fingerprint || "unknown",
+        country: country_code || null,
+      };
+
+      // Create user session record (email will be sent every login)
+      const sessionResult = await UserModel.createUserSession({
+        user_id: user.id,
+        ip: loginMetadata.ip,
+        device_fp: loginMetadata.deviceFp,
+        user_agent: loginMetadata.userAgent,
+        country: loginMetadata.country,
+        informal_login_email_sent: true, // Always set to true since email is sent every time
+      });
+
+      // Send informal login email asynchronously (don't await - don't block login)
+      this.sendInformalLoginEmail(user, loginMetadata).catch((error) => {
+        console.error("Error sending informal login email:", error);
+      });
 
       const userData = {
         id: user.id,
@@ -339,6 +361,7 @@ class UserController {
           success: true,
           message: "Login successful.",
           userId: user.id,
+          sessionId: sessionResult.insertId,
         });
       }
 
@@ -352,6 +375,7 @@ class UserController {
           user: userData,
           tokens: tokens,
         },
+        sessionId: sessionResult.insertId,
       });
     } catch (err) {
       next(err);
@@ -1691,6 +1715,106 @@ class UserController {
     console.log("Delete account verification sent: %s", info.messageId);
 
     return true;
+  };
+
+  sendInformalLoginEmail = async (user, metadata) => {
+    try {
+      const transporter = nodemailer.createTransport({
+        host: process.env.MAIL_NO_REPLY_HOST,
+        port: process.env.MAIL_NO_REPLY_PORT,
+        secure: true,
+        auth: {
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      });
+
+      // Format timestamp in UTC
+      const timestamp = new Date().toLocaleString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        timeZone: "UTC",
+        timeZoneName: "short",
+      });
+
+      const subject = "Login to Your Gigafaucet Account";
+
+      const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px;">
+            <h2 style="color: #333; margin-top: 0;">Hi ${user.name}! </h2>
+
+            <p style="color: #555; line-height: 1.6;">
+              You logged in to your Gigafaucet account. Here are the details:
+            </p>
+
+            <div style="background-color: #fff; padding: 15px; border-radius: 5px; margin: 20px 0;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 8px 0; color: #666;"><strong>Time:</strong></td>
+                  <td style="padding: 8px 0; color: #333;">${timestamp}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; color: #666;"><strong>IP Address:</strong></td>
+                  <td style="padding: 8px 0; color: #333;">${metadata.ip}</td>
+                </tr>
+                ${metadata.userAgent ? `
+                <tr>
+                  <td style="padding: 8px 0; color: #666;"><strong>Device:</strong></td>
+                  <td style="padding: 8px 0; color: #333;">${metadata.userAgent}</td>
+                </tr>
+                ` : ''}
+                ${metadata.country ? `
+                <tr>
+                  <td style="padding: 8px 0; color: #666;"><strong>Location:</strong></td>
+                  <td style="padding: 8px 0; color: #333;">${metadata.country}</td>
+                </tr>
+                ` : ''}
+              </table>
+            </div>
+
+            <p style="color: #555; line-height: 1.6;">
+              If this was you, no action is needed. Thanks for being with us! 
+            </p>
+
+            <p style="color: #555; line-height: 1.6;">
+              If you didn't log in, please <a href="mailto:support@gigafaucet.com" style="color: #007bff;">contact our support team</a> immediately.
+            </p>
+
+            <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;" />
+
+            <p style="color: #888; font-size: 12px; margin-bottom: 5px;">
+              Best regards,<br/>
+              <strong>Gigafaucet Team</strong>
+            </p>
+
+            <p style="color: #888; font-size: 11px; margin-top: 20px;">
+              <strong>Gigafaucet</strong><br/>
+              95/87, Moo 7, Soi Saiyuan,<br/>
+              A.Mueang, T.Rawai, Phuket, 83130
+            </p>
+          </div>
+        </div>
+      `;
+
+      const info = await transporter.sendMail({
+        from: '"Gigafaucet" <projectdev.bit@gmail.com>',
+        to: user.email,
+        subject: subject,
+        text: `Hi ${user.name}!\n\nYou logged in to your Gigafaucet account at ${timestamp}.\n\nLogin Details:\n- IP Address: ${metadata.ip}\n${metadata.userAgent ? `- Device: ${metadata.userAgent}\n` : ''}${metadata.country ? `- Location: ${metadata.country}\n` : ''}\nIf this was you, no action is needed. Thanks for being with us!\n\nIf you didn't log in, please contact our support team immediately.\n\nBest regards,\nGigafaucet Team`,
+        html: html,
+      });
+
+      console.log("Informal login email sent: %s", info.messageId);
+      return true;
+    } catch (error) {
+      console.error("Failed to send informal login email:", error);
+      return false;
+    }
   };
 
 }

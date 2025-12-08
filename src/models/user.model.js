@@ -568,6 +568,23 @@ class UserModel {
     const result = await coinQuery(sql, [userId, userId]);
     return result;
   };
+
+  createUserSession = async (sessionData) => {
+    const sql = `
+      INSERT INTO user_sessions (user_id, ip, device_fp, user_agent, country, informal_login_email_sent)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    const values = [
+      sessionData.user_id,
+      sessionData.ip,
+      sessionData.device_fp,
+      sessionData.user_agent || null,
+      sessionData.country || null,
+      sessionData.informal_login_email_sent ? 1 : 0,
+    ];
+    const result = await coinQuery(sql, values);
+    return result;
+  };
 }
 
 module.exports = new UserModel();

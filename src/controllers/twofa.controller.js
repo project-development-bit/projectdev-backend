@@ -3,6 +3,9 @@ const HttpException = require("../utils/HttpException.utils");
 const speakeasy = require("speakeasy");
 const QRCode = require("qrcode");
 const { validationResult } = require("express-validator");
+const UserModel = require("../models/user.model");
+const { generateAccessToken, generateRefreshToken } = require("../utils/token.utils");
+const UserController = require("./user.controller");
 
 /******************************************************************************
  *                              2FA Controller
@@ -94,7 +97,7 @@ class TwoFAController {
     try {
       this.checkValidation(req);
 
-      const { userId, token } = req.body;
+      const { userId, token,user_agent,  device_fingerprint, country_code } = req.body;
 
       // Get user's 2FA secret and full user info
       const user = await TwoFAModel.get2FASecret(userId);
@@ -123,10 +126,6 @@ class TwoFAController {
         );
       }
 
-      // Generate tokens after successful 2FA verification
-      const UserModel = require("../models/user.model");
-      const { generateAccessToken, generateRefreshToken } = require("../utils/token.utils");
-
       const accessToken = generateAccessToken(user);
       const refreshToken = generateRefreshToken(user);
 
@@ -143,6 +142,27 @@ class TwoFAController {
         accessTokenExpiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m",
         refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d",
       };
+
+      const loginMetadata = {
+        ip: req.ip || req.connection.remoteAddress || "unknown",
+        userAgent: user_agent || req.get("user-agent") || null,
+        deviceFp: device_fingerprint || "unknown",
+        country: country_code || null,
+      };
+
+      // Create user session record (email will be sent every login)
+      const sessionResult = await UserModel.createUserSession({
+        user_id: user.id,
+        ip: loginMetadata.ip,
+        device_fp: loginMetadata.deviceFp,
+        user_agent: loginMetadata.userAgent,
+        country: loginMetadata.country,
+        informal_login_email_sent: true, // Always set to true since email is sent every time
+      });
+
+      UserController.sendInformalLoginEmail(user, loginMetadata).catch((error) => {
+        console.error("Error sending informal login email:", error);
+      });
 
       // Prepare user data (excluding sensitive information)
       const userData = {
@@ -161,6 +181,7 @@ class TwoFAController {
           user: userData,
           tokens: tokens,
         },
+        sessionId: sessionResult.insertId,
       });
     } catch (error) {
       next(error);
