@@ -28,14 +28,6 @@ const createWithdrawalSchema = [
     .trim(),
 ];
 
-// Validation middleware for confirming withdrawal
-const confirmWithdrawalSchema = [
-  body("status")
-    .exists()
-    .withMessage("Status is required")
-    .isIn(['sent', 'failed'])
-    .withMessage("Status must be either 'sent' or 'failed'"),
-];
 
 // Get withdrawal options
 router.get(
@@ -44,20 +36,6 @@ router.get(
   awaitHandlerFactory(withdrawalController.getWithdrawalOptions)
 ); // GET /api/v1/withdrawals/options
 
-// Get user's withdrawal history
-router.get(
-  "/",
-  auth(),
-  awaitHandlerFactory(withdrawalController.getUserWithdrawals)
-); // GET /api/v1/withdrawals
-
-// Get single withdrawal by ID
-router.get(
-  "/:id",
-  auth(),
-  awaitHandlerFactory(withdrawalController.getWithdrawalById)
-); // GET /api/v1/withdrawals/:id
-
 // Create withdrawal request (Authenticated users)
 router.post(
   "/",
@@ -65,20 +43,5 @@ router.post(
   createWithdrawalSchema,
   awaitHandlerFactory(withdrawalController.createWithdrawal)
 ); // POST /api/v1/withdrawals
-
-// Cancel withdrawal
-router.delete(
-  "/:id",
-  auth(),
-  awaitHandlerFactory(withdrawalController.cancelWithdrawal)
-); // DELETE /api/v1/withdrawals/:id
-
-// Confirm withdrawal - Update status (Admin only)
-router.patch(
-  "/:id/confirm",
-  auth('Admin'),
-  confirmWithdrawalSchema,
-  awaitHandlerFactory(withdrawalController.confirmWithdrawal)
-); // PATCH /api/v1/withdrawals/:id/confirm
 
 module.exports = router;
