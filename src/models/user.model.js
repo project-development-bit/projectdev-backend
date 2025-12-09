@@ -273,14 +273,11 @@ class UserModel {
       // Delete balances
       await coinQuery('DELETE FROM balances WHERE user_id = ?', [id]);
 
-      // Delete deposits
-      await coinQuery('DELETE FROM deposits WHERE user_id = ?', [id]);
+      // Delete transactions 
+      await coinQuery('DELETE FROM transactions WHERE user_id = ?', [id]);
 
       // Delete faucet claims
       await coinQuery('DELETE FROM faucet_claims WHERE user_id = ?', [id]);
-
-      // Delete withdrawals
-      await coinQuery('DELETE FROM withdrawals WHERE user_id = ?', [id]);
 
       // Delete user addresses
       await coinQuery('DELETE FROM user_addresses WHERE user_id = ?', [id]);

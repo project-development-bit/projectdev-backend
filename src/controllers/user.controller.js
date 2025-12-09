@@ -403,7 +403,7 @@ class UserController {
     // res.status(201).send("Reset password is completed!");
     res.status(201).json({
       success: true,
-      message: "Reset password is completed!",
+      message: "Requested code successfully",
       data: {
         email: req.body.email,
         securityCode: securityCode,
