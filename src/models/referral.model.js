@@ -65,8 +65,8 @@ class ReferralModel {
       WHERE referrer_id = ?
     `;
 
-    // Get referral earnings from ledger
-    const earningsSql = `
+    // Get credited referral earnings from ledger
+    const creditedEarningsSql = `
       SELECT
         COALESCE(SUM(amount), 0) as total_earnings
       FROM ledger_entries
@@ -75,37 +75,28 @@ class ReferralModel {
         AND entry_type = 'credit'
     `;
 
-    // Get list of referred users
-    const referredUsersSql = `
-      SELECT
-        u.id,
-        u.email,
-        u.created_at,
-        r.revenue_share_pct,
-        r.created_at as referral_date
+    // Get count of users active in the last 7 days
+    const activeThisWeekSql = `
+      SELECT COUNT(DISTINCT r.referee_id) as active_count
       FROM ${this.referralsTable} r
       JOIN ${this.usersTable} u ON u.id = r.referee_id
       WHERE r.referrer_id = ?
-      ORDER BY r.created_at DESC
+        AND u.last_login_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
     `;
 
     try {
-      const [countResult, earningsResult, referredUsers] = await Promise.all([
+      const [countResult, creditedEarningsResult, activeThisWeekResult] = await Promise.all([
         coinQuery(countSql, [userId]),
-        coinQuery(earningsSql, [userId]),
-        coinQuery(referredUsersSql, [userId]),
+        coinQuery(creditedEarningsSql, [userId]),
+        coinQuery(activeThisWeekSql, [userId]),
       ]);
 
       return {
-        totalReferrals: countResult[0].total_referrals,
-        totalEarnings: parseFloat(earningsResult[0].total_earnings),
-        referredUsers: referredUsers.map((user) => ({
-          id: user.id,
-          email: user.email,
-          joinedAt: user.created_at,
-          revenueSharePct: parseFloat(user.revenue_share_pct),
-          referralDate: user.referral_date,
-        })),
+        referral_percent: referralConfig.revenueSharePct,
+        referral_earnings_coins: parseFloat(creditedEarningsResult[0].total_earnings),
+        referral_users_count: countResult[0].total_referrals,
+        pending_earnings_coins: 0, // TODO: Implement pending earnings tracking
+        active_this_week_count: activeThisWeekResult[0].active_count,
       };
     } catch (error) {
       console.error("Error getting referral stats:", error);
@@ -174,7 +165,7 @@ class ReferralModel {
     const limitInt = parseInt(limit, 10);
     const offset = (pageInt - 1) * limitInt;
 
-    const validSortBy = ['created_at', 'email', 'revenue_share_pct'];
+    const validSortBy = ['created_at', 'name', 'revenue_share_pct'];
     const validSortOrder = ['ASC', 'DESC'];
 
     const sortColumn = validSortBy.includes(sortBy) ? sortBy : 'created_at';
@@ -184,9 +175,9 @@ class ReferralModel {
     let whereConditions = ['r.referrer_id = ?'];
     let queryParams = [referrerId];
 
-    // Search filter (email only)
+    // Search filter (name from user_profiles)
     if (search && search.trim() !== '') {
-      whereConditions.push('u.email LIKE ?');
+      whereConditions.push('up.name LIKE ?');
       const searchPattern = `%${search.trim()}%`;
       queryParams.push(searchPattern);
     }
@@ -209,6 +200,7 @@ class ReferralModel {
       SELECT COUNT(*) as total
       FROM ${this.referralsTable} r
       JOIN ${this.usersTable} u ON u.id = r.referee_id
+      LEFT JOIN user_profiles up ON up.user_id = u.id
       WHERE ${whereClause}
     `;
 
@@ -216,7 +208,7 @@ class ReferralModel {
     const dataSql = `
       SELECT
         u.id,
-        u.email,
+        up.name,
         u.created_at as user_created_at,
         u.is_verified,
         r.id as referral_id,
@@ -233,9 +225,10 @@ class ReferralModel {
         ) as total_earned_from_referee
       FROM ${this.referralsTable} r
       JOIN ${this.usersTable} u ON u.id = r.referee_id
+      LEFT JOIN user_profiles up ON up.user_id = u.id
       WHERE ${whereClause}
       ORDER BY ${sortColumn === 'created_at' ? 'r.created_at' :
-                 sortColumn === 'email' ? 'u.email' :
+                 sortColumn === 'name' ? 'up.name' :
                  'r.revenue_share_pct'} ${order}
       LIMIT ${limitInt} OFFSET ${offset}
     `;
@@ -255,7 +248,7 @@ class ReferralModel {
       return {
         data: referredUsers.map((user) => ({
           id: user.id,
-          email: user.email,
+          name: user.name || '',
           isVerified: user.is_verified === 1,
           userCreatedAt: user.user_created_at,
           referralId: user.referral_id,

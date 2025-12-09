@@ -343,7 +343,7 @@ class UserController {
       }
 
       // For users without 2FA, generate and return tokens
-      const tokens = await this.generateToken(user);
+      const tokens = await this.generateToken(user, req);
 
       res.status(200).json({
         success: true,
@@ -434,7 +434,7 @@ class UserController {
 
     // Only generate tokens if account is verified
     if (user.is_verified === 1) {
-      const tokens = await this.generateToken(user);
+      const tokens = await this.generateToken(user, req);
 
       res.status(201).json({
         success: true,
@@ -520,13 +520,18 @@ class UserController {
     return user;
   };
 
-  generateToken = async (user) => {
+  generateToken = async (user, req = null) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
+
+    const loginIp = req ? (req.ip || req.connection.remoteAddress) : null;
+    const deviceFp = req ? req.body.device_fingerprint : null;
 
     await UserModel.refreshToken({
       refreshToken,
       userID: user.id,
+      loginIp,
+      deviceFp,
     });
 
     return {
@@ -725,7 +730,7 @@ class UserController {
 
     const user = await this.checkUserExists(req.params.email);
 
-    const tokens = await this.generateToken(user);
+    const tokens = await this.generateToken(user, req);
 
     res.status(200).json({
       success: true,

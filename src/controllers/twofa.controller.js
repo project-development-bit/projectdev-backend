@@ -130,10 +130,15 @@ class TwoFAController {
       const accessToken = generateAccessToken(user);
       const refreshToken = generateRefreshToken(user);
 
-      // Save refresh token to database
+    const loginIp = req ? (req.ip || req.connection.remoteAddress) : null;
+    const deviceFp = req ? req.body.device_fingerprint : null;
+
+      // Save refresh token and login info to database
       await UserModel.refreshToken({
         refreshToken,
         userID: user.id,
+        loginIp,
+        deviceFp,
       });
 
       const tokens = {

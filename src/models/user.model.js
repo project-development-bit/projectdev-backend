@@ -333,10 +333,10 @@ class UserModel {
     }
   };
 
-  refreshToken = async ({ refreshToken, userID }) => {
+  refreshToken = async ({ refreshToken, userID, loginIp = null, deviceFp = null }) => {
     try {
-      const sql = `UPDATE ${this.tableName} SET refresh_token = ? WHERE id = ?`;
-      const result = await coinQuery(sql, [refreshToken, userID]);
+      const sql = `UPDATE ${this.tableName} SET refresh_token = ?, last_login_at = NOW(), last_login_ip = ?, last_login_device_fp = ? WHERE id = ?`;
+      const result = await coinQuery(sql, [refreshToken, loginIp, deviceFp, userID]);
       return result;
     } catch (error) {
       console.error(error);
