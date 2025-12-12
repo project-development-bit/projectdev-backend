@@ -7,6 +7,7 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const BalanceModel = require('../models/balance.model');
+const CountryModel = require("../models/country.model");
 
 const {
   uploadImageToS3,
@@ -97,8 +98,16 @@ class UserController {
     // Get user's COIN balance
     const coinBalance = await BalanceModel.getBalanceByCurrency(userWithoutPassword.id, 'COIN');
 
+    // Get country name if country_id exists
+    let country_name = null;
+    if (userWithoutPassword.country_id) {
+      const profileData = await UserModel.getProfileWithCountry(userWithoutPassword.id);
+      country_name = profileData?.country_name || null;
+    }
+
     res.send({
       ...userWithoutPassword,
+      country_name,
       current_status: userLevelState.user_level_state.current_status,
       coin_balance: coinBalance ? coinBalance.available : 0,
       security_pin_required: security_pin_enabled
@@ -109,6 +118,16 @@ class UserController {
     try {
       this.checkValidation(req);
       await this.hashPassword(req);
+
+      // Handle country_code if provided
+      let countryId = null;
+      if (req.body.country_code) {
+        const country = await CountryModel.findByCode(req.body.country_code);
+        if (country) {
+          countryId = country.id;
+          req.body.country_id = countryId;
+        }
+      }
 
       // Handle referral code if provided
       let referrerId = null;
@@ -524,8 +543,8 @@ class UserController {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    const loginIp = req ? (req.ip || req.connection.remoteAddress) : null;
-    const deviceFp = req ? req.body.device_fingerprint : null;
+    const loginIp = req?.ip ?? req?.connection?.remoteAddress ?? null;
+    const deviceFp = req?.body?.device_fingerprint ?? null;
 
     await UserModel.refreshToken({
       refreshToken,
