@@ -20,10 +20,21 @@ const {
   validatePasswordChange,
   validateVerifyEmailChange,
   validateSecurityPinToggle,
+  validateVerifyUser,
+  validateVerifyForgotPassword,
+  validateVerifySecurityPin,
+  validateVerifyDeleteAccount,
 } = require("../middleware/validators/userValidator.middleware");
 
-const { emailChangeLimiter } = require("../middleware/rateLimiter.middleware");
-const { passwordChangeLimiter } = require("../middleware/rateLimiter.middleware");
+const {
+  emailChangeLimiter,
+  passwordChangeLimiter,
+  verifyUserLimiter,
+  verifyForgotPasswordLimiter,
+  verifyEmailChangeLimiter,
+  verifySecurityPinLimiter,
+  verifyDeleteAccountLimiter,
+} = require("../middleware/rateLimiter.middleware");
 
 router.get(
   "/personal_info/:email/:member_id",
@@ -105,15 +116,19 @@ router.post(
   awaitHandlerFactory(userController.forgotPassword)
 ); // localhost:3000/api/v1/users/forgot_password
 
-router.get(
-  "/verify/:email/:security_code",
+router.post(
+  "/verify",
+  verifyUserLimiter,
+  validateVerifyUser,
   awaitHandlerFactory(userController.verifyUser)
-); // localhost:3000/api/v1/users/verify/g.usertest01@gmail.com/1211
+); // POST localhost:3000/api/v1/users/verify
 
-router.get(
-  "/verify-forgot-password/:email/:security_code",
+router.post(
+  "/verify-forgot-password",
+  verifyForgotPasswordLimiter,
+  validateVerifyForgotPassword,
   awaitHandlerFactory(userController.verifyForgotPasswordCode)
-); // localhost:3000/api/v1/users/verify-forgot-password/user@example.com/1234
+); // POST localhost:3000/api/v1/users/verify-forgot-password
 
 router.post(
   "/save_password",
@@ -171,16 +186,18 @@ router.get(
 router.patch(
   "/email",
   auth(),
-  //emailChangeLimiter,
+  emailChangeLimiter,
   validateEmailChange,
   awaitHandlerFactory(userController.changeEmail)
 ); // PATCH /api/v1/users/email
 
-router.get(
-  "/verify-email-change/:new_email/:verification_code",
+router.post(
+  "/verify-email-change",
   auth(),
+  verifyEmailChangeLimiter,
+  validateVerifyEmailChange,
   awaitHandlerFactory(userController.verifyEmailChange)
-); // GET /api/v1/users/verify-email-change/:new_email/:verification_code
+); // POST /api/v1/users/verify-email-change
 
 // Password change route
 router.patch(
@@ -198,11 +215,21 @@ router.post(
   awaitHandlerFactory(userController.toggleSecurityPin)
 ); // POST /api/v1/users/security-pin
 
-// Verify and complete account deletion
-router.get(
-  "/verify-delete-account/:verification_code",
+router.post(
+  "/verify-security-pin",
   auth(),
+  verifySecurityPinLimiter,
+  validateVerifySecurityPin,
+  awaitHandlerFactory(userController.verifySecurityPin)
+); // POST /api/v1/users/verify-security-pin
+
+// Verify and complete account deletion
+router.post(
+  "/verify-delete-account",
+  auth(),
+  verifyDeleteAccountLimiter,
+  validateVerifyDeleteAccount,
   awaitHandlerFactory(userController.verifyAndDeleteAccount)
-); // GET /api/v1/users/verify-delete-account/:verification_code
+); // POST /api/v1/users/verify-delete-account
 
 module.exports = router;
