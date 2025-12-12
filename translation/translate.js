@@ -329,12 +329,186 @@ function printSummary() {
 
 }
 
-// Run if executed directly
-if (require.main === module) {
-  translateAll().catch(error => {
-    console.error('Unhandled error:', error);
-    process.exit(1);
-  });
+//Get value from nested object using dot notation path
+function getNestedValue(obj, path) {
+  const keys = path.split('.');
+  let current = obj;
+
+  for (const key of keys) {
+    if (current && typeof current === 'object' && key in current) {
+      current = current[key];
+    } else {
+      return undefined;
+    }
+  }
+
+  return current;
 }
 
-module.exports = { translateAll, translateLanguage };
+//Set value in nested object using dot notation path
+function setNestedValue(obj, path, value) {
+  const keys = path.split('.');
+  const lastKey = keys.pop();
+  let current = obj;
+
+  for (const key of keys) {
+    if (!(key in current)) {
+      current[key] = {};
+    }
+    current = current[key];
+  }
+
+  current[lastKey] = value;
+}
+
+//Update a specific key across all language files
+async function updateSpecificKey(keyPath) {
+  console.log('\n╔════════════════════════════════════════════════════════════╗');
+  console.log('║         Update Specific Translation Key                   ║');
+  console.log('╚════════════════════════════════════════════════════════════╝\n');
+
+  try {
+    // Verify API key is set
+    if (!process.env.GOOGLE_TRANSLATE_API_KEY) {
+      throw new Error('GOOGLE_TRANSLATE_API_KEY environment variable is not set');
+    }
+
+    // Load source file
+    console.log(`📖 Loading source file: ${SOURCE_FILE}`);
+    const sourceData = await loadJSON(SOURCE_FILE);
+
+    if (!sourceData) {
+      throw new Error('Source file not found or empty');
+    }
+
+    // Get the value for the specified key
+    const sourceValue = getNestedValue(sourceData, keyPath);
+
+    if (sourceValue === undefined) {
+      throw new Error(`Key "${keyPath}" not found in source file`);
+    }
+
+    if (typeof sourceValue !== 'string') {
+      throw new Error(`Key "${keyPath}" is not a translatable string value`);
+    }
+
+    console.log(`✓ Found key: "${keyPath}" = "${sourceValue}"\n`);
+
+    // Ensure output directory exists
+    await ensureOutputDir();
+
+    // Reset stats for this operation
+    const updateStats = {
+      totalLanguages: languages.length,
+      languagesUpdated: 0,
+      totalCharactersTranslated: 0,
+      errors: []
+    };
+
+    console.log(`🌍 Updating key in ${languages.length} language(s)...`);
+    console.log(`⏱  Using Google Cloud Translation API...\n`);
+
+    // Process languages in batches
+    for (let i = 0; i < languages.length; i += BATCH_SIZE) {
+      const batch = languages.slice(i, i + BATCH_SIZE);
+      const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+      const totalBatches = Math.ceil(languages.length / BATCH_SIZE);
+
+      console.log(`\n📦 Batch ${batchNum}/${totalBatches} (${batch.join(', ')})\n`);
+
+      // Process each language in the batch
+      for (const lang of batch) {
+        const outputFile = path.join(OUTPUT_DIR, `${lang}.json`);
+
+        try {
+          // Load existing translation file
+          let existingData = await loadJSON(outputFile);
+
+          if (!existingData) {
+            console.log(`⚠ ${lang.padEnd(8)} - File doesn't exist, skipping`);
+            continue;
+          }
+
+          // Translate the value
+          process.stdout.write(`⟳ ${lang.padEnd(8)} - Translating "${keyPath}" `);
+
+          const translatedValue = await translateText(sourceValue, lang);
+          updateStats.totalCharactersTranslated += sourceValue.length;
+
+          // Update the specific key in the existing data
+          setNestedValue(existingData, keyPath, translatedValue);
+
+          // Save the updated file
+          await saveJSON(outputFile, existingData);
+
+          updateStats.languagesUpdated++;
+          console.log(` ✓`);
+
+        } catch (error) {
+          console.error(`\n✖ ${lang.padEnd(8)} - Error: ${error.message}`);
+          updateStats.errors.push({
+            language: lang,
+            key: keyPath,
+            error: error.message
+          });
+        }
+      }
+
+      // Delay between batches
+      if (i + BATCH_SIZE < languages.length) {
+        console.log(`\n⏸  Waiting ${DELAY_BETWEEN_BATCHES/1000}s before next batch...`);
+        await sleep(DELAY_BETWEEN_BATCHES);
+      }
+    }
+
+    // Print summary for this update
+    console.log('\n\n╔════════════════════════════════════════════════════════════╗');
+    console.log('║                     Update Summary                         ║');
+    console.log('╚════════════════════════════════════════════════════════════╝\n');
+
+    console.log(`📊 Statistics:`);
+    console.log(`   • Key updated:                 "${keyPath}"`);
+    console.log(`   • Total languages processed:   ${updateStats.totalLanguages}`);
+    console.log(`   • Languages updated:           ${updateStats.languagesUpdated}`);
+    console.log(`   • Total characters translated: ${updateStats.totalCharactersTranslated.toLocaleString()}`);
+
+    if (updateStats.errors.length > 0) {
+      console.log(`\n⚠ Errors (${updateStats.errors.length}):`);
+      updateStats.errors.forEach(err => {
+        console.log(`   • [${err.language}] ${err.error}`);
+      });
+    } else {
+      console.log(`\n✓ Key updated successfully across all languages!`);
+    }
+
+    console.log('\n');
+
+  } catch (error) {
+    console.error(`\n❌ Fatal error: ${error.message}`);
+    process.exit(1);
+  }
+}
+
+// Run if executed directly
+if (require.main === module) {
+  // Check if a specific key update is requested
+  const args = process.argv.slice(2);
+
+  if (args.length > 0 && args[0] === '--key') {
+    if (!args[1]) {
+      console.error('Error: Please specify a key path. Example: npm run translate:update -- --key "app_title"');
+      process.exit(1);
+    }
+    updateSpecificKey(args[1]).catch(error => {
+      console.error('Unhandled error:', error);
+      process.exit(1);
+    });
+  } else {
+    translateAll().catch(error => {
+      console.error('Unhandled error:', error);
+      process.exit(1);
+    });
+  }
+}
+
+module.exports = { translateAll, translateLanguage, updateSpecificKey };

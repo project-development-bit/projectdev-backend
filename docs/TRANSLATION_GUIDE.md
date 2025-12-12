@@ -16,25 +16,73 @@ This project uses Google Cloud Translation API to automatically translate applic
 
 ##  Quick Start
 
-  
 
-###  Running Translations
 
-  
+###  Available Commands
 
-To translate all strings from the source `en.json` file into all supported languages:
 
-  
 
 ```bash
 
-npm run  translate
+# Full translation (add missing keys to all languages)
+
+npm run translate
+
+
+
+# Update specific key across all languages
+
+npm run translate:update -- <key_name>
 
 ```
 
-  
 
-This command executes `node translation/translate.js`
+
+###  Running Translations
+
+
+
+**Full Translation Mode:**
+
+To translate all strings from the source `en.json` file into all supported languages:
+
+
+
+```bash
+
+npm run translate
+
+```
+
+
+
+This command executes `node translation/translate.js` and performs incremental updates (only translates missing keys).
+
+
+
+**Update Specific Key Mode:**
+
+To update a specific key's value across all language files:
+
+
+
+```bash
+
+# Top-level key
+
+npm run translate:update -- app_title
+
+
+
+# Nested key (use dot notation)
+
+npm run translate:update -- settings.privacy.title
+
+```
+
+
+
+This command executes `node translation/translate.js --key <key_name>` and updates only the specified key
 
   
 
@@ -177,7 +225,221 @@ npm run translate
 
 ---
 
-  
+
+
+###  ✏️ Updating Specific Keys (Value Changes)
+
+
+
+When you need to update the value of an existing translation key across all languages (e.g., fixing a typo, changing wording, or updating content), use the specific key update feature.
+
+
+
+**How Specific Key Updates Work:**
+
+
+
+1.  **Targeted update**: Only updates the specified key in all language files
+2.  **Preserves structure**: All other keys remain unchanged
+3.  **Value translation**: Translates the new value from `en.json` to all languages
+4.  **Key unchanged**: The key name itself is never modified
+5.  **Works with nested keys**: Supports dot notation for nested object paths
+
+
+
+**Steps for Updating a Key:**
+
+
+
+1.  **Edit the value in `translation/en.json`** (keep the key name the same):
+
+```json
+
+{
+
+  "app_title": "Gigafaucet Pro",  // Changed from "Gigafaucet"
+
+  "welcome_back": "Welcome Back!",
+
+  "settings": {
+
+    "privacy": "Enhanced Privacy Settings"  // Changed from "Privacy Settings"
+
+  }
+
+}
+
+```
+
+
+
+2.  **Run the update command for the specific key:**
+
+```bash
+
+# For top-level keys
+
+npm run translate:update -- app_title
+
+
+
+# For nested keys (use dot notation)
+
+npm run translate:update -- settings.privacy
+
+```
+
+
+
+3.  **What happens:**
+
+- Script reads the new value for the specified key from `en.json`
+- Translates the new value to all 103+ target languages
+- Updates ONLY that specific key in each language file
+- All other translations remain untouched
+- Shows real-time progress for each language
+
+
+
+**Example Output:**
+
+```
+
+╔════════════════════════════════════════════════════════════╗
+
+║         Update Specific Translation Key                   ║
+
+╚════════════════════════════════════════════════════════════╝
+
+
+
+📖 Loading source file: /path/to/translation/en.json
+
+✓ Found key: "app_title" = "Gigafaucet Pro"
+
+
+
+🌍 Updating key in 103 language(s)...
+
+⏱  Using Google Cloud Translation API...
+
+
+
+📦 Batch 1/21 (af, am, ar, az, be)
+
+
+
+⟳ af       - Translating "app_title" ✓
+
+⟳ am       - Translating "app_title" ✓
+
+⟳ ar       - Translating "app_title" ✓
+
+⟳ az       - Translating "app_title" ✓
+
+⟳ be       - Translating "app_title" ✓
+
+
+
+⏸  Waiting 5s before next batch...
+
+
+
+╔════════════════════════════════════════════════════════════╗
+
+║                     Update Summary                         ║
+
+╚════════════════════════════════════════════════════════════╝
+
+
+
+📊 Statistics:
+
+   • Key updated:                 "app_title"
+
+   • Total languages processed:   103
+
+   • Languages updated:           103
+
+   • Total characters translated: 1,442
+
+
+
+✓ Key updated successfully across all languages!
+
+```
+
+
+
+**Use Cases:**
+
+- **Fix typos**: Correct spelling or grammar mistakes
+
+- **Update branding**: Change company/product names
+
+- **Improve wording**: Refine messaging for clarity
+
+- **Content updates**: Update feature descriptions or instructions
+
+- **A/B testing**: Test different copy variations
+
+
+
+**Cost Estimate for Updating a Single Key:**
+
+- 1 key × ~14 characters (average key length) = 14 characters per language
+
+- 14 chars × 103 languages = 1,442 characters
+
+- Cost: **$0 (FREE!)** - Well within the 500K monthly free tier
+
+- You can update ~346 keys per month for FREE (346 × 14 × 103 ≈ 499K chars)
+
+
+
+**Important Notes:**
+
+- The key name itself never changes - only the value is updated
+
+- If you need to rename a key, manually update it in `en.json` and use `npm run translate` to add it as a new key
+
+- Supports nested keys using dot notation (e.g., `user.profile.settings.name`)
+
+- If the key doesn't exist in `en.json`, the command will fail with an error
+
+- Skips language files that don't exist
+
+
+
+**Examples:**
+
+```bash
+
+# Update a top-level key
+
+npm run translate:update -- app_title
+
+npm run translate:update -- welcome_message
+
+npm run translate:update -- sign_in
+
+
+
+# Update nested keys
+
+npm run translate:update -- profile.settings.privacy
+
+npm run translate:update -- errors.validation.email_invalid
+
+npm run translate:update -- dashboard.stats.total_users
+
+```
+
+
+
+---
+
+
 
 ###  🔄 Append-Only Updates (Adding New Keys)
 
