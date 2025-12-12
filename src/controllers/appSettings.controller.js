@@ -1,6 +1,8 @@
 const AppSettingsModel = require("../models/appSettings.model");
 const HttpException = require("../utils/HttpException.utils");
 const { validationResult } = require("express-validator");
+const fs = require("fs");
+const path = require("path");
 
 /******************************************************************************
  *                              App Settings Controller
@@ -142,6 +144,42 @@ class AppSettingsController {
     }
   };
 
+  // Get translation JSON file by language code
+  getLocale = async (req, res, next) => {
+    try {
+      const { lang } = req.params;
+
+      // Validate language code (alphanumeric and hyphens only, max 10 chars)
+      const langRegex = /^[a-zA-Z0-9-]{2,10}\.json$/;
+      if (!langRegex.test(lang)) {
+        throw new HttpException(400, "Invalid language code format");
+      }
+
+      // Construct the file path
+      const localeFilePath = path.join(
+        __dirname,
+        "../../translation/output",
+        `${lang}`
+      );
+
+      // Check if file exists
+      if (!fs.existsSync(localeFilePath)) {
+        throw new HttpException(404, `Translation file for language '${lang}' not found`);
+      }
+
+      // Read and parse the file
+      const fileContent = fs.readFileSync(localeFilePath, "utf8");
+      const translations = JSON.parse(fileContent);
+
+      res.status(200).json(translations);
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        return next(new HttpException(500, "Invalid translation file format"));
+      }
+
+      next(error);
+    }
+  };
 
   /**
    * Validation helper

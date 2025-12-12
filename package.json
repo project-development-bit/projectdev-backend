@@ -6,7 +6,8 @@
   "scripts": {
     "start-production": "node src/server.js",
     "start": "nodemon",
-    "dev": "npm run start"
+    "dev": "npm run start",
+    "translate": "node translation/translate.js"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
   "type": "commonjs",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.931.0",
+    "@google-cloud/translate": "^9.3.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",

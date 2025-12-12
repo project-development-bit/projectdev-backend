@@ -45,4 +45,10 @@ router.delete(
   awaitHandlerFactory(appSettingsController.deleteSettingById)
 ); // DELETE /api/v1/app-settings/id/1
 
+ // Get translation JSON by language code
+router.get(
+  "/locales/:lang",
+  awaitHandlerFactory(appSettingsController.getLocale)
+); // GET /api/v1/app-settings/locales/en
+
 module.exports = router;
