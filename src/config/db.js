@@ -80,5 +80,6 @@ module.exports = {
   // datamartQuery: datamartDB.query,
   // jwdbQuery: JWDB.query,
   coinQuery: coinDB.query,
+  coinDB: coinDB.db, // Export the pool for transactions
   // Export more query functions for other databases if necessary
 };
