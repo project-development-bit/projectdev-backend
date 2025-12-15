@@ -108,10 +108,110 @@ const passwordChangeLimiter = rateLimit({
   },
 });
 
+// Rate limiter for user verification (register)
+// 5 requests per minute per IP
+const verifyUserLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5, // 5 requests per minute per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => `verifyuser:ip:${rateLimit.ipKeyGenerator(req)}`,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: "Too many verification attempts. Please try again after 1 minute.",
+      error: "VERIFY_USER_RATE_LIMIT_EXCEEDED",
+    });
+  },
+});
+
+// Rate limiter for forgot password verification
+// 5 requests per minute per IP
+const verifyForgotPasswordLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5, // 5 requests per minute per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => `verifyforgotpwd:ip:${rateLimit.ipKeyGenerator(req)}`,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: "Too many verification attempts. Please try again after 1 minute.",
+      error: "VERIFY_FORGOT_PASSWORD_RATE_LIMIT_EXCEEDED",
+    });
+  },
+});
+
+// Rate limiter for email change verification
+// 5 requests per minute per user
+const verifyEmailChangeLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5, // 5 requests per minute per user
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) =>
+    req.currentUser?.id
+      ? `verifyemailchange:uid:${req.currentUser.id}`
+      : `verifyemailchange:ip:${rateLimit.ipKeyGenerator(req)}`,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: "Too many verification attempts. Please try again after 1 minute.",
+      error: "VERIFY_EMAIL_CHANGE_RATE_LIMIT_EXCEEDED",
+    });
+  },
+});
+
+// Rate limiter for security pin verification
+// 5 requests per minute per user
+const verifySecurityPinLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5, // 5 requests per minute per user
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) =>
+    req.currentUser?.id
+      ? `verifypin:uid:${req.currentUser.id}`
+      : `verifypin:ip:${rateLimit.ipKeyGenerator(req)}`,
+  skipSuccessfulRequests: true, // Only count failed attempts
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: "Too many PIN verification attempts. Please try again after 1 minute.",
+      error: "VERIFY_SECURITY_PIN_RATE_LIMIT_EXCEEDED",
+    });
+  },
+});
+
+// Rate limiter for delete account verification
+// 5 requests per minute per user
+const verifyDeleteAccountLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5, // 5 requests per minute per user
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) =>
+    req.currentUser?.id
+      ? `verifydelete:uid:${req.currentUser.id}`
+      : `verifydelete:ip:${rateLimit.ipKeyGenerator(req)}`,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: "Too many verification attempts. Please try again after 1 minute.",
+      error: "VERIFY_DELETE_ACCOUNT_RATE_LIMIT_EXCEEDED",
+    });
+  },
+});
+
 module.exports = {
   twoFALoginLimiter,
   twoFASetupLimiter,
   walletBalancesLimiter,
   emailChangeLimiter,
   passwordChangeLimiter,
+  verifyUserLimiter,
+  verifyForgotPasswordLimiter,
+  verifyEmailChangeLimiter,
+  verifySecurityPinLimiter,
+  verifyDeleteAccountLimiter,
 };

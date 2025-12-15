@@ -732,9 +732,11 @@ class UserController {
   };
 
   verifyUser = async (req, res) => {
+    this.checkValidation(req);
+
     const verification = await UserModel.checkSecurityCode({
-      email: req.params.email,
-      security_code: req.params.security_code,
+      email: req.body.email,
+      security_code: req.body.security_code,
     });
 
     if (!verification) {
@@ -744,10 +746,10 @@ class UserController {
         "INVALID_CODE"
       );
     } else {
-      await UserModel.updateRegistrationStatus(req.params.email);
+      await UserModel.updateRegistrationStatus(req.body.email);
     }
 
-    const user = await this.checkUserExists(req.params.email);
+    const user = await this.checkUserExists(req.body.email);
 
     const tokens = await this.generateToken(user, req);
 
@@ -769,9 +771,11 @@ class UserController {
   };
 
   verifyForgotPasswordCode = async (req, res) => {
+    this.checkValidation(req);
+
     const verification = await UserModel.checkSecurityCode({
-      email: req.params.email,
-      security_code: req.params.security_code,
+      email: req.body.email,
+      security_code: req.body.security_code,
     });
 
     if (!verification) {
@@ -789,7 +793,7 @@ class UserController {
       success: true,
       message: "Verification code is valid.",
       data: {
-        email: req.params.email,
+        email: req.body.email,
         verified: true,
       },
     });
@@ -1377,7 +1381,9 @@ class UserController {
   // Verify email change and update email
   verifyEmailChange = async (req, res, next) => {
     try {
-      const { new_email, verification_code } = req.params;
+      this.checkValidation(req);
+
+      const { new_email, verification_code } = req.body;
       const userId = req.currentUser.id;
       const user = req.currentUser;
 
@@ -1609,7 +1615,9 @@ class UserController {
   // Verify code and delete account
   verifyAndDeleteAccount = async (req, res, next) => {
     try {
-      const { verification_code } = req.params;
+      this.checkValidation(req);
+
+      const { verification_code } = req.body;
       const userId = req.currentUser.id;
       const user = req.currentUser;
 
@@ -1654,6 +1662,68 @@ class UserController {
         data: {
           deleted_user_id: result.deletedUser.id,
           deleted_email: result.deletedUser.email,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  verifySecurityPin = async (req, res, next) => {
+    try {
+      this.checkValidation(req);
+
+      const userId = req.currentUser.id;
+      const { security_pin } = req.body;
+
+      const pinString = String(security_pin);
+
+      // Validate PIN is exactly 4 digits
+      if (!/^\d{4}$/.test(pinString)) {
+        throw new HttpException(
+          400,
+          "Security PIN must be exactly 4 digits.",
+          "INVALID_PIN_FORMAT"
+        );
+      }
+
+      const status = await UserModel.checkSecurityPinStatus(userId);
+      if (!status || !status.security_pin_enabled) {
+        throw new HttpException(
+          400,
+          "Security PIN is not enabled for this account.",
+          "SECURITY_PIN_NOT_ENABLED"
+        );
+      }
+
+      const pinData = await UserModel.getSecurityPinHash(userId);
+
+      if (!pinData || !pinData.security_pin) {
+        throw new HttpException(
+          500,
+          "Security PIN data not found.",
+          "SECURITY_PIN_DATA_NOT_FOUND"
+        );
+      }
+
+      const hashedPin = Buffer.isBuffer(pinData.security_pin)
+        ? pinData.security_pin.toString()
+        : pinData.security_pin;
+
+      const isPinValid = await bcrypt.compare(pinString, hashedPin);
+      if (!isPinValid) {
+        throw new HttpException(
+          401,
+          "Invalid security PIN. Please try again.",
+          "INVALID_SECURITY_PIN"
+        );
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Security PIN verified successfully.",
+        data: {
+          verified: true,
         },
       });
     } catch (error) {

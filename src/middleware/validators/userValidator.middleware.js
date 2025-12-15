@@ -243,3 +243,62 @@ exports.validateSecurityPinToggle = [
     .isBoolean()
     .withMessage("enable must be a boolean (true or false)"),
 ];
+
+exports.validateVerifyUser = [
+  body("email")
+    .exists()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Must be a valid email"),
+  body("security_code")
+    .exists()
+    .withMessage("Security code is required")
+    .notEmpty()
+    .withMessage("Security code must not be empty"),
+];
+
+exports.validateVerifyForgotPassword = [
+  body("email")
+    .exists()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Must be a valid email"),
+  body("security_code")
+    .exists()
+    .withMessage("Security code is required")
+    .notEmpty()
+    .withMessage("Security code must not be empty"),
+];
+
+exports.validateVerifyEmailChange = [
+  body("new_email")
+    .exists()
+    .withMessage("New email is required")
+    .isEmail()
+    .withMessage("Must be a valid email"),
+  body("verification_code")
+    .exists()
+    .withMessage("Verification code is required")
+    .notEmpty()
+    .withMessage("Verification code must not be empty"),
+];
+
+exports.validateVerifySecurityPin = [
+  body("security_pin")
+    .exists()
+    .withMessage("Security PIN is required")
+    .notEmpty()
+    .withMessage("Security PIN must not be empty")
+    .isLength({ min: 4, max: 4 })
+    .withMessage("Security PIN must be exactly 4 digits")
+    .matches(/^\d{4}$/)
+    .withMessage("Security PIN must contain only digits"),
+];
+
+exports.validateVerifyDeleteAccount = [
+  body("verification_code")
+    .exists()
+    .withMessage("Verification code is required")
+    .notEmpty()
+    .withMessage("Verification code must not be empty"),
+];
