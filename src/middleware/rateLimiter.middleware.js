@@ -7,6 +7,25 @@ function keyByUserOrIp(req) {
   return `ip:${rateLimit.ipKeyGenerator(req)}`;
 }
 
+// Generic rate limiter creator
+function createRateLimiter(options) {
+  const defaults = {
+    keyGenerator: (req) =>
+      req.currentUser?.id
+        ? `uid:${req.currentUser.id}`
+        : `ip:${rateLimit.ipKeyGenerator(req)}`,
+    handler: (req, res) => {
+      res.status(429).json({
+        success: false,
+        message: options.message || "Too many requests. Please try again later.",
+        error: "RATE_LIMIT_EXCEEDED",
+      });
+    },
+  };
+
+  return rateLimit({ ...defaults, ...options });
+}
+
 // Rate limiter for 2FA verification during login
 const twoFALoginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
@@ -109,6 +128,7 @@ const passwordChangeLimiter = rateLimit({
 });
 
 module.exports = {
+  createRateLimiter,
   twoFALoginLimiter,
   twoFASetupLimiter,
   walletBalancesLimiter,
