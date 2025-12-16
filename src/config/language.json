@@ -1,20 +1,765 @@
 [
   {
-    "code": "EN",
-    "name": "English",
-    "flag": "https://flagcdn.com/w80/en.png",
-    "default": true
+    "code": "af",
+    "name": "Afrikaans",
+    "country_code": "ZA",
+    "flag": "https://flagcdn.com/w80/za.png",
+    "default": false
   },
   {
-    "code": "FR",
-    "name": "French",
+    "code": "am",
+    "name": "Amharic",
+    "country_code": "ET",
+    "flag": "https://flagcdn.com/w80/et.png",
+    "default": false
+  },
+  {
+    "code": "ar",
+    "name": "Arabic",
+    "country_code": "SA",
+    "flag": "https://flagcdn.com/w80/sa.png",
+    "default": false
+  },
+  {
+    "code": "az",
+    "name": "Azerbaijani",
+    "country_code": "AZ",
+    "flag": "https://flagcdn.com/w80/az.png",
+    "default": false
+  },
+  {
+    "code": "be",
+    "name": "Belarusian",
+    "country_code": "BY",
+    "flag": "https://flagcdn.com/w80/by.png",
+    "default": false
+  },
+  {
+    "code": "bg",
+    "name": "Bulgarian",
+    "country_code": "BG",
+    "flag": "https://flagcdn.com/w80/bg.png",
+    "default": false
+  },
+  {
+    "code": "bn",
+    "name": "Bengali",
+    "country_code": "BD",
+    "flag": "https://flagcdn.com/w80/bd.png",
+    "default": false
+  },
+  {
+    "code": "bs",
+    "name": "Bosnian",
+    "country_code": "BA",
+    "flag": "https://flagcdn.com/w80/ba.png",
+    "default": false
+  },
+  {
+    "code": "ca",
+    "name": "Catalan",
+    "country_code": "ES",
+    "flag": "https://flagcdn.com/w80/es.png",
+    "default": false
+  },
+  {
+    "code": "ceb",
+    "name": "Cebuano",
+    "country_code": "PH",
+    "flag": "https://flagcdn.com/w80/ph.png",
+    "default": false
+  },
+  {
+    "code": "co",
+    "name": "Corsican",
+    "country_code": "FR",
     "flag": "https://flagcdn.com/w80/fr.png",
     "default": false
   },
   {
-    "code": "MM",
-    "name": "Myanmar",
+    "code": "cs",
+    "name": "Czech",
+    "country_code": "CZ",
+    "flag": "https://flagcdn.com/w80/cz.png",
+    "default": false
+  },
+  {
+    "code": "cy",
+    "name": "Welsh",
+    "country_code": "GB",
+    "flag": "https://flagcdn.com/w80/gb.png",
+    "default": false
+  },
+  {
+    "code": "da",
+    "name": "Danish",
+    "country_code": "DK",
+    "flag": "https://flagcdn.com/w80/dk.png",
+    "default": false
+  },
+  {
+    "code": "de",
+    "name": "German",
+    "country_code": "DE",
+    "flag": "https://flagcdn.com/w80/de.png",
+    "default": false
+  },
+  {
+    "code": "el",
+    "name": "Greek",
+    "country_code": "GR",
+    "flag": "https://flagcdn.com/w80/gr.png",
+    "default": false
+  },
+  {
+    "code": "en",
+    "name": "English",
+    "country_code": "US",
+    "flag": "https://flagcdn.com/w80/us.png",
+    "default": true
+  },
+  {
+    "code": "eo",
+    "name": "Esperanto",
+    "country_code": "EU",
+    "flag": "https://flagcdn.com/w80/eu.png",
+    "default": false
+  },
+  {
+    "code": "es",
+    "name": "Spanish",
+    "country_code": "ES",
+    "flag": "https://flagcdn.com/w80/es.png",
+    "default": false
+  },
+  {
+    "code": "et",
+    "name": "Estonian",
+    "country_code": "EE",
+    "flag": "https://flagcdn.com/w80/ee.png",
+    "default": false
+  },
+  {
+    "code": "eu",
+    "name": "Basque",
+    "country_code": "ES",
+    "flag": "https://flagcdn.com/w80/es.png",
+    "default": false
+  },
+  {
+    "code": "fa",
+    "name": "Persian",
+    "country_code": "IR",
+    "flag": "https://flagcdn.com/w80/ir.png",
+    "default": false
+  },
+  {
+    "code": "fi",
+    "name": "Finnish",
+    "country_code": "FI",
+    "flag": "https://flagcdn.com/w80/fi.png",
+    "default": false
+  },
+  {
+    "code": "fr",
+    "name": "French",
+    "country_code": "FR",
+    "flag": "https://flagcdn.com/w80/fr.png",
+    "default": false
+  },
+  {
+    "code": "fy",
+    "name": "Frisian",
+    "country_code": "NL",
+    "flag": "https://flagcdn.com/w80/nl.png",
+    "default": false
+  },
+  {
+    "code": "ga",
+    "name": "Irish",
+    "country_code": "IE",
+    "flag": "https://flagcdn.com/w80/ie.png",
+    "default": false
+  },
+  {
+    "code": "gd",
+    "name": "Scottish Gaelic",
+    "country_code": "GB",
+    "flag": "https://flagcdn.com/w80/gb.png",
+    "default": false
+  },
+  {
+    "code": "gl",
+    "name": "Galician",
+    "country_code": "ES",
+    "flag": "https://flagcdn.com/w80/es.png",
+    "default": false
+  },
+  {
+    "code": "gu",
+    "name": "Gujarati",
+    "country_code": "IN",
+    "flag": "https://flagcdn.com/w80/in.png",
+    "default": false
+  },
+  {
+    "code": "ha",
+    "name": "Hausa",
+    "country_code": "NG",
+    "flag": "https://flagcdn.com/w80/ng.png",
+    "default": false
+  },
+  {
+    "code": "haw",
+    "name": "Hawaiian",
+    "country_code": "US",
+    "flag": "https://flagcdn.com/w80/us.png",
+    "default": false
+  },
+  {
+    "code": "he",
+    "name": "Hebrew",
+    "country_code": "IL",
+    "flag": "https://flagcdn.com/w80/il.png",
+    "default": false
+  },
+  {
+    "code": "hi",
+    "name": "Hindi",
+    "country_code": "IN",
+    "flag": "https://flagcdn.com/w80/in.png",
+    "default": false
+  },
+  {
+    "code": "hmn",
+    "name": "Hmong",
+    "country_code": "LA",
+    "flag": "https://flagcdn.com/w80/la.png",
+    "default": false
+  },
+  {
+    "code": "hr",
+    "name": "Croatian",
+    "country_code": "HR",
+    "flag": "https://flagcdn.com/w80/hr.png",
+    "default": false
+  },
+  {
+    "code": "ht",
+    "name": "Haitian Creole",
+    "country_code": "HT",
+    "flag": "https://flagcdn.com/w80/ht.png",
+    "default": false
+  },
+  {
+    "code": "hu",
+    "name": "Hungarian",
+    "country_code": "HU",
+    "flag": "https://flagcdn.com/w80/hu.png",
+    "default": false
+  },
+  {
+    "code": "hy",
+    "name": "Armenian",
+    "country_code": "AM",
+    "flag": "https://flagcdn.com/w80/am.png",
+    "default": false
+  },
+  {
+    "code": "id",
+    "name": "Indonesian",
+    "country_code": "ID",
+    "flag": "https://flagcdn.com/w80/id.png",
+    "default": false
+  },
+  {
+    "code": "ig",
+    "name": "Igbo",
+    "country_code": "NG",
+    "flag": "https://flagcdn.com/w80/ng.png",
+    "default": false
+  },
+  {
+    "code": "is",
+    "name": "Icelandic",
+    "country_code": "IS",
+    "flag": "https://flagcdn.com/w80/is.png",
+    "default": false
+  },
+  {
+    "code": "it",
+    "name": "Italian",
+    "country_code": "IT",
+    "flag": "https://flagcdn.com/w80/it.png",
+    "default": false
+  },
+  {
+    "code": "ja",
+    "name": "Japanese",
+    "country_code": "JP",
+    "flag": "https://flagcdn.com/w80/jp.png",
+    "default": false
+  },
+  {
+    "code": "jv",
+    "name": "Javanese",
+    "country_code": "ID",
+    "flag": "https://flagcdn.com/w80/id.png",
+    "default": false
+  },
+  {
+    "code": "ka",
+    "name": "Georgian",
+    "country_code": "GE",
+    "flag": "https://flagcdn.com/w80/ge.png",
+    "default": false
+  },
+  {
+    "code": "kk",
+    "name": "Kazakh",
+    "country_code": "KZ",
+    "flag": "https://flagcdn.com/w80/kz.png",
+    "default": false
+  },
+  {
+    "code": "km",
+    "name": "Khmer",
+    "country_code": "KH",
+    "flag": "https://flagcdn.com/w80/kh.png",
+    "default": false
+  },
+  {
+    "code": "kn",
+    "name": "Kannada",
+    "country_code": "IN",
+    "flag": "https://flagcdn.com/w80/in.png",
+    "default": false
+  },
+  {
+    "code": "ko",
+    "name": "Korean",
+    "country_code": "KR",
+    "flag": "https://flagcdn.com/w80/kr.png",
+    "default": false
+  },
+  {
+    "code": "ku",
+    "name": "Kurdish",
+    "country_code": "IQ",
+    "flag": "https://flagcdn.com/w80/iq.png",
+    "default": false
+  },
+  {
+    "code": "ky",
+    "name": "Kyrgyz",
+    "country_code": "KG",
+    "flag": "https://flagcdn.com/w80/kg.png",
+    "default": false
+  },
+  {
+    "code": "la",
+    "name": "Latin",
+    "country_code": "VA",
+    "flag": "https://flagcdn.com/w80/va.png",
+    "default": false
+  },
+  {
+    "code": "lb",
+    "name": "Luxembourgish",
+    "country_code": "LU",
+    "flag": "https://flagcdn.com/w80/lu.png",
+    "default": false
+  },
+  {
+    "code": "lo",
+    "name": "Lao",
+    "country_code": "LA",
+    "flag": "https://flagcdn.com/w80/la.png",
+    "default": false
+  },
+  {
+    "code": "lt",
+    "name": "Lithuanian",
+    "country_code": "LT",
+    "flag": "https://flagcdn.com/w80/lt.png",
+    "default": false
+  },
+  {
+    "code": "lv",
+    "name": "Latvian",
+    "country_code": "LV",
+    "flag": "https://flagcdn.com/w80/lv.png",
+    "default": false
+  },
+  {
+    "code": "mg",
+    "name": "Malagasy",
+    "country_code": "MG",
+    "flag": "https://flagcdn.com/w80/mg.png",
+    "default": false
+  },
+  {
+    "code": "mi",
+    "name": "Maori",
+    "country_code": "NZ",
+    "flag": "https://flagcdn.com/w80/nz.png",
+    "default": false
+  },
+  {
+    "code": "mk",
+    "name": "Macedonian",
+    "country_code": "MK",
+    "flag": "https://flagcdn.com/w80/mk.png",
+    "default": false
+  },
+  {
+    "code": "ml",
+    "name": "Malayalam",
+    "country_code": "IN",
+    "flag": "https://flagcdn.com/w80/in.png",
+    "default": false
+  },
+  {
+    "code": "mn",
+    "name": "Mongolian",
+    "country_code": "MN",
+    "flag": "https://flagcdn.com/w80/mn.png",
+    "default": false
+  },
+  {
+    "code": "mr",
+    "name": "Marathi",
+    "country_code": "IN",
+    "flag": "https://flagcdn.com/w80/in.png",
+    "default": false
+  },
+  {
+    "code": "ms",
+    "name": "Malay",
+    "country_code": "MY",
+    "flag": "https://flagcdn.com/w80/my.png",
+    "default": false
+  },
+  {
+    "code": "mt",
+    "name": "Maltese",
+    "country_code": "MT",
+    "flag": "https://flagcdn.com/w80/mt.png",
+    "default": false
+  },
+  {
+    "code": "my",
+    "name": "Myanmar (Burmese)",
+    "country_code": "MM",
     "flag": "https://flagcdn.com/w80/mm.png",
+    "default": false
+  },
+  {
+    "code": "ne",
+    "name": "Nepali",
+    "country_code": "NP",
+    "flag": "https://flagcdn.com/w80/np.png",
+    "default": false
+  },
+  {
+    "code": "nl",
+    "name": "Dutch",
+    "country_code": "NL",
+    "flag": "https://flagcdn.com/w80/nl.png",
+    "default": false
+  },
+  {
+    "code": "no",
+    "name": "Norwegian",
+    "country_code": "NO",
+    "flag": "https://flagcdn.com/w80/no.png",
+    "default": false
+  },
+  {
+    "code": "ny",
+    "name": "Chichewa",
+    "country_code": "MW",
+    "flag": "https://flagcdn.com/w80/mw.png",
+    "default": false
+  },
+  {
+    "code": "or",
+    "name": "Odia",
+    "country_code": "IN",
+    "flag": "https://flagcdn.com/w80/in.png",
+    "default": false
+  },
+  {
+    "code": "pa",
+    "name": "Punjabi",
+    "country_code": "IN",
+    "flag": "https://flagcdn.com/w80/in.png",
+    "default": false
+  },
+  {
+    "code": "pl",
+    "name": "Polish",
+    "country_code": "PL",
+    "flag": "https://flagcdn.com/w80/pl.png",
+    "default": false
+  },
+  {
+    "code": "ps",
+    "name": "Pashto",
+    "country_code": "AF",
+    "flag": "https://flagcdn.com/w80/af.png",
+    "default": false
+  },
+  {
+    "code": "pt",
+    "name": "Portuguese",
+    "country_code": "PT",
+    "flag": "https://flagcdn.com/w80/pt.png",
+    "default": false
+  },
+  {
+    "code": "ro",
+    "name": "Romanian",
+    "country_code": "RO",
+    "flag": "https://flagcdn.com/w80/ro.png",
+    "default": false
+  },
+  {
+    "code": "ru",
+    "name": "Russian",
+    "country_code": "RU",
+    "flag": "https://flagcdn.com/w80/ru.png",
+    "default": false
+  },
+  {
+    "code": "rw",
+    "name": "Kinyarwanda",
+    "country_code": "RW",
+    "flag": "https://flagcdn.com/w80/rw.png",
+    "default": false
+  },
+  {
+    "code": "sd",
+    "name": "Sindhi",
+    "country_code": "PK",
+    "flag": "https://flagcdn.com/w80/pk.png",
+    "default": false
+  },
+  {
+    "code": "si",
+    "name": "Sinhala",
+    "country_code": "LK",
+    "flag": "https://flagcdn.com/w80/lk.png",
+    "default": false
+  },
+  {
+    "code": "sk",
+    "name": "Slovak",
+    "country_code": "SK",
+    "flag": "https://flagcdn.com/w80/sk.png",
+    "default": false
+  },
+  {
+    "code": "sl",
+    "name": "Slovenian",
+    "country_code": "SI",
+    "flag": "https://flagcdn.com/w80/si.png",
+    "default": false
+  },
+  {
+    "code": "sm",
+    "name": "Samoan",
+    "country_code": "WS",
+    "flag": "https://flagcdn.com/w80/ws.png",
+    "default": false
+  },
+  {
+    "code": "sn",
+    "name": "Shona",
+    "country_code": "ZW",
+    "flag": "https://flagcdn.com/w80/zw.png",
+    "default": false
+  },
+  {
+    "code": "so",
+    "name": "Somali",
+    "country_code": "SO",
+    "flag": "https://flagcdn.com/w80/so.png",
+    "default": false
+  },
+  {
+    "code": "sq",
+    "name": "Albanian",
+    "country_code": "AL",
+    "flag": "https://flagcdn.com/w80/al.png",
+    "default": false
+  },
+  {
+    "code": "sr",
+    "name": "Serbian",
+    "country_code": "RS",
+    "flag": "https://flagcdn.com/w80/rs.png",
+    "default": false
+  },
+  {
+    "code": "st",
+    "name": "Sesotho",
+    "country_code": "LS",
+    "flag": "https://flagcdn.com/w80/ls.png",
+    "default": false
+  },
+  {
+    "code": "su",
+    "name": "Sundanese",
+    "country_code": "ID",
+    "flag": "https://flagcdn.com/w80/id.png",
+    "default": false
+  },
+  {
+    "code": "sv",
+    "name": "Swedish",
+    "country_code": "SE",
+    "flag": "https://flagcdn.com/w80/se.png",
+    "default": false
+  },
+  {
+    "code": "sw",
+    "name": "Swahili",
+    "country_code": "KE",
+    "flag": "https://flagcdn.com/w80/ke.png",
+    "default": false
+  },
+  {
+    "code": "ta",
+    "name": "Tamil",
+    "country_code": "IN",
+    "flag": "https://flagcdn.com/w80/in.png",
+    "default": false
+  },
+  {
+    "code": "te",
+    "name": "Telugu",
+    "country_code": "IN",
+    "flag": "https://flagcdn.com/w80/in.png",
+    "default": false
+  },
+  {
+    "code": "tg",
+    "name": "Tajik",
+    "country_code": "TJ",
+    "flag": "https://flagcdn.com/w80/tj.png",
+    "default": false
+  },
+  {
+    "code": "th",
+    "name": "Thai",
+    "country_code": "TH",
+    "flag": "https://flagcdn.com/w80/th.png",
+    "default": false
+  },
+  {
+    "code": "tk",
+    "name": "Turkmen",
+    "country_code": "TM",
+    "flag": "https://flagcdn.com/w80/tm.png",
+    "default": false
+  },
+  {
+    "code": "tl",
+    "name": "Tagalog",
+    "country_code": "PH",
+    "flag": "https://flagcdn.com/w80/ph.png",
+    "default": false
+  },
+  {
+    "code": "tr",
+    "name": "Turkish",
+    "country_code": "TR",
+    "flag": "https://flagcdn.com/w80/tr.png",
+    "default": false
+  },
+  {
+    "code": "tt",
+    "name": "Tatar",
+    "country_code": "RU",
+    "flag": "https://flagcdn.com/w80/ru.png",
+    "default": false
+  },
+  {
+    "code": "ug",
+    "name": "Uyghur",
+    "country_code": "CN",
+    "flag": "https://flagcdn.com/w80/cn.png",
+    "default": false
+  },
+  {
+    "code": "uk",
+    "name": "Ukrainian",
+    "country_code": "UA",
+    "flag": "https://flagcdn.com/w80/ua.png",
+    "default": false
+  },
+  {
+    "code": "ur",
+    "name": "Urdu",
+    "country_code": "PK",
+    "flag": "https://flagcdn.com/w80/pk.png",
+    "default": false
+  },
+  {
+    "code": "uz",
+    "name": "Uzbek",
+    "country_code": "UZ",
+    "flag": "https://flagcdn.com/w80/uz.png",
+    "default": false
+  },
+  {
+    "code": "vi",
+    "name": "Vietnamese",
+    "country_code": "VN",
+    "flag": "https://flagcdn.com/w80/vn.png",
+    "default": false
+  },
+  {
+    "code": "xh",
+    "name": "Xhosa",
+    "country_code": "ZA",
+    "flag": "https://flagcdn.com/w80/za.png",
+    "default": false
+  },
+  {
+    "code": "yi",
+    "name": "Yiddish",
+    "country_code": "IL",
+    "flag": "https://flagcdn.com/w80/il.png",
+    "default": false
+  },
+  {
+    "code": "yo",
+    "name": "Yoruba",
+    "country_code": "NG",
+    "flag": "https://flagcdn.com/w80/ng.png",
+    "default": false
+  },
+  {
+    "code": "zh",
+    "name": "Chinese (Simplified)",
+    "country_code": "CN",
+    "flag": "https://flagcdn.com/w80/cn.png",
+    "default": false
+  },
+  {
+    "code": "zh-TW",
+    "name": "Chinese (Traditional)",
+    "country_code": "TW",
+    "flag": "https://flagcdn.com/w80/tw.png",
+    "default": false
+  },
+  {
+    "code": "zu",
+    "name": "Zulu",
+    "country_code": "ZA",
+    "flag": "https://flagcdn.com/w80/za.png",
     "default": false
   }
 ]
