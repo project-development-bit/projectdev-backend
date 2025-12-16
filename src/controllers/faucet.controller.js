@@ -28,6 +28,21 @@ class FaucetController {
     }
   };
 
+  //Get public faucet status (no authentication required)
+  getPublicFaucetStatus = async (req, res, next) => {
+    try {
+      const status = await FaucetModel.getPublicFaucetStatus();
+
+      res.status(200).json({
+        success: true,
+        data: status
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  };
+
   //Claim faucet reward
   claimFaucet = async (req, res, next) => {
     try {

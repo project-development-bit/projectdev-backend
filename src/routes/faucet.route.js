@@ -25,6 +25,21 @@ const faucetStatusLimiter = createRateLimiter({
   legacyHeaders: false,
 });
 
+const publicFaucetStatusLimiter = createRateLimiter({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 60, // Max 60 requests per minute for public endpoint
+  message: "Too many requests. Please slow down.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+//Get public faucet status (no authentication required)
+router.get(
+  "/public/status",
+  publicFaucetStatusLimiter,
+  awaitHandlerFactory(faucetController.getPublicFaucetStatus)
+);
+
 //Get faucet status for authenticated user
 router.get(
   "/status",

@@ -303,6 +303,57 @@ class FaucetModel {
     }
   };
 
+  //Get public faucet status
+  getPublicFaucetStatus = async () => {
+    // Calculate time until daily reset (midnight UTC)
+    const now = new Date();
+    const tomorrow = new Date(Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate() + 1,
+      FAUCET_CONFIG.DAILY_RESET_HOUR,
+      0,
+      0,
+      0
+    ));
+    const msUntilReset = tomorrow.getTime() - now.getTime();
+    const hoursUntilReset = Math.floor(msUntilReset / (1000 * 60 * 60));
+    const minutesUntilReset = Math.floor((msUntilReset % (1000 * 60 * 60)) / (1000 * 60));
+    const secondsUntilReset = Math.floor((msUntilReset % (1000 * 60)) / 1000);
+
+    const allStreakRewards = generateStreakRewards(FAUCET_CONFIG.MAX_STREAK_DAYS);
+
+    return {
+      reward_per_claim: FAUCET_CONFIG.BASE_REWARD,
+      interval_hours: FAUCET_CONFIG.CLAIM_INTERVAL_HOURS,
+      next_faucet_at: null,
+      can_claim_now: true,
+      time_remaining: null,
+      base_daily_target: FAUCET_CONFIG.BASE_DAILY_TARGET,
+      max_daily_target: FAUCET_CONFIG.MAX_DAILY_TARGET,
+      target_growth_rate: FAUCET_CONFIG.TARGET_GROWTH_RATE,
+      daily_reset: {
+        reset_time_utc: `${FAUCET_CONFIG.DAILY_RESET_HOUR.toString().padStart(2, '0')}:00:00 UTC`,
+        next_reset_at: tomorrow.toISOString(),
+        time_until_reset: {
+          hours: hoursUntilReset,
+          minutes: minutesUntilReset,
+          seconds: secondsUntilReset,
+          total_seconds: Math.floor(msUntilReset / 1000)
+        }
+      },
+      streak: {
+        current_day: 1,
+        max_days: FAUCET_CONFIG.MAX_STREAK_DAYS,
+        progress_percent: 0,
+        daily_target: 300,
+        earned_today: 0,
+        remaining: 300,
+        days: allStreakRewards
+      }
+    };
+  };
+
   //Get faucet status for user
   getFaucetStatus = async (userId) => {
     // Process daily reset first
