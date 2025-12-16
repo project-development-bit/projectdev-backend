@@ -61,6 +61,19 @@ class DBConnection {
       throw err;
     });
   };
+
+  // Get a connection for transaction handling
+  getConnection = async () => {
+    return new Promise((resolve, reject) => {
+      this.db.getConnection((error, connection) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(connection);
+      });
+    });
+  };
 }
 
 const HttpStatusCodes = Object.freeze({
@@ -80,5 +93,6 @@ module.exports = {
   // datamartQuery: datamartDB.query,
   // jwdbQuery: JWDB.query,
   coinQuery: coinDB.query,
+  getCoinConnection: coinDB.getConnection,
   // Export more query functions for other databases if necessary
 };
