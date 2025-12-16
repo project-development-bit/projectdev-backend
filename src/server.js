@@ -22,6 +22,7 @@ const walletRouter = require('./routes/wallet.route');
 const languagesRouter = require('./routes/languages.route');
 const earningsRouter = require('./routes/earnings.route');
 const faucetRouter = require('./routes/faucet.route');
+const fortuneWheelRouter = require('./routes/fortuneWheel.route');
 
 const countryRouter = require('./routes/country.route');
 
@@ -56,6 +57,7 @@ app.use(`/api/v1/wallet`, walletRouter);
 app.use(`/api/v1/languages`, languagesRouter);
 app.use(`/api/v1/earnings`, earningsRouter);
 app.use(`/api/v1/faucet`, faucetRouter);
+app.use(`/api/v1/fortune-wheel`, fortuneWheelRouter);
 
 app.use(`/api/v1/countries`, countryRouter);
 
