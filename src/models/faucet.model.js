@@ -250,6 +250,19 @@ class FaucetModel {
       await executeQuery(updateStreakSql, [newTotalEarned, now, userId]);
 
       // 6. Credit coins to user balance
+      const checkBalanceSql = `
+        SELECT user_id FROM balances WHERE user_id = ? AND currency = 'COIN'
+      `;
+      const balanceExists = await executeQuery(checkBalanceSql, [userId]);
+
+      if (!balanceExists || balanceExists.length === 0) {
+        // Create COIN balance record if it doesn't exist
+        const createBalanceSql = `
+          INSERT INTO balances (user_id, currency, available, pending)
+          VALUES (?, 'COIN', 0.00000000, 0.00000000)
+        `;
+        await executeQuery(createBalanceSql, [userId]);
+      }
       const updateBalanceSql = `
         UPDATE balances
         SET available = available + ?
