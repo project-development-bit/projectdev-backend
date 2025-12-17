@@ -216,6 +216,215 @@ class OfferwallController {
       return false;
     }
   };
+
+  handleBitLabsPostback = async (req, res, next) => {
+    const provider = "bitlabs";
+    const webhookIp = req.ip || req.connection.remoteAddress;
+
+    try {
+      const params = req.query;
+      const headers = req.headers;
+
+      // Log incoming webhook
+      await OfferwallModel.saveWebhookLog(
+        provider,
+        webhookIp,
+        headers,
+        params,
+        "ok",
+        null
+      );
+
+      // Validate required parameters
+      const requiredParams = ["uid", "tx", "val", "hash"];
+      for (const param of requiredParams) {
+        if (!params[param]) {
+          throw new HttpException(
+            400,
+            `Missing required parameter: ${param}`,
+            "INVALID_PARAMS"
+          );
+        }
+      }
+
+      // Validate signature
+      const isValidSignature = this.validateBitLabsSignature(params);
+      if (!isValidSignature) {
+        await OfferwallModel.saveWebhookLog(
+          provider,
+          webhookIp,
+          headers,
+          params,
+          "invalid_signature",
+          "Signature validation failed"
+        );
+
+        throw new HttpException(
+          403,
+          "Invalid signature",
+          "INVALID_SIGNATURE"
+        );
+      }
+
+      // Check for duplicate conversion
+      const providerConversionId = params.tx;
+      const existingConversion = await OfferwallModel.checkDuplicateConversion(
+        provider,
+        providerConversionId
+      );
+
+      if (existingConversion) {
+        await OfferwallModel.saveWebhookLog(
+          provider,
+          webhookIp,
+          headers,
+          params,
+          "duplicate",
+          "Duplicate conversion"
+        );
+
+        return res.status(200).send("OK");
+      }
+
+      // Find user by offer_token (BitLabs sends this as uid parameter)
+      let user = await OfferwallModel.getUserByOfferToken(params.uid);
+
+      if (!user) {
+        throw new HttpException(404, "User not found", "USER_NOT_FOUND");
+      }
+
+      // Parse amounts
+      const coins = parseFloat(params.val) || 0;
+      const usdAmount = parseFloat(params.raw) || 0;
+      const xpEarned = Math.floor(coins * 10);
+
+      // Determine reward type based on additional parameters
+      let rewardType = "other";
+      if (params.callback_type === "survey" || params.type) {
+        rewardType = "survey";
+      } else if (params.callback_type === "offer" || params.offer_id) {
+        rewardType = "offer";
+      } else if (params.callback_type === "receipt" || params.receipt_state) {
+        rewardType = "other"; // Can add 'receipt' to enum if needed
+      }
+
+      // Check for reversals/reconciliation
+      const isReversed =
+        params.type === "RECONCILIATION" ||
+        params.task_state === "RECONCILED" ||
+        coins < 0;
+
+      // Prepare conversion data
+      const conversionData = {
+        userId: user.id,
+        providerId: provider,
+        providerConversionId: providerConversionId,
+        externalUserId: params.uid,
+        rewardType: rewardType,
+        coins: Math.abs(coins), // Store absolute value
+        usdAmount: usdAmount,
+        xpEarned: Math.abs(xpEarned),
+        status: isReversed ? "reversed" : "pending",
+        ip: params.ip || null,
+        webhookIp: webhookIp,
+        userAgent: headers["user-agent"] || null,
+        rawPayload: params,
+      };
+
+      // Create conversion record
+      const conversionId = await OfferwallModel.createConversion(
+        conversionData
+      );
+
+      // Credit or reverse balance
+      if (isReversed) {
+        await OfferwallModel.reverseConversion(
+          user.id,
+          Math.abs(coins),
+          Math.abs(xpEarned),
+          conversionId
+        );
+      } else {
+        await OfferwallModel.creditUserBalance(
+          user.id,
+          coins,
+          xpEarned,
+          conversionId
+        );
+      }
+
+      return res.status(200).send("OK");
+    } catch (error) {
+      await OfferwallModel.saveWebhookLog(
+        provider,
+        webhookIp,
+        req.headers,
+        req.query,
+        "error",
+        error.message
+      );
+
+      next(error);
+    }
+  };
+
+  validateBitLabsSignature = (params) => {
+    try {
+      const secretKey = process.env.BITLABS_APP_SECRET;
+
+      if (!secretKey) {
+        console.error("BITLABS_APP_SECRET not configured");
+        return false;
+      }
+
+      // Skip signature check if enabled (testing only)
+      if (process.env.BITLABS_SKIP_SIGNATURE_CHECK === 'true') {
+        console.warn("⚠️ WARNING: BitLabs signature validation is DISABLED - only for testing!");
+        return true;
+      }
+
+      const receivedHash = params.hash;
+      if (!receivedHash) {
+        console.error("No hash parameter received");
+        return false;
+      }
+
+      // Remove hash from parameters
+      const paramsToSign = { ...params };
+      delete paramsToSign.hash;
+
+      // Sort parameters alphabetically and build query string
+      const sortedKeys = Object.keys(paramsToSign).sort();
+      const signatureString = sortedKeys
+        .map((key) => `${key}=${paramsToSign[key]}`)
+        .join("&");
+
+      console.log("BitLabs signature validation debug:", {
+        signatureString: signatureString,
+        receivedHash: receivedHash,
+      });
+
+      // BitLabs uses SHA-1 HMAC
+      const calculatedHash = crypto
+        .createHmac("sha1", secretKey)
+        .update(signatureString)
+        .digest("hex");
+
+      const isValid = calculatedHash === receivedHash;
+
+      if (!isValid) {
+        console.error("BitLabs signature validation failed:", {
+          received: receivedHash,
+          calculated: calculatedHash,
+        });
+      }
+
+      return isValid;
+    } catch (error) {
+      console.error("BitLabs signature validation error:", error);
+      return false;
+    }
+  };
 }
 
 module.exports = new OfferwallController();

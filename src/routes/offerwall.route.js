@@ -4,21 +4,16 @@ const offerwallController = require("../controllers/offerwall.controller");
 const awaitHandlerFactory = require("../middleware/awaitHandlerFactory.middleware");
 
 router.get(
-  "/postback/:provider",
+  "/postback/playtime",
   awaitHandlerFactory(async (req, res, next) => {
-    const provider = req.params.provider.toLowerCase();
-  //     https://your-domain.com/api/v1/offerwall/postback/playtime?user_id={user_id}&offer_id={offer_id}&offer_name={offer_name}&payout={payo
-  //    ut}&signature={signature}&event={event}&conversionDatetime={conversionDatetime}&clickDatetime={clickDatetime}&callback_type={callback
-  //    _type}
-    if (provider === "playtime") {
-      return await offerwallController.handlePlaytimePostback(req, res, next);
-    }
+    return await offerwallController.handlePlaytimePostback(req, res, next);
+  })
+);
 
-    return res.status(404).json({
-      success: false,
-      message: `Provider ${provider} not supported`,
-      code: "PROVIDER_NOT_SUPPORTED",
-    });
+router.get(
+  "/postback/bitlabs",
+  awaitHandlerFactory(async (req, res, next) => {
+    return await offerwallController.handleBitLabsPostback(req, res, next);
   })
 );
 
