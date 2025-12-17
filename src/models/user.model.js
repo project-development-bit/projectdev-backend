@@ -162,7 +162,8 @@ class UserModel {
     // Separate parameters into users table columns and profile columns
     const userColumns = ['email', 'password', 'role', 'refresh_token', 'security_code',
                         'twofa_enabled', 'twofa_secret', 'is_banned', 'is_verified',
-                        'referral_code', 'referred_by', 'last_login_at', 'offer_token', 'security_pin_enabled'];
+                        'referral_code', 'referred_by', 'last_login_at', 'offer_token', 'security_pin_enabled',
+                        'login_provider', 'social_provider_id'];
 
     const profileColumns = ['name', 'avatar_url', 'country_id', 'language', 'interest_enable', 'risk_score', 'show_onboarding', 'notifications_enabled', 'show_stats_enabled', 'anonymous_in_contests'];
 
@@ -565,6 +566,86 @@ class UserModel {
     const result = await coinQuery(sql, [userId, userId]);
     return result;
   };
+
+  // Find user by social provider
+  findBySocialProvider = async (provider, providerId) => {
+    const sql = `
+      SELECT
+        u.*,
+        up.name,
+        up.avatar_url,
+        up.country_id,
+        up.language,
+        up.interest_enable,
+        up.risk_score,
+        up.show_onboarding,
+        up.notifications_enabled,
+        up.show_stats_enabled,
+        up.anonymous_in_contests
+      FROM ${this.tableName} u
+      LEFT JOIN ${this.profilesTableName} up ON u.id = up.user_id
+      WHERE u.login_provider = ? AND u.social_provider_id = ?
+    `;
+
+    const result = await coinQuery(sql, [provider, providerId]);
+    return result[0];
+  };
+
+  // Check if social provider account exists
+  socialProviderExists = async (provider, providerId) => {
+    const sql = `
+      SELECT id FROM ${this.tableName}
+      WHERE login_provider = ? AND social_provider_id = ?
+    `;
+    const result = await coinQuery(sql, [provider, providerId]);
+    return result.length > 0;
+  };
+
+  // Create user with Google authentication
+  createGoogleUser = async ({ email, googleId, name, referralCode, referrerId, countryId, role, avatarUrl = null }) => {
+    try {
+      // Insert into users table
+      const userSql = `
+        INSERT INTO ${this.tableName}
+        (email, password, role, referral_code, referred_by, is_verified, is_banned, login_provider, social_provider_id)
+        VALUES (?, NULL, ?, ?, ?, 1, 0, 'google', ?)
+      `;
+
+      const userResult = await coinQuery(userSql, [
+        email,
+        role,
+        referralCode,
+        referrerId,
+        googleId
+      ]);
+
+      const userId = userResult.insertId;
+
+      // Insert into user_profiles table
+      const profileSql = `
+        INSERT INTO ${this.profilesTableName}
+        (user_id, name, avatar_url, country_id, language, interest_enable, risk_score, show_onboarding, notifications_enabled, show_stats_enabled, anonymous_in_contests)
+        VALUES (?, ?, ?, ?, 'en', 0, 0, 1, 1, 1, 0)
+      `;
+
+      await coinQuery(profileSql, [
+        userId,
+        name || '',
+        avatarUrl,
+        countryId
+      ]);
+
+      return {
+        id: userId,
+        insertId: userId
+      };
+
+    } catch (error) {
+      console.error('Google user creation failed:', error);
+      throw error;
+    }
+  };
+
 }
 
 module.exports = new UserModel();

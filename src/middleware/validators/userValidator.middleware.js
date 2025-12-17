@@ -302,3 +302,33 @@ exports.validateVerifyDeleteAccount = [
     .notEmpty()
     .withMessage("Verification code must not be empty"),
 ];
+
+exports.validateGoogleSignup = [
+  body("idToken")
+    .exists()
+    .withMessage("Firebase ID token is required")
+    .notEmpty()
+    .withMessage("Firebase ID token must not be empty")
+    .isString()
+    .withMessage("Firebase ID token must be a string"),
+  body("referral_code")
+    .optional()
+    .isString()
+    .withMessage("Referral code must be a string"),
+  body("country_code")
+    .optional()
+    .isString()
+    .withMessage("Country code must be a string")
+    .isLength({ min: 2, max: 2 })
+    .withMessage("Country code must be exactly 2 characters"),
+];
+
+exports.validateGoogleSignin = [
+  body("idToken")
+    .exists()
+    .withMessage("Firebase ID token is required")
+    .notEmpty()
+    .withMessage("Firebase ID token must not be empty")
+    .isString()
+    .withMessage("Firebase ID token must be a string"),
+];

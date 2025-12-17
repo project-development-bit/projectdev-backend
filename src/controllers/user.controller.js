@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const BalanceModel = require('../models/balance.model');
 const CountryModel = require("../models/country.model");
+const admin = require("../config/firebase.config");
 
 const {
   uploadImageToS3,
@@ -1785,6 +1786,218 @@ class UserController {
     console.log("Delete account verification sent: %s", info.messageId);
 
     return true;
+  };
+
+  // Google Sign Up
+  googleSignup = async (req, res, next) => {
+    try {
+      this.checkValidation(req);
+
+      const { idToken, referral_code, country_code } = req.body;
+
+      // Verify the Firebase ID token
+      let decodedToken;
+      try {
+        decodedToken = await admin.auth().verifyIdToken(idToken);
+      } catch (error) {
+        throw new HttpException(401, "Invalid Firebase token", "INVALID_TOKEN");
+      }
+
+      const { email, name, uid: googleId } = decodedToken;
+
+      if (!email) {
+        throw new HttpException(
+          400,
+          "Email not found in Google account",
+          "EMAIL_NOT_FOUND"
+        );
+      }
+
+      // Check if user already exists
+      const existingUser = await UserModel.findOne({ email });
+      if (existingUser) {
+        throw new HttpException(
+          409,
+          "An account with this email already exists. Please sign in instead.",
+          "EMAIL_ALREADY_EXISTS"
+        );
+      }
+
+      // Handle country_code if provided
+      let countryId = null;
+      if (country_code) {
+        const country = await CountryModel.findByCode(country_code);
+        if (country) {
+          countryId = country.id;
+        }
+      }
+
+      // Handle referral code if provided
+      let referrerId = null;
+      if (referral_code) {
+        const referrer = await ReferralModel.getUserByReferralCode(
+          referral_code
+        );
+        if (referrer) {
+          referrerId = referrer.id;
+        }
+      }
+
+      // Generate unique referral code for new user
+      const referralCode = await generateUniqueReferralCode();
+
+      // Handle avatar upload if provided
+      let avatarUrl = null;
+      if (req.file) {
+        // Validate avatar file
+        const maxSizeBytes = parseInt(
+          process.env.AVATAR_MAX_SIZE_BYTES || 2097152
+        ); // Default 2MB
+        const validation = validateImageFile(req.file, maxSizeBytes);
+
+        if (!validation.valid) {
+          throw new HttpException(400, validation.error, "INVALID_AVATAR_FILE");
+        }
+
+        // Upload avatar to S3
+        try {
+          avatarUrl = await uploadImageToS3(
+            req.file.buffer,
+            "avatars",
+            `google-${googleId}`,
+            req.file.mimetype,
+            req.file.originalname
+          );
+        } catch (error) {
+          console.error("S3 upload failed during Google signup:", error);
+          avatarUrl = null;
+        }
+      }
+
+      // Create user with Google authentication
+      const userResult = await UserModel.createGoogleUser({
+        email,
+        googleId,
+        name,
+        referralCode,
+        referrerId,
+        countryId,
+        role: Role.NormalUser,
+        avatarUrl
+      });
+
+      const userId = userResult.insertId;
+
+      // Create referral relationship if user was referred
+      if (referrerId) {
+        await ReferralModel.createReferralRelationship(referrerId, userId);
+        await ReferralModel.updateUserReferredBy(userId, referrerId);
+      }
+
+      // Get the created user
+      const user = await UserModel.findOne({ id: userId }, true);
+
+      // Generate tokens
+      const tokens = await this.generateToken(user, req);
+
+      res.status(201).json({
+        success: true,
+        message: "Google account registered successfully.",
+        data: {
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            interest_enable: user.interest_enable,
+            show_onboarding: user.show_onboarding,
+          },
+          tokens: tokens,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // Google Sign In
+  googleSignin = async (req, res, next) => {
+    try {
+      this.checkValidation(req);
+
+      const { idToken } = req.body;
+
+      // Verify the Firebase ID token
+      let decodedToken;
+      try {
+        decodedToken = await admin.auth().verifyIdToken(idToken);
+      } catch (error) {
+        throw new HttpException(401, "Invalid Firebase token", "INVALID_TOKEN");
+      }
+
+      const { email, uid: googleId } = decodedToken;
+
+      if (!email) {
+        throw new HttpException(
+          400,
+          "Email not found in Google account",
+          "EMAIL_NOT_FOUND"
+        );
+      }
+
+      // Find user by email
+      const user = await UserModel.findOne({ email }, true);
+
+      if (!user) {
+        throw new HttpException(
+          404,
+          "No account found with this email. Please sign up first.",
+          "USER_NOT_FOUND"
+        );
+      }
+
+      // Check if user is banned
+      if (user.is_banned === 1) {
+        throw new HttpException(
+          401,
+          "Your account is banned. Please contact support.",
+          "BANNED_ACCOUNT"
+        );
+      }
+
+      const userData = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        twofa_enabled: user.twofa_enabled,
+        interest_enable: user.interest_enable,
+        show_onboarding: user.show_onboarding,
+      };
+
+      // If 2FA is enabled, return only userId without tokens
+      if (user.twofa_enabled === 1) {
+        return res.status(200).json({
+          success: true,
+          message: "Login successful.",
+          userId: user.id,
+        });
+      }
+
+      // Generate tokens
+      const tokens = await this.generateToken(user, req);
+
+      res.status(200).json({
+        success: true,
+        message: "Google sign in successful.",
+        data: {
+          user: userData,
+          tokens: tokens,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   };
 
 }

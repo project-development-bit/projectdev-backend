@@ -24,6 +24,8 @@ const {
   validateVerifyForgotPassword,
   validateVerifySecurityPin,
   validateVerifyDeleteAccount,
+  validateGoogleSignup,
+  validateGoogleSignin,
 } = require("../middleware/validators/userValidator.middleware");
 
 const {
@@ -108,6 +110,20 @@ router.post(
   verifyTurnstile({ expectedAction: 'login', includeRemoteIp: true }),
   awaitHandlerFactory(userController.userLogin)
 ); // localhost:3000/api/v1/users/login
+
+router.post(
+  "/google/signup",
+  validateGoogleSignup,
+  verifyTurnstile({ expectedAction: 'google-signup', includeRemoteIp: true }),
+  awaitHandlerFactory(userController.googleSignup)
+); // localhost:3000/api/v1/users/google-signup
+
+router.post(
+  "/google/signin",
+  validateGoogleSignin,
+  verifyTurnstile({ expectedAction: 'google-signin', includeRemoteIp: true }),
+  awaitHandlerFactory(userController.googleSignin)
+); // localhost:3000/api/v1/users/google-signin
 
 router.post(
   "/forgot_password",
