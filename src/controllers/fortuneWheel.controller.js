@@ -31,10 +31,23 @@ class FortuneWheelController {
       if(!req.currentUser || !req.currentUser.id) {
         throw new HttpException(401, "Unauthorized");
       }
-      let canSpin = !(await FortuneWheelModel.hasSpunToday(req.currentUser.id));
+
+      const userId = req.currentUser.id;
+
+      // Get spin statistics
+      const todaySpinCount = await FortuneWheelModel.getTodaySpinCount(userId);
+      const dailyLimit = await FortuneWheelModel.getDailySpinLimit(userId);
+      const remainingSpins = Math.max(0, dailyLimit - todaySpinCount);
+      const canSpin = remainingSpins > 0;
+
       res.status(200).json({
         success: true,
-        canSpin,
+        data: {
+          canSpin,
+          todaySpins: todaySpinCount,
+          dailyLimit,
+          remainingSpins
+        }
       });
 
     } catch (error) {
@@ -73,9 +86,15 @@ class FortuneWheelController {
     } catch (error) {
       // Handle specific errors
       if (error.message === "ALREADY_SPUN_TODAY") {
-        next(new HttpException(403, "Daily spin already used", {
+        // Get spin info for better error message
+        const todaySpins = await FortuneWheelModel.getTodaySpinCount(req.currentUser.id);
+        const dailyLimit = await FortuneWheelModel.getDailySpinLimit(req.currentUser.id);
+
+        next(new HttpException(403, "Daily spin limit reached", {
           code: 'ALREADY_SPUN_TODAY',
-          message: "You have already spun the wheel today. Come back tomorrow!"
+          message: `You have used all ${dailyLimit} of your daily spins (${todaySpins}/${dailyLimit}). Come back tomorrow or level up to get more spins!`,
+          todaySpins,
+          dailyLimit
         }));
       } else if (error.message === "NO_REWARDS_CONFIGURED") {
         next(new HttpException(500, "Wheel configuration error", {
@@ -88,51 +107,6 @@ class FortuneWheelController {
     }
   };
 
-    //Process a daily fortune wheel spin
-  testSpinWheel = async (req, res, next) => {
-    try {
-      this.checkValidation(req);
-
-      const userId = req.currentUser.id;
-      const ip = req.ip || req.connection?.remoteAddress || null;
-      const deviceFingerprint = req.body?.deviceFingerprint || null;
-
-      // Process the spin
-      const spinResult = await FortuneWheelModel.testProcessSpin(userId, ip, deviceFingerprint);
-
-      // Format success message based on reward type
-      let message = "";
-      if (spinResult.reward_coins > 0) {
-        message = `Congratulations! You won ${spinResult.reward_coins} coins!`;
-      } else if (spinResult.reward_usd > 0) {
-        message = `Congratulations! You won $${spinResult.reward_usd} cash!`;
-      } else {
-        message = `You got: ${spinResult.label}`;
-      }
-
-      res.status(200).json({
-        success: true,
-        message,
-        data: spinResult
-      });
-
-    } catch (error) {
-      // Handle specific errors
-      if (error.message === "ALREADY_SPUN_TODAY") {
-        next(new HttpException(403, "Daily spin already used", {
-          code: 'ALREADY_SPUN_TODAY',
-          message: "You have already spun the wheel today. Come back tomorrow!"
-        }));
-      } else if (error.message === "NO_REWARDS_CONFIGURED") {
-        next(new HttpException(500, "Wheel configuration error", {
-          code: 'NO_REWARDS_CONFIGURED',
-          message: "Fortune wheel is not configured properly. Please contact support."
-        }));
-      } else {
-        next(error);
-      }
-    }
-  };
 
   //Get user's spin history
   getSpinHistory = async (req, res, next) => {

@@ -1,13 +1,80 @@
 const { coinQuery, getCoinConnection } = require("../config/db");
+const { getUserLevelConfig } = require("../config/rewards.config");
 
 class FortuneWheelModel {
   rewardsTableName = "fortune_wheel_rewards";
   logsTableName = "fortune_wheel_logs";
   balancesTableName = "balances";
   ledgerTableName = "ledger_entries";
+  usersTableName = "users";
 
   // Daily coin cap for fortune wheel
   DAILY_COIN_CAP = 30;
+
+  //Get user's current XP and level
+  getUserLevel = async (userId) => {
+    const sql = `SELECT xp FROM ${this.usersTableName} WHERE id = ?`;
+    const result = await coinQuery(sql, [userId]);
+
+    if (!result || result.length === 0) {
+      return { xp: 0, level: 1 };
+    }
+
+    const userXp = parseFloat(result[0].xp || 0);
+    const config = getUserLevelConfig();
+
+    if (!config) {
+      return { xp: userXp, level: 1 };
+    }
+
+    // Calculate level from XP
+    let level = 1;
+    const { base_xp_for_level_2, growth_factor_per_level } = config.xp_rules.config;
+
+    let totalXpNeeded = 0;
+    while (true) {
+      const nextLevel = level + 1;
+      const xpForNextLevel = nextLevel === 2
+        ? base_xp_for_level_2
+        : Math.round(base_xp_for_level_2 * Math.pow(growth_factor_per_level, nextLevel - 2));
+
+      totalXpNeeded += xpForNextLevel;
+
+      if (userXp < totalXpNeeded) {
+        break;
+      }
+
+      level = nextLevel;
+    }
+
+    return { xp: userXp, level };
+  };
+
+  //Get user's daily spin limit based on their level
+  getDailySpinLimit = async (userId) => {
+    const { level } = await this.getUserLevel(userId);
+    const config = getUserLevelConfig();
+
+    if (!config || !config.statuses) {
+      return 1; // Default to 1 spin if config is missing
+    }
+
+    // Find the appropriate sub-level configuration
+    for (const status of config.statuses) {
+      for (const subLevel of status.sub_levels) {
+        // Check if user level matches this sub-level
+        const nextSubLevel = status.sub_levels[status.sub_levels.indexOf(subLevel) + 1];
+        const maxLevel = nextSubLevel ? nextSubLevel.min_level - 1 : status.max_level;
+
+        if (level >= subLevel.min_level && (!maxLevel || level <= maxLevel)) {
+          return subLevel.daily_spin_free || 1;
+        }
+      }
+    }
+
+    // Default to 1 if no matching level found
+    return 1;
+  };
 
   //Get all active fortune wheel rewards
   getActiveRewards = async () => {
@@ -48,8 +115,8 @@ class FortuneWheelModel {
     return await coinQuery(sql);
   };
 
-  //Check if user has already spun today
-  hasSpunToday = async (userId) => {
+  //Get today's spin count
+  getTodaySpinCount = async (userId) => {
     const today = new Date().toISOString().split('T')[0]; // UTC date
 
     const sql = `
@@ -60,7 +127,15 @@ class FortuneWheelModel {
     `;
 
     const result = await coinQuery(sql, [userId, today]);
-    return result[0].count > 0;
+    return parseInt(result[0].count || 0);
+  };
+
+  //Check if user has reached daily spin limit
+  hasSpunToday = async (userId) => {
+    const todaySpinCount = await this.getTodaySpinCount(userId);
+    const dailyLimit = await this.getDailySpinLimit(userId);
+
+    return todaySpinCount >= dailyLimit;
   };
 
   //Get total coins earned from fortune wheel today

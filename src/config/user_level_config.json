@@ -56,8 +56,8 @@
           "id": "silver_1",
           "label": "Silver 1",
           "min_level": 30,
-          "daily_spin_free": 1,
-          "weekly_chest_free": 1,
+          "daily_spin_free": 2,
+          "weekly_chest_free": 2,
           "offer_boost_percent": 4,
           "ptc_discount_percent": 0
         },
@@ -65,8 +65,8 @@
           "id": "silver_2",
           "label": "Silver 2",
           "min_level": 40,
-          "daily_spin_free": 1,
-          "weekly_chest_free": 1,
+          "daily_spin_free": 2,
+          "weekly_chest_free": 2,
           "offer_boost_percent": 5,
           "ptc_discount_percent": 1
         },
@@ -74,8 +74,8 @@
           "id": "silver_3",
           "label": "Silver 3",
           "min_level": 50,
-          "daily_spin_free": 1,
-          "weekly_chest_free": 1,
+          "daily_spin_free": 2,
+          "weekly_chest_free": 3,
           "offer_boost_percent": 6,
           "ptc_discount_percent": 1
         }
@@ -91,8 +91,8 @@
           "id": "gold_1",
           "label": "Gold 1",
           "min_level": 60,
-          "daily_spin_free": 1,
-          "weekly_chest_free": 1,
+          "daily_spin_free": 3,
+          "weekly_chest_free": 3,
           "offer_boost_percent": 7,
           "ptc_discount_percent": 1
         },
@@ -100,8 +100,8 @@
           "id": "gold_2",
           "label": "Gold 2",
           "min_level": 70,
-          "daily_spin_free": 1,
-          "weekly_chest_free": 1,
+          "daily_spin_free": 3,
+          "weekly_chest_free": 3,
           "offer_boost_percent": 8,
           "ptc_discount_percent": 2
         },
@@ -109,8 +109,8 @@
           "id": "gold_3",
           "label": "Gold 3",
           "min_level": 80,
-          "daily_spin_free": 1,
-          "weekly_chest_free": 1,
+          "daily_spin_free": 3,
+          "weekly_chest_free": 3,
           "offer_boost_percent": 9,
           "ptc_discount_percent": 2
         }
@@ -126,8 +126,8 @@
           "id": "diamond_1",
           "label": "Diamond 1",
           "min_level": 90,
-          "daily_spin_free": 1,
-          "weekly_chest_free": 1,
+          "daily_spin_free": 5,
+          "weekly_chest_free": 5,
           "offer_boost_percent": 10,
           "ptc_discount_percent": 3
         },
@@ -135,8 +135,8 @@
           "id": "diamond_2",
           "label": "Diamond 2",
           "min_level": 100,
-          "daily_spin_free": 1,
-          "weekly_chest_free": 1,
+          "daily_spin_free": 5,
+          "weekly_chest_free": 5,
           "offer_boost_percent": 11,
           "ptc_discount_percent": 3
         },
@@ -144,8 +144,8 @@
           "id": "diamond_3",
           "label": "Diamond 3",
           "min_level": 110,
-          "daily_spin_free": 1,
-          "weekly_chest_free": 1,
+          "daily_spin_free": 5,
+          "weekly_chest_free": 5,
           "offer_boost_percent": 12,
           "ptc_discount_percent": 4
         }
@@ -161,8 +161,8 @@
           "id": "legend_1",
           "label": "Legend 1",
           "min_level": 120,
-          "daily_spin_free": 1,
-          "weekly_chest_free": 1,
+          "daily_spin_free": 7,
+          "weekly_chest_free": 7,
           "offer_boost_percent": 13,
           "ptc_discount_percent": 4
         }

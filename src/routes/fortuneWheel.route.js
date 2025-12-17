@@ -50,18 +50,6 @@ router.post(
 );
 
 
-//Spin the fortune wheel (for testing purposes)
-router.post(
-  "/spin/test",
-  auth(),
-  // wheelSpinLimiter,
-  // spinWheelSchema,
-  // verifyTurnstile({
-  //   expectedAction: 'fortune_wheel_spin',
-  //   includeRemoteIp: true
-  // }),
-  awaitHandlerFactory(fortuneWheelController.testSpinWheel)
-);
 
 //Get user's spin history
 router.get(
