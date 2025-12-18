@@ -222,6 +222,40 @@ const verifyDeleteAccountLimiter = rateLimit({
   },
 });
 
+// Rate limiter for Google signup
+// 5 requests per 15 minutes per IP
+const googleSignupLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 requests per 15 minutes per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => `googlesignup:ip:${rateLimit.ipKeyGenerator(req)}`,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: "Too many Google signup attempts. Please try again after 15 minutes.",
+      error: "GOOGLE_SIGNUP_RATE_LIMIT_EXCEEDED",
+    });
+  },
+});
+
+// Rate limiter for Google signin
+// 10 requests per 15 minutes per IP
+const googleSigninLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 requests per 15 minutes per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => `googlesignin:ip:${rateLimit.ipKeyGenerator(req)}`,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: "Too many Google signin attempts. Please try again after 15 minutes.",
+      error: "GOOGLE_SIGNIN_RATE_LIMIT_EXCEEDED",
+    });
+  },
+});
+
 module.exports = {
   createRateLimiter,
   twoFALoginLimiter,
@@ -234,4 +268,6 @@ module.exports = {
   verifyEmailChangeLimiter,
   verifySecurityPinLimiter,
   verifyDeleteAccountLimiter,
+  googleSignupLimiter,
+  googleSigninLimiter,
 };

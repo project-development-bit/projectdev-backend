@@ -36,6 +36,8 @@ const {
   verifyEmailChangeLimiter,
   verifySecurityPinLimiter,
   verifyDeleteAccountLimiter,
+  googleSignupLimiter,
+  googleSigninLimiter,
 } = require("../middleware/rateLimiter.middleware");
 
 router.get(
@@ -113,6 +115,7 @@ router.post(
 
 router.post(
   "/google/signup",
+  googleSignupLimiter,
   validateGoogleSignup,
   verifyTurnstile({ expectedAction: 'google-signup', includeRemoteIp: true }),
   awaitHandlerFactory(userController.googleSignup)
@@ -120,6 +123,7 @@ router.post(
 
 router.post(
   "/google/signin",
+  googleSigninLimiter,
   validateGoogleSignin,
   verifyTurnstile({ expectedAction: 'google-signin', includeRemoteIp: true }),
   awaitHandlerFactory(userController.googleSignin)
