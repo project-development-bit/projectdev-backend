@@ -334,6 +334,15 @@ class UserController {
 
       const user = await this.checkUserExists(email);
 
+      // Prevent Google accounts from logging in with password
+      if (user.google_id) {
+        throw new HttpException(
+          403,
+          "This account uses Google Sign-In. Please continue with Google.",
+          "GOOGLE_ACCOUNT_NO_PASSWORD"
+        );
+      }
+
       const hashedPassword = Buffer.isBuffer(user.password)
         ? user.password.toString()
         : user.password;
@@ -1803,6 +1812,15 @@ class UserController {
         throw new HttpException(401, "Invalid Firebase token", "INVALID_TOKEN");
       }
 
+      // Validate that the token is from Google provider
+      if (decodedToken.firebase?.sign_in_provider !== 'google.com') {
+        throw new HttpException(
+          401,
+          "Invalid sign-in provider. Only Google authentication is supported.",
+          "INVALID_PROVIDER"
+        );
+      }
+
       const { email, name, uid: googleId } = decodedToken;
 
       if (!email) {
@@ -1933,6 +1951,15 @@ class UserController {
         decodedToken = await admin.auth().verifyIdToken(idToken);
       } catch (error) {
         throw new HttpException(401, "Invalid Firebase token", "INVALID_TOKEN");
+      }
+
+      // Validate that the token is from Google provider
+      if (decodedToken.firebase?.sign_in_provider !== 'google.com') {
+        throw new HttpException(
+          401,
+          "Invalid sign-in provider. Only Google authentication is supported.",
+          "INVALID_PROVIDER"
+        );
       }
 
       const { email, uid: googleId } = decodedToken;

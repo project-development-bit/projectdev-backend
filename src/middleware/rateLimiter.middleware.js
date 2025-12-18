@@ -223,13 +223,13 @@ const verifyDeleteAccountLimiter = rateLimit({
 });
 
 // Rate limiter for Google signup
-// 5 requests per 15 minutes per IP
+// 20 requests per 15 minutes per IP + email
 const googleSignupLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 requests per 15 minutes per IP
+  max: 20, // 20 requests per 15 minutes per IP/email
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => `googlesignup:ip:${rateLimit.ipKeyGenerator(req)}`,
+  keyGenerator: keyByUserOrIp, // IP + email based limiting
   handler: (req, res) => {
     res.status(429).json({
       success: false,
@@ -240,13 +240,13 @@ const googleSignupLimiter = rateLimit({
 });
 
 // Rate limiter for Google signin
-// 10 requests per 15 minutes per IP
+// 10 requests per 15 minutes per IP + email (stricter than signup)
 const googleSigninLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // 10 requests per 15 minutes per IP
+  max: 10, // 10 requests per 15 minutes per IP/email (stricter for signin)
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => `googlesignin:ip:${rateLimit.ipKeyGenerator(req)}`,
+  keyGenerator: keyByUserOrIp, // IP + email based limiting
   handler: (req, res) => {
     res.status(429).json({
       success: false,
