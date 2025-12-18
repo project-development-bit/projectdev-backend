@@ -41,11 +41,11 @@ router.post(
   "/spin",
   auth(),
   wheelSpinLimiter,
-  spinWheelSchema,
-  verifyTurnstile({
-    expectedAction: 'fortune_wheel_spin',
-    includeRemoteIp: true
-  }),
+  //spinWheelSchema,
+  // verifyTurnstile({
+  //   expectedAction: 'fortune_wheel_spin',
+  //   includeRemoteIp: true
+  // }),
   awaitHandlerFactory(fortuneWheelController.spinWheel)
 );
 

@@ -320,7 +320,6 @@ class FortuneWheelModel {
         reward_coins: finalCoins,
         reward_usd: selectedReward.reward_usd,
         reward_type: selectedReward.reward_type,
-        remaining_daily_cap: Math.max(0, this.DAILY_COIN_CAP - todayEarnings - finalCoins)
       };
 
     } catch (error) {

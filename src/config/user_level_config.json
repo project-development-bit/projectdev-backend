@@ -75,7 +75,7 @@
           "label": "Silver 3",
           "min_level": 50,
           "daily_spin_free": 2,
-          "weekly_chest_free": 3,
+          "weekly_chest_free": 2,
           "offer_boost_percent": 6,
           "ptc_discount_percent": 1
         }
