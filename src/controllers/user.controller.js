@@ -335,7 +335,7 @@ class UserController {
       const user = await this.checkUserExists(email);
 
       // Prevent Google accounts from logging in with password
-      if (user.google_id) {
+      if (user.social_provider_id) {
         throw new HttpException(
           403,
           "This account uses Google Sign-In. Please continue with Google.",
