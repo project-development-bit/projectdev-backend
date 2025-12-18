@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Feumaidh am post-d ùr a bhith eadar-dhealaichte bhon phost-d làithreach",
   "your_country": "Do Dhùthaich",
   "change_your_country_note": "Chan urrainn dhut do dhùthaich atharrachadh ach 3 tursan sa bhliadhna.",
-  "setup_2fa_app_description": "Cleachd aplacaid dearbhaidh mar [Google Authenticator, Microsoft Authenticator, Authy] no [1Password]. Sgan an còd QR gu h-ìosal. Cruthaichidh e còd 4-dhigitach dhut airson a chuir a-steach gu h-ìosal.",
+  "setup_2fa_app_description": "Cleachd aplacaid dearbhaidh mar [Google Authenticator, Microsoft Authenticator, Authy,] no [1Password]. Sgan an còd QR gu h-ìosal. Cruthaichidh e còd 4-dhigitach dhut airson a chuir a-steach gu h-ìosal.",
   "setup_2fa_app_note": "Ma tha duilgheadas agad a’ sganadh a’ chòd QR, tagh cuir a-steach le làimh san aplacaid dearbhaidh agad agus cuir a-steach d’ ainm-cleachdaiche agus an còd a leanas:",
   "setup_2fa_app_title": "Suidhich dearbhadh dà-fhactar",
   "authentication_code": "Còd Dearbhaidh",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} latha air ais",
   "time_week_ago": "{0} seachdain air ais",
   "time_month_ago": "{0} mìos air ais",
-  "time_year_ago": "{0} bliadhna air ais"
+  "time_year_ago": "{0} bliadhna air ais",
+  "failed_to_crop_image": "Dh’fhàillig bearradh na h-ìomhaigh",
+  "remaining": "Air fhàgail",
+  "you_have_reached_max_faucet_reward": "Tha thu air an duais faucet as àirde a ruighinn 🎉 Cùm do shreath gus a chumail suas!",
+  "your_faucet": "An tap agad",
+  "your_faucet_ready": "Tha an tap agad deiseil!",
+  "claim_your_faucet": "Tagradh do Tap",
+  "event_your_faucet": "An tap agad",
+  "claim_faucet": "Tagradh faucet",
+  "faucet_claimed_successfully": "Chaidh tagradh a dhèanamh air an tap gu soirbheachail!",
+  "ready": "Deiseil",
+  "login_required": "Feumar Logadh a-steach",
+  "you_must_login_to_continue": "Feumaidh tu logadh a-steach gus leantainn air adhart",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Feumaidh tu captcha fhuasgladh gus tagradh a dhèanamh airson do faucet."
 }

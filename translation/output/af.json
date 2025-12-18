@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Nuwe e-posadres moet verskil van huidige e-posadres",
   "your_country": "Jou land",
   "change_your_country_note": "Jy kan jou land slegs 3 keer per jaar verander.",
-  "setup_2fa_app_description": "Gebruik 'n verifikasie-app soos [Google Authenticator, Microsoft Authenticator, Authy] of [1Password]. Skandeer die QR-kode hieronder. Dit sal 'n 4-syfer-kode genereer wat jy hieronder moet invoer.",
+  "setup_2fa_app_description": "Gebruik 'n verifikasie-app soos [Google Authenticator, Microsoft Authenticator, Authy,] of [1Password]. Skandeer die QR-kode hieronder. Dit sal 'n 4-syfer-kode genereer wat jy hieronder moet invoer.",
   "setup_2fa_app_note": "As jy probleme ondervind om die QR-kode te skandeer, kies handmatige invoer in jou verifikasie-app en voer jou gebruikersnaam en die volgende kode in:",
   "setup_2fa_app_title": "Stel tweefaktor-verifikasie op",
   "authentication_code": "Verifikasiekode",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} dag gelede",
   "time_week_ago": "{0} week gelede",
   "time_month_ago": "{0} maand gelede",
-  "time_year_ago": "{0} jaar gelede"
+  "time_year_ago": "{0} jaar gelede",
+  "failed_to_crop_image": "Kon nie beeld snoei nie",
+  "remaining": "Oorblywend",
+  "you_have_reached_max_faucet_reward": "Jy het jou maksimum kraanbeloning bereik 🎉 Hou jou reeks aan om dit te behou!",
+  "your_faucet": "Jou kraan",
+  "your_faucet_ready": "Jou kraan is gereed!",
+  "claim_your_faucet": "Eis jou kraan op",
+  "event_your_faucet": "Jou kraan",
+  "claim_faucet": "Eis kraan op",
+  "faucet_claimed_successfully": "Kraan suksesvol opgeëis!",
+  "ready": "Gereed",
+  "login_required": "Aanmelding Vereis",
+  "you_must_login_to_continue": "Jy moet aanmeld om voort te gaan",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Jy moet 'n captcha oplos om jou kraan te eis."
 }

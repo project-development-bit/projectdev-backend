@@ -771,5 +771,18 @@
   "time_day_ago": "{0} dzień temu",
   "time_week_ago": "{0} tydzień temu",
   "time_month_ago": "{0} miesiąc temu",
-  "time_year_ago": "{0} rok temu"
+  "time_year_ago": "{0} rok temu",
+  "failed_to_crop_image": "Nie udało się przyciąć obrazu",
+  "remaining": "Pozostały",
+  "you_have_reached_max_faucet_reward": "Osiągnąłeś maksymalną liczbę nagród 🎉 Utrzymaj passę, aby ją utrzymać!",
+  "your_faucet": "Twój kran",
+  "your_faucet_ready": "Twój kran jest gotowy!",
+  "claim_your_faucet": "Zdobądź swój kran",
+  "event_your_faucet": "Twój kran",
+  "claim_faucet": "Kran roszczeń",
+  "faucet_claimed_successfully": "Kran został pomyślnie przejęty!",
+  "ready": "Gotowy",
+  "login_required": "Wymagane logowanie",
+  "you_must_login_to_continue": "Musisz się zalogować, aby kontynuować",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Aby odebrać kran, musisz rozwiązać kod captcha."
 }

@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Nový e-mail sa musí líšiť od súčasného e-mailu",
   "your_country": "Vaša krajina",
   "change_your_country_note": "Svoju krajinu môžete zmeniť iba 3-krát ročne.",
-  "setup_2fa_app_description": "Použite autentifikačnú aplikáciu, ako napríklad [Google Authenticator, Microsoft Authenticator, Authy] alebo [1Password]. Naskenujte QR kód nižšie. Vygeneruje sa 4-miestny kód, ktorý zadáte nižšie.",
+  "setup_2fa_app_description": "Použite overovaciu aplikáciu, ako napríklad [Google Authenticator, Microsoft Authenticator, Authy] alebo [1Password]. Naskenujte QR kód nižšie. Vygeneruje sa 4-miestny kód, ktorý zadáte nižšie.",
   "setup_2fa_app_note": "Ak máte problémy so skenovaním QR kódu, vyberte v aplikácii na overenie totožnosti možnosť manuálneho zadania a zadajte svoje používateľské meno a nasledujúci kód:",
   "setup_2fa_app_title": "Nastavenie dvojfaktorového overenia",
   "authentication_code": "Autentifikačný kód",
@@ -771,5 +771,18 @@
   "time_day_ago": "Pred {0} dňom",
   "time_week_ago": "Pred {0} týždňom",
   "time_month_ago": "Pred {0} mesiacom",
-  "time_year_ago": "Pred {0} rokom"
+  "time_year_ago": "Pred {0} rokom",
+  "failed_to_crop_image": "Orezanie obrázka zlyhalo",
+  "remaining": "Zostávajúce",
+  "you_have_reached_max_faucet_reward": "Dosiahli ste maximálnu odmenu za kohútik 🎉 Udržte si ju v sérii!",
+  "your_faucet": "Váš kohútik",
+  "your_faucet_ready": "Váš kohútik je pripravený!",
+  "claim_your_faucet": "Získajte svoj kohútik",
+  "event_your_faucet": "Váš kohútik",
+  "claim_faucet": "Nárokujte si kohútik",
+  "faucet_claimed_successfully": "Nárok na kohútik bol úspešný!",
+  "ready": "Pripravený",
+  "login_required": "Vyžaduje sa prihlásenie",
+  "you_must_login_to_continue": "Pre pokračovanie sa musíte prihlásiť",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Na uplatnenie si nároku na batériu musíte vyriešiť captcha."
 }

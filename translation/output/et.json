@@ -771,5 +771,18 @@
   "time_day_ago": "{0} päev tagasi",
   "time_week_ago": "{0} nädal tagasi",
   "time_month_ago": "{0} kuu tagasi",
-  "time_year_ago": "{0} aasta tagasi"
+  "time_year_ago": "{0} aasta tagasi",
+  "failed_to_crop_image": "Pildi kärpimine ebaõnnestus",
+  "remaining": "Järelejäänud",
+  "you_have_reached_max_faucet_reward": "Oled saavutanud maksimaalse kraanipreemia 🎉 Jätka oma võiduseeriat, et seda säilitada!",
+  "your_faucet": "Sinu kraan",
+  "your_faucet_ready": "Teie kraan on valmis!",
+  "claim_your_faucet": "Nõua oma kraan",
+  "event_your_faucet": "Sinu kraan",
+  "claim_faucet": "Nõude kraan",
+  "faucet_claimed_successfully": "Kraani kasutamine õnnestus!",
+  "ready": "Valmis",
+  "login_required": "Sisselogimine on nõutav",
+  "you_must_login_to_continue": "Jätkamiseks peate sisse logima",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Oma kraani saamiseks peate lahendama captcha."
 }

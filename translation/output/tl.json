@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Ang bagong email ay dapat na iba sa kasalukuyang email",
   "your_country": "Iyong Bansa",
   "change_your_country_note": "Maaari mong baguhin ang iyong bansa nang 3 beses lamang bawat taon.",
-  "setup_2fa_app_description": "Gumamit ng authenticator app tulad ng [Google Authenticator, Microsoft Authenticator, Authy] o [1Password]. I-scan ang QR code sa ibaba. Bubuo ito ng 4-digit na code na ilalagay mo sa ibaba.",
+  "setup_2fa_app_description": "Gumamit ng authenticator app tulad ng [Google Authenticator, Microsoft Authenticator, Authy,] o [1Password]. I-scan ang QR code sa ibaba. Bubuo ito ng 4-digit na code na ilalagay mo sa ibaba.",
   "setup_2fa_app_note": "Kung nagkakaproblema ka sa pag-scan ng QR code, piliin ang manu-manong entry sa iyong authenticator app at ilagay ang iyong username at ang sumusunod na code:",
   "setup_2fa_app_title": "I-setup ang Two Factor Authentication",
   "authentication_code": "Code ng Pagpapatunay",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} araw na ang nakalipas",
   "time_week_ago": "{0} linggo na ang nakalipas",
   "time_month_ago": "{0} buwan na ang nakalipas",
-  "time_year_ago": "{0} taon na ang nakalipas"
+  "time_year_ago": "{0} taon na ang nakalipas",
+  "failed_to_crop_image": "Nabigong i-crop ang larawan",
+  "remaining": "Natitira",
+  "you_have_reached_max_faucet_reward": "Naabot mo na ang pinakamataas na gantimpala sa faucet 🎉 Panatilihin ang iyong streak para mapanatili ito!",
+  "your_faucet": "Ang Iyong Gripo",
+  "your_faucet_ready": "Handa na ang iyong gripo!",
+  "claim_your_faucet": "Kunin ang Iyong Gripo",
+  "event_your_faucet": "Ang Iyong Gripo",
+  "claim_faucet": "gripo ng pag-claim",
+  "faucet_claimed_successfully": "Matagumpay na na-claim ang Faucet!",
+  "ready": "Handa na",
+  "login_required": "Kinakailangan ang Pag-login",
+  "you_must_login_to_continue": "Kailangan mong mag-login para magpatuloy",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Kailangan mong mag-resolve ng captcha para makuha ang iyong gripo."
 }

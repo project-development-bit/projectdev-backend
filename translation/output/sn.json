@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Nyowani email inofanira kunge yakasiyana neyezvino email",
   "your_country": "Nyika Yako",
   "change_your_country_note": "Iwe unogona kushandura nyika yako chete katatu pagore.",
-  "setup_2fa_app_description": "Shandisa app yekuvimbisa se [Google Authenticator, Microsoft Authenticator, Authy] kana [1Password]. Skena QR code iri pazasi. Ichagadzira kodhi ine manhamba mana kuti uise pazasi.",
+  "setup_2fa_app_description": "Shandisa app yekuvimbisa se [Google Authenticator, Microsoft Authenticator, Authy,] kana [1Password]. Skena QR code iri pazasi. Ichagadzira kodhi ine manhamba mana kuti uise pazasi.",
   "setup_2fa_app_note": "Kana iwe uchinetseka kuongorora iyo QR kodhi, sarudza yekunyora mune yako authenticator app uye isa zita rako rekushandisa uye inotevera kodhi:",
   "setup_2fa_app_title": "Seta maviri Factor Authentication",
   "authentication_code": "Authentication Code",
@@ -771,5 +771,18 @@
   "time_day_ago": "Mazuva {0} apfuura",
   "time_week_ago": "Vhiki {0} rapfuura",
   "time_month_ago": "Mwedzi {0} wapfuura",
-  "time_year_ago": "Gore rapfuura {0}"
+  "time_year_ago": "Gore rapfuura {0}",
+  "failed_to_crop_image": "Takundikana kuchekerera mufananidzo",
+  "remaining": "Zvasara",
+  "you_have_reached_max_faucet_reward": "Wasvika pamubayiro wepamusoro wepombi 🎉 Ramba uine mutsetse wako kuti urambe wakadaro!",
+  "your_faucet": "Pombi Yako",
+  "your_faucet_ready": "Pombi Yenyu Yagadzirira!",
+  "claim_your_faucet": "Tora Pombi Yako",
+  "event_your_faucet": "Pombi Yako",
+  "claim_faucet": "Tora Pombi",
+  "faucet_claimed_successfully": "Pombi yatorwa nekubudirira!",
+  "ready": "Kugadzirira",
+  "login_required": "Kupinda Kunodiwa",
+  "you_must_login_to_continue": "Unofanira kupinda kuti urambe uchienderera mberi",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Unofanira kugadzirisa captcha kuti uwane pombi yako."
 }

@@ -621,7 +621,7 @@
   "new_email_same_as_current": "E-mel baharu mestilah berbeza daripada e-mel semasa",
   "your_country": "Negara anda",
   "change_your_country_note": "Anda boleh menukar negara anda hanya 3 kali setahun.",
-  "setup_2fa_app_description": "Gunakan aplikasi pengesah seperti [Google Authenticator, Microsoft Authenticator, Authy] atau [1Password]. Imbas kod QR di bawah. Ia akan menjana kod 4 digit untuk anda masukkan di bawah.",
+  "setup_2fa_app_description": "Gunakan aplikasi pengesah seperti [Google Authenticator, Microsoft Authenticator, Authy,] atau [1Password]. Imbas kod QR di bawah. Ia akan menjana kod 4 digit untuk anda masukkan di bawah.",
   "setup_2fa_app_note": "Jika anda menghadapi masalah mengimbas kod QR, pilih entri manual dalam apl pengesah anda dan masukkan nama pengguna anda dan kod berikut:",
   "setup_2fa_app_title": "Sediakan Pengesahan Dua Faktor",
   "authentication_code": "Kod Pengesahan",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} hari yang lalu",
   "time_week_ago": "{0} minggu lalu",
   "time_month_ago": "{0} bulan yang lalu",
-  "time_year_ago": "{0} tahun yang lalu"
+  "time_year_ago": "{0} tahun yang lalu",
+  "failed_to_crop_image": "Gagal memangkas imej",
+  "remaining": "Baki",
+  "you_have_reached_max_faucet_reward": "Anda telah mencapai ganjaran keran maksimum 🎉 Kekalkan rentak anda untuk mengekalkannya!",
+  "your_faucet": "Paip Anda",
+  "your_faucet_ready": "Paip Anda Sudah Siap!",
+  "claim_your_faucet": "Tuntut Paip Anda",
+  "event_your_faucet": "Paip Anda",
+  "claim_faucet": "Keran Tuntutan",
+  "faucet_claimed_successfully": "Faucet berjaya dituntut!",
+  "ready": "Sedia",
+  "login_required": "Log Masuk Diperlukan",
+  "you_must_login_to_continue": "Anda mesti log masuk untuk meneruskan",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Anda perlu menyelesaikan captcha untuk menuntut pili anda."
 }

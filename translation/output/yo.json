@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Imeeli tuntun gbọdọ yatọ si imeeli lọwọlọwọ",
   "your_country": "Orilẹ-ede rẹ",
   "change_your_country_note": "O le yi orilẹ-ede rẹ pada ni igba mẹta ni ọdun kan.",
-  "setup_2fa_app_description": "Lo àpù olùdámọ̀ràn bíi [Google Authenticator, Microsoft Authenticator, Authy] tàbí [1Password]. Ṣe ìwòye kódù QR tó wà ní ìsàlẹ̀ yìí. Yóò mú kódù oní-nọ́mbà mẹ́rin jáde fún ọ láti fi sí ìsàlẹ̀ yìí.",
+  "setup_2fa_app_description": "Lo àpù olùdámọ̀ràn bíi [Google Authenticator, Microsoft Authenticator, Authy,] tàbí [1Password]. Ṣe ìwòye kódù QR ní ìsàlẹ̀. Yóò mú kódù oní-nọ́mbà mẹ́rin jáde fún ọ láti fi sí ìsàlẹ̀ yìí.",
   "setup_2fa_app_note": "Ti o ba ni wahala lati ṣe ọlọjẹ koodu QR, yan titẹ sii afọwọṣe ninu ohun elo afọwọsi rẹ ki o tẹ orukọ olumulo rẹ ati koodu atẹle naa:",
   "setup_2fa_app_title": "Seto Meji ifosiwewe Ijeri",
   "authentication_code": "Koodu Ijeri",
@@ -771,5 +771,18 @@
   "time_day_ago": "Ọjọ́ {0} sẹ́yìn",
   "time_week_ago": "Ọ̀sẹ̀ {0} sẹ́yìn",
   "time_month_ago": "Oṣù {0} sẹ́yìn",
-  "time_year_ago": "{0} ọdún sẹ́yìn"
+  "time_year_ago": "{0} ọdún sẹ́yìn",
+  "failed_to_crop_image": "Kò lè gé àwòrán náà",
+  "remaining": "Tó kù",
+  "you_have_reached_max_faucet_reward": "O ti dé èrè tó ga jùlọ fún fọ́ọ̀mù 🎉 Máa tẹ̀síwájú láti máa ṣe é!",
+  "your_faucet": "Fọ́ọ̀tì rẹ",
+  "your_faucet_ready": "Fọ́ọ̀tì rẹ ti ṣetán!",
+  "claim_your_faucet": "Béèrè fún Fọ́ọ̀tì Rẹ",
+  "event_your_faucet": "Fọ́ọ̀tì rẹ",
+  "claim_faucet": "Ẹ̀tọ́ Fọ́ọ̀tì",
+  "faucet_claimed_successfully": "Faucet ló ṣe àṣeyọrí!",
+  "ready": "Ṣetán",
+  "login_required": "Wíwọlé nílò",
+  "you_must_login_to_continue": "O gbọdọ wọle lati tẹsiwaju",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "O nilo lati yanju captcha kan lati gba faucet rẹ."
 }

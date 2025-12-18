@@ -771,5 +771,18 @@
   "time_day_ago": "Pred {0} dnem",
   "time_week_ago": "Pred {0} tednom",
   "time_month_ago": "Pred {0} mesecem",
-  "time_year_ago": "Pred {0} letom"
+  "time_year_ago": "Pred {0} letom",
+  "failed_to_crop_image": "Obrezovanje slike ni uspelo",
+  "remaining": "Preostanek",
+  "you_have_reached_max_faucet_reward": "Dosegli ste največjo nagrado za pipe 🎉 Nadaljujte s svojim nizom, da ga ohranite!",
+  "your_faucet": "Vaša pipa",
+  "your_faucet_ready": "Vaša pipa je pripravljena!",
+  "claim_your_faucet": "Zahtevajte svojo pipo",
+  "event_your_faucet": "Vaša pipa",
+  "claim_faucet": "Zahtevajte pipo",
+  "faucet_claimed_successfully": "Zahtevek za pipo je bil uspešno izveden!",
+  "ready": "Pripravljen",
+  "login_required": "Prijava je obvezna",
+  "you_must_login_to_continue": "Za nadaljevanje se morate prijaviti",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Za prevzem pipe morate rešiti captcha."
 }

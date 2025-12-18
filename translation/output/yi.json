@@ -621,7 +621,7 @@
   "new_email_same_as_current": "נייע אימעיל מוז זיין אנדערש פון יעצטיגע אימעיל",
   "your_country": "דיין לאַנד",
   "change_your_country_note": "איר קענט נאָר טוישן אייער לאַנד 3 מאָל פּער יאָר.",
-  "setup_2fa_app_description": "ניצט אַן אויטענטיקאַטאָר אַפּ ווי [Google Authenticator, Microsoft Authenticator, Authy] אדער [1Password]. סקענט דעם QR קאָד אונטן. עס וועט דזשענערירן אַ 4-ציפֿעריקן קאָד וואָס איר דאַרפט אַרייַנגעבן אונטן.",
+  "setup_2fa_app_description": "ניצט אַן אויטענטיקאַטאָר אַפּ ווי [Google Authenticator, Microsoft Authenticator, Authy,] אדער [1Password]. סקענט דעם QR קאָד אונטן. עס וועט דזשענערירן אַ 4-ציפֿעריקן קאָד וואָס איר דאַרפֿט אַרייַנגעבן אונטן.",
   "setup_2fa_app_note": "אויב איר האָט פּראָבלעמען צו סקענען דעם QR קאָד, סעלעקטירט מאַנועלע איינגאַבע אין אייער אויטענטיפיקאַטאָר אַפּ און גיט אריין אייער באַניצער נאָמען און דעם פאלגענדן קאָד:",
   "setup_2fa_app_title": "סעטאַפּ צוויי-פאַקטאָר אויטענטיפֿיקאַציע",
   "authentication_code": "אויטענטיפֿיקאַציע קאָד",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} טאָג צוריק",
   "time_week_ago": "{0} וואָך צוריק",
   "time_month_ago": "{0} חודש צוריק",
-  "time_year_ago": "{0} יאָר צוריק"
+  "time_year_ago": "{0} יאָר צוריק",
+  "failed_to_crop_image": "נישט געקענט שניידן בילד",
+  "remaining": "פארבליבן",
+  "you_have_reached_max_faucet_reward": "דו האסט דערגרייכט דיין מאַקסימום פאָסעט באַלוינונג 🎉 האַלט דיין סטריק צו עס אָנהאַלטן!",
+  "your_faucet": "דיין קראַן",
+  "your_faucet_ready": "אייער קראַן איז גרייט!",
+  "claim_your_faucet": "פאָדערן דיין קראַן",
+  "event_your_faucet": "דיין קראַן",
+  "claim_faucet": "פאָדערן קראַן",
+  "faucet_claimed_successfully": "קראַן האט געראָטן צו באַקומען!",
+  "ready": "גרייט",
+  "login_required": "לאָגין פארלאנגט",
+  "you_must_login_to_continue": "איר מוזט זיך איינלאָגירן צו פאָרזעצן",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "איר דאַרפֿט סאָלווען אַ קאַפּטשע צו באַקומען אייער פאָסעט."
 }

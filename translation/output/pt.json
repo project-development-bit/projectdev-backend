@@ -771,5 +771,18 @@
   "time_day_ago": "{0} dia atrás",
   "time_week_ago": "{0} semana atrás",
   "time_month_ago": "{0} mês atrás",
-  "time_year_ago": "{0} ano atrás"
+  "time_year_ago": "{0} ano atrás",
+  "failed_to_crop_image": "Falha ao recortar a imagem",
+  "remaining": "Restante",
+  "you_have_reached_max_faucet_reward": "Você atingiu a recompensa máxima na torneira 🎉 Mantenha sua sequência para preservá-la!",
+  "your_faucet": "Sua torneira",
+  "your_faucet_ready": "Sua torneira está pronta!",
+  "claim_your_faucet": "Reivindique sua torneira",
+  "event_your_faucet": "Sua torneira",
+  "claim_faucet": "Torneira de Reivindicação",
+  "faucet_claimed_successfully": "Torneira reivindicada com sucesso!",
+  "ready": "Preparar",
+  "login_required": "É necessário fazer login.",
+  "you_must_login_to_continue": "Você precisa fazer login para continuar.",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Você precisa resolver um captcha para reivindicar sua torneira."
 }

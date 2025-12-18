@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Email tshiab yuav tsum txawv ntawm email tam sim no",
   "your_country": "Koj lub teb chaws",
   "change_your_country_note": "Koj tuaj yeem hloov koj lub tebchaws tsuas yog 3 zaug hauv ib xyoos.",
-  "setup_2fa_app_description": "Siv ib lub app authenticator xws li [Google Authenticator, Microsoft Authenticator, Authy] lossis [1Password]. Luam theej daim QR code hauv qab no. Nws yuav tsim ib tus lej 4-tus lej rau koj sau rau hauv qab no.",
+  "setup_2fa_app_description": "Siv ib lub app authenticator xws li [Google Authenticator, Microsoft Authenticator, Authy,] lossis [1Password]. Luam theej daim QR code hauv qab no. Nws yuav tsim ib tus lej 4-tus lej rau koj sau rau hauv qab no.",
   "setup_2fa_app_note": "Yog tias koj muaj teeb meem luam theej duab QR code, xaiv phau ntawv nkag hauv koj lub app authenticator thiab sau koj lub npe siv thiab cov lej hauv qab no:",
   "setup_2fa_app_title": "Teem Ob Qhov Tseem Ceeb Authentication",
   "authentication_code": "Authentication Code",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} hnub dhau los",
   "time_week_ago": "{0} lub lim tiam dhau los",
   "time_month_ago": "{0} lub hlis dhau los",
-  "time_year_ago": "{0} xyoo dhau los"
+  "time_year_ago": "{0} xyoo dhau los",
+  "failed_to_crop_image": "Ua tsis tau txiav daim duab",
+  "remaining": "Tseem tshuav",
+  "you_have_reached_max_faucet_reward": "Koj tau mus txog qhov khoom plig faucet siab tshaj plaws 🎉 Khaws koj cov kab sib law liag kom tswj tau!",
+  "your_faucet": "Koj Lub Qhov Dej",
+  "your_faucet_ready": "Koj lub Faucet Npaj Txhij Lawm!",
+  "claim_your_faucet": "Thov Koj Lub Qhov Dej",
+  "event_your_faucet": "Koj Lub Qhov Dej",
+  "claim_faucet": "Kev Thov Dej",
+  "faucet_claimed_successfully": "Faucet tau thov tiav lawm!",
+  "ready": "Npaj txhij",
+  "login_required": "Yuav tsum tau nkag mus",
+  "you_must_login_to_continue": "Koj yuav tsum nkag mus rau hauv koj tus account kom txuas ntxiv mus",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Koj yuav tsum daws qhov captcha kom tau txais koj lub qhov dej."
 }

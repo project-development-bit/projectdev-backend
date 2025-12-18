@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Helbide elektroniko berriak uneko helbide elektronikotik desberdina izan behar du",
   "your_country": "Zure herrialdea",
   "change_your_country_note": "Urtean 3 aldiz bakarrik alda dezakezu herrialdea.",
-  "setup_2fa_app_description": "Erabili autentifikazio-aplikazio bat, hala nola [Google Authenticator, Microsoft Authenticator, Authy] edo [1Password]. Eskaneatu beheko QR kodea. 4 digituko kode bat sortuko du behean sartzeko.",
+  "setup_2fa_app_description": "Erabili autentifikazio-aplikazio bat, hala nola [Google Authenticator, Microsoft Authenticator, Authy,] edo [1Password]. Eskaneatu beheko QR kodea. 4 digituko kode bat sortuko du behean sartzeko.",
   "setup_2fa_app_note": "QR kodea eskaneatzeko arazoak badituzu, hautatu eskuzko sarrera zure autentifikazio aplikazioan eta idatzi zure erabiltzaile-izena eta kode hau:",
   "setup_2fa_app_title": "Bi faktoreko autentifikazioa konfiguratu",
   "authentication_code": "Autentifikazio kodea",
@@ -771,5 +771,18 @@
   "time_day_ago": "Duela {0} egun",
   "time_week_ago": "Duela {0} aste",
   "time_month_ago": "Duela {0} hilabete",
-  "time_year_ago": "Duela {0} urte"
+  "time_year_ago": "Duela {0} urte",
+  "failed_to_crop_image": "Irudia moztu ezin izan da",
+  "remaining": "Geratzen direnak",
+  "you_have_reached_max_faucet_reward": "Txorrotaren sari maximoa lortu duzu 🎉 Mantendu zure bolada hura mantentzeko!",
+  "your_faucet": "Zure txorrota",
+  "your_faucet_ready": "Zure txorrota prest dago!",
+  "claim_your_faucet": "Eskatu zure txorrota",
+  "event_your_faucet": "Zure txorrota",
+  "claim_faucet": "Txorrota erreklamatu",
+  "faucet_claimed_successfully": "Txorrota arrakastaz erreklamatu da!",
+  "ready": "Prest",
+  "login_required": "Saioa hasi behar da",
+  "you_must_login_to_continue": "Jarraitzeko saioa hasi behar duzu",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Zure txorrota erreklamatzeko captcha bat ebatzi behar duzu."
 }

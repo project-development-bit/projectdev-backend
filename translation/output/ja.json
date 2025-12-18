@@ -771,5 +771,18 @@
   "time_day_ago": "{0}日前",
   "time_week_ago": "{0}週間前",
   "time_month_ago": "{0}か月前",
-  "time_year_ago": "{0}年前"
+  "time_year_ago": "{0}年前",
+  "failed_to_crop_image": "画像の切り抜きに失敗しました",
+  "remaining": "残り",
+  "you_have_reached_max_faucet_reward": "最大のフォーセット報酬に到達しました🎉 継続して報酬を維持しましょう！",
+  "your_faucet": "あなたの蛇口",
+  "your_faucet_ready": "蛇口の準備ができました!",
+  "claim_your_faucet": "蛇口を請求する",
+  "event_your_faucet": "あなたの蛇口",
+  "claim_faucet": "クレームフォーセット",
+  "faucet_claimed_successfully": "蛇口の請求に成功しました!",
+  "ready": "準備ができて",
+  "login_required": "ログインが必要です",
+  "you_must_login_to_continue": "続行するにはログインする必要があります",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "蛇口を要求するには、キャプチャを解決する必要があります。"
 }

@@ -621,7 +621,7 @@
   "new_email_same_as_current": "E-nameya nû divê ji e-nameya heyî cuda be",
   "your_country": "Welatê Te",
   "change_your_country_note": "Tu dikarî welatê xwe salê tenê 3 caran biguherînî.",
-  "setup_2fa_app_description": "Bernameyeke pejirandinê wekî [Google Authenticator, Microsoft Authenticator, Authy] an [1Password] bikar bîne. Koda QR ya li jêr bixwîne. Ew ê kodeke 4-reqemî çêbike ku hûn li jêr binivîsin.",
+  "setup_2fa_app_description": "Bernameyeke pejirandinê wekî [Google Authenticator, Microsoft Authenticator, Authy,] an [1Password] bikar bîne. Koda QR ya li jêr bixwîne. Ew ê kodeke 4-reqemî çêbike ku hûn li jêr binivîsin.",
   "setup_2fa_app_note": "Heke hûn di şopandina koda QR de zehmetiyê dikişînin, di sepana xwe ya pejirandinê de têketina destan hilbijêrin û navê bikarhêner û koda jêrîn binivîsin:",
   "setup_2fa_app_title": "Sazkirina Pejirandina Du Faktorî",
   "authentication_code": "Koda Pejirandinê",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} roj berê",
   "time_week_ago": "{0} hefte berê",
   "time_month_ago": "{0} meh berê",
-  "time_year_ago": "{0} sal berê"
+  "time_year_ago": "{0} sal berê",
+  "failed_to_crop_image": "Birrîna wêneyê neserket",
+  "remaining": "Jiberma",
+  "you_have_reached_max_faucet_reward": "Te gihîştiye xelata herî zêde ya fîncanê 🎉 Ji bo domandina wê, rêzeya xwe bidomîne!",
+  "your_faucet": "Çerxa Te",
+  "your_faucet_ready": "Fenera we amade ye!",
+  "claim_your_faucet": "Daxwaza Fûçeya Xwe Bike",
+  "event_your_faucet": "Çerxa Te",
+  "claim_faucet": "Fauceta Daxwazkirinê",
+  "faucet_claimed_successfully": "Faucet bi serkeftî hate îdîakirin!",
+  "ready": "Amade",
+  "login_required": "Têketin Pêwîst e",
+  "you_must_login_to_continue": "Ji bo berdewamkirinê divê hûn têkevinê",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Pêdivî ye ku hûn captcha çareser bikin da ku hûn faucet-a xwe îdîa bikin."
 }

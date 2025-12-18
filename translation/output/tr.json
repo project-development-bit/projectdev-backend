@@ -771,5 +771,18 @@
   "time_day_ago": "{0} gün önce",
   "time_week_ago": "{0} hafta önce",
   "time_month_ago": "{0} ay önce",
-  "time_year_ago": "{0} yıl önce"
+  "time_year_ago": "{0} yıl önce",
+  "failed_to_crop_image": "Görüntü kırpma işlemi başarısız oldu.",
+  "remaining": "Geriye kalan",
+  "you_have_reached_max_faucet_reward": "Maksimum musluk ödülüne ulaştınız 🎉 Bu seviyeyi korumak için serinizi sürdürün!",
+  "your_faucet": "Musluğunuz",
+  "your_faucet_ready": "Musluğunuz hazır!",
+  "claim_your_faucet": "Musluğunuzu Talep Edin",
+  "event_your_faucet": "Musluğunuz",
+  "claim_faucet": "Musluğu Talep Et",
+  "faucet_claimed_successfully": "Musluk başarıyla açıldı!",
+  "ready": "Hazır",
+  "login_required": "Giriş Yapmanız Gerekiyor",
+  "you_must_login_to_continue": "Devam etmek için giriş yapmalısınız.",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Musluğunuzu kullanabilmek için bir captcha çözmeniz gerekiyor."
 }

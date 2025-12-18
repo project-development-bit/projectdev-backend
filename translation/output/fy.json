@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Nije e-post moat oars wêze as hjoeddeistige e-post",
   "your_country": "Dyn lân",
   "change_your_country_note": "Jo kinne jo lân mar 3 kear yn 't jier feroarje.",
-  "setup_2fa_app_description": "Brûk in autentikaasje-app lykas [Google Authenticator, Microsoft Authenticator, Authy] of [1Password]. Scan de QR-koade hjirûnder. It sil in koade fan 4 sifers generearje dy't jo hjirûnder ynfiere kinne.",
+  "setup_2fa_app_description": "Brûk in autentikaasje-app lykas [Google Authenticator, Microsoft Authenticator, Authy,] of [1Password]. Scan de QR-koade hjirûnder. It sil in koade fan 4 sifers generearje dy't jo hjirûnder ynfiere kinne.",
   "setup_2fa_app_note": "As jo problemen hawwe mei it scannen fan 'e QR-koade, selektearje dan hânmjittige ynfier yn jo autentikaasje-app en fier jo brûkersnamme en de folgjende koade yn:",
   "setup_2fa_app_title": "Twa-faktor-autentikaasje ynstelle",
   "authentication_code": "Autentikaasjekoade",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} dei lyn",
   "time_week_ago": "{0} wike lyn",
   "time_month_ago": "{0} moanne lyn",
-  "time_year_ago": "{0} jier lyn"
+  "time_year_ago": "{0} jier lyn",
+  "failed_to_crop_image": "Ofbylding koe net bysnien wurde",
+  "remaining": "Oerbleaun",
+  "you_have_reached_max_faucet_reward": "Jo hawwe de maksimale kraanbeleanning berikt 🎉 Hâld jo streak om it te behâlden!",
+  "your_faucet": "Dyn kraan",
+  "your_faucet_ready": "Dyn kraan is klear!",
+  "claim_your_faucet": "Claim jo kraan",
+  "event_your_faucet": "Dyn kraan",
+  "claim_faucet": "Kraan oanfreegje",
+  "faucet_claimed_successfully": "Kraan mei súkses opeaske!",
+  "ready": "Klear",
+  "login_required": "Oanmelde fereaske",
+  "you_must_login_to_continue": "Jo moatte ynlogge om troch te gean",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Jo moatte in captcha oplosse om jo kraan te claimen."
 }

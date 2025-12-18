@@ -771,5 +771,18 @@
   "time_day_ago": "{0} giorno fa",
   "time_week_ago": "{0} settimana fa",
   "time_month_ago": "{0} mese fa",
-  "time_year_ago": "{0} anni fa"
+  "time_year_ago": "{0} anni fa",
+  "failed_to_crop_image": "Impossibile ritagliare l'immagine",
+  "remaining": "Rimanente",
+  "you_have_reached_max_faucet_reward": "Hai raggiunto la ricompensa massima del rubinetto 🎉 Mantieni la tua serie per mantenerla!",
+  "your_faucet": "Il tuo rubinetto",
+  "your_faucet_ready": "Il tuo rubinetto è pronto!",
+  "claim_your_faucet": "Richiedi il tuo rubinetto",
+  "event_your_faucet": "Il tuo rubinetto",
+  "claim_faucet": "Richiedi rubinetto",
+  "faucet_claimed_successfully": "Rubinetto rivendicato con successo!",
+  "ready": "Pronto",
+  "login_required": "Accesso richiesto",
+  "you_must_login_to_continue": "Devi effettuare l'accesso per continuare",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Per rivendicare il tuo faucet devi risolvere un captcha."
 }

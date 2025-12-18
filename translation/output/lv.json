@@ -771,5 +771,18 @@
   "time_day_ago": "pirms {0} dienas",
   "time_week_ago": "pirms {0} nedēļas",
   "time_month_ago": "pirms {0} mēneša",
-  "time_year_ago": "pirms {0} gada"
+  "time_year_ago": "pirms {0} gada",
+  "failed_to_crop_image": "Neizdevās apgriezt attēlu",
+  "remaining": "Atlikušie",
+  "you_have_reached_max_faucet_reward": "Esat sasniedzis maksimālo jaucējkrāna atlīdzību 🎉 Turpiniet savu sēriju, lai to saglabātu!",
+  "your_faucet": "Jūsu krāns",
+  "your_faucet_ready": "Jūsu krāns ir gatavs!",
+  "claim_your_faucet": "Pieprasiet savu krānu",
+  "event_your_faucet": "Jūsu krāns",
+  "claim_faucet": "Prasības krāns",
+  "faucet_claimed_successfully": "Krāns veiksmīgi pieprasīts!",
+  "ready": "Gatavs",
+  "login_required": "Nepieciešama pieteikšanās",
+  "you_must_login_to_continue": "Lai turpinātu, jums jāpiesakās",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Lai pieprasītu savu krānu, jums jāatrisina captcha."
 }

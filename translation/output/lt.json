@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Naujas el. pašto adresas turi skirtis nuo dabartinio el. pašto adreso",
   "your_country": "Jūsų šalis",
   "change_your_country_note": "Savo šalį galite pakeisti tik 3 kartus per metus.",
-  "setup_2fa_app_description": "Naudokite autentifikavimo programėlę, pvz., [„Google Authenticator“, „Microsoft Authenticator“, „Authy“] arba [1Password]. Nuskaitykite QR kodą apačioje. Bus sugeneruotas 4 skaitmenų kodas, kurį turėsite įvesti žemiau.",
+  "setup_2fa_app_description": "Naudokite autentifikavimo programėlę, pvz., [„Google Authenticator“, „Microsoft Authenticator“, „Authy“] arba [1Password]. Nuskaitykite QR kodą apačioje. Jis sugeneruos 4 skaitmenų kodą, kurį turėsite įvesti žemiau.",
   "setup_2fa_app_note": "Jei kyla problemų nuskaitant QR kodą, autentifikavimo programėlėje pasirinkite rankinį įvedimą ir įveskite savo vartotojo vardą bei šį kodą:",
   "setup_2fa_app_title": "Nustatykite dviejų veiksnių autentifikavimą",
   "authentication_code": "Autentifikavimo kodas",
@@ -771,5 +771,18 @@
   "time_day_ago": "prieš {0} dieną",
   "time_week_ago": "prieš {0} savaitę",
   "time_month_ago": "prieš {0} mėnesį",
-  "time_year_ago": "prieš {0} metus"
+  "time_year_ago": "prieš {0} metus",
+  "failed_to_crop_image": "Nepavyko apkirpti vaizdo",
+  "remaining": "Likęs",
+  "you_have_reached_max_faucet_reward": "Pasiekėte maksimalų čiaupo atlygį 🎉 Tęskite savo seriją, kad ją išlaikytumėte!",
+  "your_faucet": "Jūsų maišytuvas",
+  "your_faucet_ready": "Jūsų maišytuvas paruoštas!",
+  "claim_your_faucet": "Pareikškite savo čiaupą",
+  "event_your_faucet": "Jūsų maišytuvas",
+  "claim_faucet": "Reikalauti maišytuvo",
+  "faucet_claimed_successfully": "Maišytuvas sėkmingai pareikštas!",
+  "ready": "Pasiruošęs",
+  "login_required": "Būtina prisijungti",
+  "you_must_login_to_continue": "Norėdami tęsti, turite prisijungti",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Norėdami pareikšti pretenziją dėl čiaupų, turite išspręsti „captcha“."
 }

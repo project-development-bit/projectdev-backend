@@ -771,5 +771,18 @@
   "time_day_ago": "לפני {0} יום",
   "time_week_ago": "לפני {0} שבוע",
   "time_month_ago": "לפני {0} חודש",
-  "time_year_ago": "לפני {0} שנה"
+  "time_year_ago": "לפני {0} שנה",
+  "failed_to_crop_image": "חיתוך התמונה נכשל",
+  "remaining": "נוֹתָר",
+  "you_have_reached_max_faucet_reward": "הגעת לתגמול מקסימלי בברז 🎉 שמור על הרצף שלך כדי לשמור עליו!",
+  "your_faucet": "הברז שלך",
+  "your_faucet_ready": "הברז שלך מוכן!",
+  "claim_your_faucet": "תבע את הברז שלך",
+  "event_your_faucet": "הברז שלך",
+  "claim_faucet": "תביעת ברז",
+  "faucet_claimed_successfully": "תביעת הברז תבעה בהצלחה!",
+  "ready": "מוּכָן",
+  "login_required": "נדרשת כניסה",
+  "you_must_login_to_continue": "עליך להתחבר כדי להמשיך",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "עליך לפתור קפטצ'ה כדי לתבוע את הברז שלך."
 }

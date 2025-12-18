@@ -771,5 +771,18 @@
   "time_day_ago": "Fa {0} dia",
   "time_week_ago": "Fa {0} setmana",
   "time_month_ago": "Fa {0} mes",
-  "time_year_ago": "Fa {0} any"
+  "time_year_ago": "Fa {0} any",
+  "failed_to_crop_image": "No s'ha pogut retallar la imatge",
+  "remaining": "Restans",
+  "you_have_reached_max_faucet_reward": "Has arribat a la recompensa màxima de l'aixeta 🎉 Mantén la teva ratxa per mantenir-la!",
+  "your_faucet": "La teva aixeta",
+  "your_faucet_ready": "La teva aixeta està a punt!",
+  "claim_your_faucet": "Reclama la teva aixeta",
+  "event_your_faucet": "La teva aixeta",
+  "claim_faucet": "Reclama l'aixeta",
+  "faucet_claimed_successfully": "Aixeta reclamada correctament!",
+  "ready": "Llest",
+  "login_required": "Cal iniciar sessió",
+  "you_must_login_to_continue": "Heu d'iniciar sessió per continuar",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Heu de resoldre un captcha per reclamar la vostra aixeta."
 }

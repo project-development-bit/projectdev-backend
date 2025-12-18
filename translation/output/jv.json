@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Email anyar kudu beda karo email saiki",
   "your_country": "Negaramu",
   "change_your_country_note": "Sampeyan bisa ngganti negara mung 3 kaping saben taun.",
-  "setup_2fa_app_description": "Gunakna aplikasi autentikasi kaya [Google Authenticator, Microsoft Authenticator, Authy] utawa [1Password]. Pindai kode QR ing ngisor iki. Iki bakal ngasilake kode 4 digit sing kudu dilebokake ing ngisor iki.",
+  "setup_2fa_app_description": "Gunakna aplikasi autentikasi kaya [Google Authenticator, Microsoft Authenticator, Authy,] utawa [1Password]. Pindai kode QR ing ngisor iki. Iki bakal ngasilake kode 4 digit sing kudu dilebokake ing ngisor iki.",
   "setup_2fa_app_note": "Yen sampeyan ngalami masalah mindhai kode QR, pilih entri manual ing aplikasi authenticator banjur ketik jeneng pangguna lan kode ing ngisor iki:",
   "setup_2fa_app_title": "Setup Two Factor Authentication",
   "authentication_code": "Kode Authentication",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} dina kepungkur",
   "time_week_ago": "{0} minggu kepungkur",
   "time_month_ago": "{0} sasi kepungkur",
-  "time_year_ago": "{0} taun kepungkur"
+  "time_year_ago": "{0} taun kepungkur",
+  "failed_to_crop_image": "Gagal ngethok gambar",
+  "remaining": "Sisa",
+  "you_have_reached_max_faucet_reward": "Kowé wis tekan ganjaran faucet maksimal 🎉 Pertahanké rekormu supaya tetep apik!",
+  "your_faucet": "Kranmu",
+  "your_faucet_ready": "Kranmu wis siap! (or) Kranmu wis siap!",
+  "claim_your_faucet": "Klaim Kran Sampeyan",
+  "event_your_faucet": "Kranmu",
+  "claim_faucet": "Kran Klaim",
+  "faucet_claimed_successfully": "Kran wis kasil diklaim!",
+  "ready": "Siap",
+  "login_required": "Kudu mlebu log",
+  "you_must_login_to_continue": "Sampeyan kudu mlebu log kanggo nerusake",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Sampeyan kudu ngrampungake captcha kanggo ngeklaim kran sampeyan."
 }

@@ -771,5 +771,18 @@
   "time_day_ago": "for {0} dage siden",
   "time_week_ago": "for {0} uge siden",
   "time_month_ago": "For {0} måneder siden",
-  "time_year_ago": "For {0} år siden"
+  "time_year_ago": "For {0} år siden",
+  "failed_to_crop_image": "Kunne ikke beskære billedet",
+  "remaining": "Resterende",
+  "you_have_reached_max_faucet_reward": "Du har nået din maksimale faucet-belønning 🎉 Fortsæt din streak for at bevare den!",
+  "your_faucet": "Din vandhane",
+  "your_faucet_ready": "Din vandhane er klar!",
+  "claim_your_faucet": "Gør krav på din vandhane",
+  "event_your_faucet": "Din vandhane",
+  "claim_faucet": "Gør krav på vandhane",
+  "faucet_claimed_successfully": "Vandhanen er blevet gjort krav på!",
+  "ready": "Parat",
+  "login_required": "Login påkrævet",
+  "you_must_login_to_continue": "Du skal logge ind for at fortsætte",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Du skal løse en captcha for at gøre krav på din vandhane."
 }

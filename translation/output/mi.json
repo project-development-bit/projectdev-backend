@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Me rereke nga imeera hou mai i nga imeera o naianei",
   "your_country": "To Whenua",
   "change_your_country_note": "Ka taea e koe te huri i to whenua 3 noa nga wa ia tau.",
-  "setup_2fa_app_description": "Whakamahia he taupānga whakamana pēnei i te [Google Authenticator, Microsoft Authenticator, Authy] me te [1Password]. Matawaihia te waehere QR i raro nei. Ka puta he waehere mati-4 hei whakauru māu ki raro nei.",
+  "setup_2fa_app_description": "Whakamahia he taupānga whakamana pēnei i a [Google Authenticator, Microsoft Authenticator, Authy,] [1Password rānei]. Matawaihia te waehere QR i raro nei. Ka whakaputahia he waehere mati-4 hei whakauru māu ki raro nei.",
   "setup_2fa_app_note": "Mena kei te raru koe ki te matawai i te waehere QR, tohua te urunga a-ringa ki to tono whakamotuhēhē me te whakauru i to ingoa kaiwhakamahi me te waehere e whai ake nei:",
   "setup_2fa_app_title": "Tatūnga Motuhēhēnga Tauira Rua",
   "authentication_code": "Waehere Motuhēhēnga",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} rā ki muri",
   "time_week_ago": "{0} wiki ki muri",
   "time_month_ago": "{0} marama ki muri",
-  "time_year_ago": "{0} tau ki muri"
+  "time_year_ago": "{0} tau ki muri",
+  "failed_to_crop_image": "Kāore i taea te tapahi i te ahua",
+  "remaining": "E toe ana",
+  "you_have_reached_max_faucet_reward": "Kua eke koe ki te taumata teitei o te utu taputapu 🎉 Kia mau tonu tō kaha!",
+  "your_faucet": "Tō Taputapu",
+  "your_faucet_ready": "Kua rite tō Taputapu!",
+  "claim_your_faucet": "Keremehia tō Pūrere",
+  "event_your_faucet": "Tō Taputapu",
+  "claim_faucet": "Kereme Pātene",
+  "faucet_claimed_successfully": "I angitu te kereme a Faucet!",
+  "ready": "Kua rite",
+  "login_required": "Me takiuru",
+  "you_must_login_to_continue": "Me takiuru koe ki te haere tonu",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Me whakaoti e koe he captcha hei kereme i tō taputapu."
 }

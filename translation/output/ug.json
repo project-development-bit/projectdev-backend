@@ -771,5 +771,18 @@
   "time_day_ago": "{0} كۈن ئىلگىرى",
   "time_week_ago": "{0} ھەپتە ئىلگىرى",
   "time_month_ago": "{0} ئاي ئىلگىرى",
-  "time_year_ago": "{0} يىل ئىلگىرى"
+  "time_year_ago": "{0} يىل ئىلگىرى",
+  "failed_to_crop_image": "رەسىمنى كېسىش مەغلۇپ بولدى",
+  "remaining": "قالغان",
+  "you_have_reached_max_faucet_reward": "سىز ئەڭ يۇقىرى مۇكاپاتقا ئېرىشتىڭىز 🎉 ئۇنى ساقلاپ قېلىش ئۈچۈن رېكورتىڭىزنى ساقلاپ قالىڭ!",
+  "your_faucet": "سىزنىڭ كرانىڭىز",
+  "your_faucet_ready": "سۇ چىقىرىش كرانىڭىز تەييار!",
+  "claim_your_faucet": "كرانىڭىزنى ئېلىڭ",
+  "event_your_faucet": "سىزنىڭ كرانىڭىز",
+  "claim_faucet": "كران تەلەپ قىلىڭ",
+  "faucet_claimed_successfully": "كران مۇۋەپپەقىيەتلىك تەلەپ قىلىندى!",
+  "ready": "تەييار",
+  "login_required": "كىرىش تەلەپ قىلىنىدۇ",
+  "you_must_login_to_continue": "داۋاملاشتۇرۇش ئۈچۈن كىرىشىڭىز كېرەك",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "سۇ چىقىرىش ئۈسكۈنىڭىزنى ئېلىش ئۈچۈن، سىز captcha نى ھەل قىلىشىڭىز كېرەك."
 }

@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Email ọhụrụ ga-adị iche na ozi-e ugbu a",
   "your_country": "Obodo gị",
   "change_your_country_note": "Ị nwere ike ịgbanwe obodo gị naanị ugboro atọ kwa afọ.",
-  "setup_2fa_app_description": "Jiri ngwa nyocha dịka [Google Authenticator, Microsoft Authenticator, Authy] ma ọ bụ [1Password]. Nyochaa koodu QR dị n'okpuru. Ọ ga-emepụta koodu ọnụọgụ anọ ka ị tinye n'okpuru.",
+  "setup_2fa_app_description": "Jiri ngwa nyocha dịka [Google Authenticator, Microsoft Authenticator, Authy,] ma ọ bụ [1Password]. Nyochaa koodu QR dị n'okpuru. Ọ ga-emepụta koodu ọnụọgụ anọ ka ị tinye n'okpuru.",
   "setup_2fa_app_note": "Ọ bụrụ na ị na-enwe nsogbu inyocha koodu QR, họrọ ntinye aka n'ime ngwa nyocha gị wee tinye aha njirimara gị na koodu a:",
   "setup_2fa_app_title": "Mepụta nkwenye ihe abụọ",
   "authentication_code": "Koodu nyocha",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} ụbọchị gara aga",
   "time_week_ago": "Izu {0} gara aga",
   "time_month_ago": "Ọnwa {0} gara aga",
-  "time_year_ago": "{0} afọ gara aga"
+  "time_year_ago": "{0} afọ gara aga",
+  "failed_to_crop_image": "Ịkpụchaghị onyonyo ahụ nke ọma",
+  "remaining": "Fọdụrụ",
+  "you_have_reached_max_faucet_reward": "I rutela ihe nrite kachasị elu nke faucet 🎉 Nọgide na-enwe usoro gị iji nọgide na-enwe ya!",
+  "your_faucet": "Faịpụ gị",
+  "your_faucet_ready": "Faịpụ gị dị njikere!",
+  "claim_your_faucet": "Kwụọ Paụpụ Gị",
+  "event_your_faucet": "Faịpụ gị",
+  "claim_faucet": "Faucet nkwupụta",
+  "faucet_claimed_successfully": "Faucet ahụ nwetara ihe ịga nke ọma!",
+  "ready": "Dị njikere",
+  "login_required": "A chọrọ nbanye",
+  "you_must_login_to_continue": "Ị ga-abanyerịrị iji gaa n'ihu",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Ịkwesịrị idozi captcha iji nweta ọkpọkọ gị."
 }

@@ -771,5 +771,18 @@
   "time_day_ago": "Fyrir {0} degi",
   "time_week_ago": "Fyrir {0} viku",
   "time_month_ago": "Fyrir {0} mánuði",
-  "time_year_ago": "Fyrir {0} ári"
+  "time_year_ago": "Fyrir {0} ári",
+  "failed_to_crop_image": "Mistókst að klippa myndina",
+  "remaining": "Eftirstandandi",
+  "you_have_reached_max_faucet_reward": "Þú hefur náð hámarksverðlaunum fyrir krana 🎉 Haltu áfram að vinna með þig!",
+  "your_faucet": "Kraninn þinn",
+  "your_faucet_ready": "Kraninn þinn er tilbúinn!",
+  "claim_your_faucet": "Fáðu þér kranann þinn",
+  "event_your_faucet": "Kraninn þinn",
+  "claim_faucet": "Krafa um blöndunartæki",
+  "faucet_claimed_successfully": "Kraninn hefur verið krafist!",
+  "ready": "Tilbúinn",
+  "login_required": "Innskráning nauðsynleg",
+  "you_must_login_to_continue": "Þú verður að skrá þig inn til að halda áfram",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Þú þarft að leysa úr captcha til að fá kranann þinn."
 }

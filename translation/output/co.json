@@ -621,7 +621,7 @@
   "new_email_same_as_current": "U novu email deve esse differente da l'email attuale",
   "your_country": "U vostru paese",
   "change_your_country_note": "Pudete cambià u vostru paese solu 3 volte à l'annu.",
-  "setup_2fa_app_description": "Aduprate una applicazione d'autentificazione cum'è [Google Authenticator, Microsoft Authenticator, Authy] o [1Password]. Scannate u codice QR quì sottu. Genererà un codice di 4 cifre da inserisce quì sottu.",
+  "setup_2fa_app_description": "Aduprate una applicazione d'autentificazione cum'è [Google Authenticator, Microsoft Authenticator, Authy,] o [1Password]. Scannate u codice QR quì sottu. Genererà un codice di 4 cifre da inserisce quì sottu.",
   "setup_2fa_app_note": "Sè avete prublemi à scansà u codice QR, selezziunate l'inserimentu manuale in a vostra applicazione d'autentificazione è inserite u vostru nome d'utilizatore è u codice seguente:",
   "setup_2fa_app_title": "Cunfigurà l'autenticazione à dui fattori",
   "authentication_code": "Codice d'autentificazione",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} ghjornu fà",
   "time_week_ago": "{0} settimana fà",
   "time_month_ago": "{0} mese fà",
-  "time_year_ago": "{0} annu fà"
+  "time_year_ago": "{0} annu fà",
+  "failed_to_crop_image": "Ùn hè micca statu pussibule di ritaglià l'imagine",
+  "remaining": "Restante",
+  "you_have_reached_max_faucet_reward": "Avete righjuntu a ricumpensa massima di u rubinettu 🎉 Mantene a vostra serie per mantene la!",
+  "your_faucet": "U vostru rubinettu",
+  "your_faucet_ready": "U vostru rubinettu hè prontu!",
+  "claim_your_faucet": "Rivendicate u vostru rubinettu",
+  "event_your_faucet": "U vostru rubinettu",
+  "claim_faucet": "Reclamazione Rubinettu",
+  "faucet_claimed_successfully": "U rubinettu hè statu rivendicatu cù successu!",
+  "ready": "Prontu",
+  "login_required": "Cunnessione necessaria",
+  "you_must_login_to_continue": "Duvete cunnettassi per cuntinuà",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Avete bisognu di risolve un captcha per rivendicà u vostru rubinettu."
 }

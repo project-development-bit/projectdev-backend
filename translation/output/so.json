@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Iimayl cusub waa inuu ka duwanaadaa iimaylka hadda",
   "your_country": "Dalkaaga",
   "change_your_country_note": "Waxaad bedeli kartaa dalkaaga 3 jeer sannadkii.",
-  "setup_2fa_app_description": "Adeegso abka xaqiijinta sida [Google Authenticator, Microsoft Authenticator, Authy] ama [1Password]. Iskaan garee koodka QR-ka ee hoose. Waxay kuu soo saari doontaa kood 4-god ah si aad hoos ugu qorto.",
+  "setup_2fa_app_description": "Adeegso abka xaqiijinta sida [Google Authenticator, Microsoft Authenticator, Authy,] ama [1Password]. Iskaan garee koodka QR-ka ee hoose. Waxay kuu soo saari doontaa kood 4-god ah si aad hoos ugu qorto.",
   "setup_2fa_app_note": "Haddii ay dhibaato kaa haysato sawirida summada QR, dooro gelida gacanta ee abkaaga xaqiijinta oo geli magacaaga isticmaale iyo koodka soo socda:",
   "setup_2fa_app_title": "Dejinta Aqoonsiga Laba Qodob",
   "authentication_code": "Koodhka Xaqiijinta",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} maalin ka hor",
   "time_week_ago": "{0} toddobaad ka hor",
   "time_month_ago": "{0} bil ka hor",
-  "time_year_ago": "{0} sano ka hor"
+  "time_year_ago": "{0} sano ka hor",
+  "failed_to_crop_image": "Ku guuldareystay in sawirka la jaro",
+  "remaining": "Haray",
+  "you_have_reached_max_faucet_reward": "Waxaad gaartay abaalmarinta ugu badan ee qasabadda 🎉 Hayso socodkaaga si aad u ilaaliso!",
+  "your_faucet": "Tuubadaada",
+  "your_faucet_ready": "Tuubadaadu waa diyaar!",
+  "claim_your_faucet": "Sheeg Tuubadaada",
+  "event_your_faucet": "Tuubadaada",
+  "claim_faucet": "Tuubada Sheegashada",
+  "faucet_claimed_successfully": "Tuubada ayaa si guul leh loo sheegay!",
+  "ready": "Diyaar ah",
+  "login_required": "Galitaan ayaa loo baahan yahay",
+  "you_must_login_to_continue": "Waa inaad gasho si aad u sii wadato",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Waxaad u baahan tahay inaad xalliso captcha si aad u sheegato tuubadaada."
 }

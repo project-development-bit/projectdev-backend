@@ -621,7 +621,7 @@
   "new_email_same_as_current": "New email must be different from current email",
   "your_country": "Your Country",
   "change_your_country_note": "You can change your country only 3 times per year.",
-  "setup_2fa_app_description": "Use an authenticator app like  [Google Authenticator, Microsoft Authenticator, Authy] or [1Password]. Scan the QR code below. It will  generate a 4-digit code for you to enter below.",
+  "setup_2fa_app_description": "Use an authenticator app like  [Google Authenticator, Microsoft Authenticator, Authy,] or [1Password]. Scan the QR code below. It will  generate a 4-digit code for you to enter below.",
   "setup_2fa_app_note": "If you’re having trouble scanning the QR code, select manual entry in your authenticator app and enter your username and the following code:",
   "setup_2fa_app_title": "Setup Two Factor Authentication",
   "authentication_code": "Authentication Code",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} day ago",
   "time_week_ago": "{0} week ago",
   "time_month_ago": "{0} month ago",
-  "time_year_ago": "{0} year ago"
+  "time_year_ago": "{0} year ago",
+  "failed_to_crop_image": "Failed to crop image",
+  "remaining": "Remaining",
+  "you_have_reached_max_faucet_reward": "You’ve reached max faucet reward 🎉 Keep your streak to maintain it!",
+  "your_faucet": "Your Faucet",
+  "your_faucet_ready": "Your Faucet is Ready!",
+  "claim_your_faucet": "Claim Your Faucet",
+  "event_your_faucet": "Your Faucet",
+  "claim_faucet": "Claim Faucet",
+  "faucet_claimed_successfully": "Faucet claimed successfully!",
+  "ready": "Ready",
+  "login_required": "Login Required",
+  "you_must_login_to_continue": "You must login to continue",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "You need to resolve a captcha to claim your faucet."
 }

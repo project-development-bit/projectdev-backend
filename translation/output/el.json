@@ -771,5 +771,18 @@
   "time_day_ago": "πριν από {0} ημέρες",
   "time_week_ago": "{0} εβδομάδα πριν",
   "time_month_ago": "{0} μήνα πριν",
-  "time_year_ago": "{0} χρόνια πριν"
+  "time_year_ago": "{0} χρόνια πριν",
+  "failed_to_crop_image": "Αποτυχία περικοπής εικόνας",
+  "remaining": "Παραμένων",
+  "you_have_reached_max_faucet_reward": "Έχετε φτάσει τη μέγιστη ανταμοιβή βρύσης 🎉 Συνεχίστε το σερί σας για να το διατηρήσετε!",
+  "your_faucet": "Η βρύση σας",
+  "your_faucet_ready": "Η βρύση σας είναι έτοιμη!",
+  "claim_your_faucet": "Διεκδικήστε τη βρύση σας",
+  "event_your_faucet": "Η βρύση σας",
+  "claim_faucet": "Αίτηση για βρύση",
+  "faucet_claimed_successfully": "Η βρύση διεκδικήθηκε με επιτυχία!",
+  "ready": "Ετοιμος",
+  "login_required": "Απαιτείται σύνδεση",
+  "you_must_login_to_continue": "Πρέπει να συνδεθείτε για να συνεχίσετε",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Πρέπει να επιλύσετε ένα captcha για να διεκδικήσετε το faucet σας."
 }

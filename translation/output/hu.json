@@ -771,5 +771,18 @@
   "time_day_ago": "{0} nappal ezelőtt",
   "time_week_ago": "{0} héttel ezelőtt",
   "time_month_ago": "{0} hónappal ezelőtt",
-  "time_year_ago": "{0} évvel ezelőtt"
+  "time_year_ago": "{0} évvel ezelőtt",
+  "failed_to_crop_image": "Nem sikerült a képet körülvágni",
+  "remaining": "Többi",
+  "you_have_reached_max_faucet_reward": "Elérted a maximális csapjutalom 🎉 Tartsd meg a sorozatodat, hogy fenntartsd!",
+  "your_faucet": "A csapteleped",
+  "your_faucet_ready": "A csapteleped készen áll!",
+  "claim_your_faucet": "Igényelje a csaptelepét",
+  "event_your_faucet": "A csapteleped",
+  "claim_faucet": "Igénycsap",
+  "faucet_claimed_successfully": "Csaptelep igénylése sikeresen megtörtént!",
+  "ready": "Kész",
+  "login_required": "Bejelentkezés szükséges",
+  "you_must_login_to_continue": "Be kell jelentkezned a folytatáshoz",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "A csap igényléséhez meg kell oldania egy captcha-t."
 }

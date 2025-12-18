@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Imelo yatsopano iyenera kukhala yosiyana ndi imelo yomwe ilipo",
   "your_country": "Dziko Lanu",
   "change_your_country_note": "Mutha kusintha dziko lanu katatu pachaka.",
-  "setup_2fa_app_description": "Gwiritsani ntchito pulogalamu yotsimikizira ngati [Google Authenticator, Microsoft Authenticator, Authy] kapena [1Password]. Skani khodi ya QR pansipa. Idzakupatsani khodi ya manambala anayi kuti muyike pansipa.",
+  "setup_2fa_app_description": "Gwiritsani ntchito pulogalamu yotsimikizira ngati [Google Authenticator, Microsoft Authenticator, Authy,] kapena [1Password]. Skani khodi ya QR pansipa. Idzakupatsani khodi ya manambala anayi kuti muyike pansipa.",
   "setup_2fa_app_note": "Ngati mukuvutika kusanthula kachidindo ka QR, sankhani cholembera pamanja mu pulogalamu yanu yotsimikizira ndikulowetsa dzina lanu lolowera ndi nambala iyi:",
   "setup_2fa_app_title": "Kukhazikitsa Two Factor Authentication",
   "authentication_code": "Khodi Yotsimikizira",
@@ -771,5 +771,18 @@
   "time_day_ago": "Masiku {0} apitawo",
   "time_week_ago": "Sabata {0} yapitayo",
   "time_month_ago": "Mwezi {0} wapitawo",
-  "time_year_ago": "Chaka chapitacho {0}"
+  "time_year_ago": "Chaka chapitacho {0}",
+  "failed_to_crop_image": "Zalephera kudula chithunzi",
+  "remaining": "Zotsala",
+  "you_have_reached_max_faucet_reward": "Mwafika pa mphotho yayikulu kwambiri ya faucet 🎉 Sungani nthawi yanu kuti mupitirize!",
+  "your_faucet": "Faucet Yanu",
+  "your_faucet_ready": "Faucet Yanu Yakonzeka!",
+  "claim_your_faucet": "Pezani Faucet Yanu",
+  "event_your_faucet": "Faucet Yanu",
+  "claim_faucet": "Funani Faucet",
+  "faucet_claimed_successfully": "Faucet yatengedwa bwino!",
+  "ready": "Wokonzeka",
+  "login_required": "Kulowa Kofunikira",
+  "you_must_login_to_continue": "Muyenera kulowa kuti mupitirize",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Muyenera kulemba captcha kuti mutenge faucet yanu."
 }

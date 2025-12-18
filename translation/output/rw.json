@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Imeri nshya igomba kuba itandukanye na imeri iriho",
   "your_country": "Igihugu cyawe",
   "change_your_country_note": "Urashobora guhindura igihugu cyawe inshuro 3 gusa kumwaka.",
-  "setup_2fa_app_description": "Koresha porogaramu yo kwemeza nka [Google Authenticator, Microsoft Authenticator, Authy] cyangwa [1Password]. Skena kode ya QR iri hepfo. Izaguha kode y'imibare 4 kugira ngo winjize hano hepfo.",
+  "setup_2fa_app_description": "Koresha porogaramu yo kwemeza nka [Google Authenticator, Microsoft Authenticator, Authy,] cyangwa [1Password]. Skena kode ya QR iri hepfo. Izaguha kode y'imibare 4 kugira ngo winjize hano hepfo.",
   "setup_2fa_app_note": "Niba ufite ikibazo cyo gusikana kode ya QR, hitamo ibyandikishijwe intoki muri porogaramu yawe yemewe hanyuma wandike izina ukoresha hamwe na code ikurikira:",
   "setup_2fa_app_title": "Gushiraho Ibintu bibiri Kwemeza",
   "authentication_code": "Kode yo Kwemeza",
@@ -771,5 +771,18 @@
   "time_day_ago": "Umunsi {0} ushize",
   "time_week_ago": "Icyumweru {0} gishize",
   "time_month_ago": "Ukwezi {0} gushize",
-  "time_year_ago": "Umwaka {0} ushize"
+  "time_year_ago": "Umwaka {0} ushize",
+  "failed_to_crop_image": "Yananiwe gukata ishusho",
+  "remaining": "Ibisigaye",
+  "you_have_reached_max_faucet_reward": "Wageze ku gihembo ntarengwa cyo gukoresha rouge 🎉 Komeza umurongo wawe kugira ngo uwukomeze!",
+  "your_faucet": "Irobine yawe",
+  "your_faucet_ready": "Irobine yawe iriteguye!",
+  "claim_your_faucet": "Shaka umuyoboro wawe",
+  "event_your_faucet": "Irobine yawe",
+  "claim_faucet": "Faucet yo gusaba",
+  "faucet_claimed_successfully": "Faucet yasabwe neza!",
+  "ready": "Twiteguye",
+  "login_required": "Ni ngombwa kwinjira",
+  "you_must_login_to_continue": "Ugomba kwinjira kugira ngo ukomeze",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Ugomba gukemura ikibazo cyo gukoresha robine yawe."
 }

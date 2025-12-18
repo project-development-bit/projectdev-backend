@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Rhaid i'r e-bost newydd fod yn wahanol i'r e-bost cyfredol",
   "your_country": "Eich Gwlad",
   "change_your_country_note": "Dim ond 3 gwaith y flwyddyn y gallwch newid eich gwlad.",
-  "setup_2fa_app_description": "Defnyddiwch ap dilysu fel [Google Authenticator, Microsoft Authenticator, Authy] neu [1Password]. Sganiwch y cod QR isod. Bydd yn cynhyrchu cod 4 digid i chi ei nodi isod.",
+  "setup_2fa_app_description": "Defnyddiwch ap dilysu fel [Google Authenticator, Microsoft Authenticator, Authy,] neu [1Password]. Sganiwch y cod QR isod. Bydd yn cynhyrchu cod 4 digid i chi ei nodi isod.",
   "setup_2fa_app_note": "Os ydych chi'n cael trafferth sganio'r cod QR, dewiswch fewnbynnu â llaw yn eich ap dilysu a nodwch eich enw defnyddiwr a'r cod canlynol:",
   "setup_2fa_app_title": "Gosod Dilysu Dau Ffactor",
   "authentication_code": "Cod Dilysu",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} diwrnod yn ôl",
   "time_week_ago": "{0} wythnos yn ôl",
   "time_month_ago": "{0} mis yn ôl",
-  "time_year_ago": "{0} flwyddyn yn ôl"
+  "time_year_ago": "{0} flwyddyn yn ôl",
+  "failed_to_crop_image": "Methwyd cnydio'r ddelwedd",
+  "remaining": "Sy'n weddill",
+  "you_have_reached_max_faucet_reward": "Rydych chi wedi cyrraedd y wobr faucet uchaf 🎉 Cadwch eich streic i'w chynnal!",
+  "your_faucet": "Eich tap",
+  "your_faucet_ready": "Mae eich tap yn barod!",
+  "claim_your_faucet": "Hawliwch Eich Tap",
+  "event_your_faucet": "Eich tap",
+  "claim_faucet": "Hawlio'r tap",
+  "faucet_claimed_successfully": "Hawliwyd y faucet yn llwyddiannus!",
+  "ready": "Parod",
+  "login_required": "Mewngofnodi Angenrheidiol",
+  "you_must_login_to_continue": "Rhaid i chi fewngofnodi i barhau",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Mae angen i chi ddatrys captcha i hawlio'ch tap."
 }

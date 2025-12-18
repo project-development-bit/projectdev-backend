@@ -771,5 +771,18 @@
   "time_day_ago": "0 天前",
   "time_week_ago": "一周前",
   "time_month_ago": "一个月前",
-  "time_year_ago": "0 年前"
+  "time_year_ago": "0 年前",
+  "failed_to_crop_image": "裁剪图像失败",
+  "remaining": "其余的",
+  "you_have_reached_max_faucet_reward": "您已获得最高水龙头奖励🎉 保持连胜即可继续保持！",
+  "your_faucet": "你的水龙头",
+  "your_faucet_ready": "您的水龙头已准备就绪！",
+  "claim_your_faucet": "认领您的水龙头",
+  "event_your_faucet": "你的水龙头",
+  "claim_faucet": "索赔水龙头",
+  "faucet_claimed_successfully": "水龙头已成功认领！",
+  "ready": "准备好",
+  "login_required": "需要登录",
+  "you_must_login_to_continue": "您必须登录才能继续",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "您需要完成验证码才能领取水龙头。"
 }

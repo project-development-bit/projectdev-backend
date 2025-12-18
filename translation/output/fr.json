@@ -621,7 +621,7 @@
   "new_email_same_as_current": "La nouvelle adresse e-mail doit être différente de l'adresse e-mail actuelle.",
   "your_country": "Votre pays",
   "change_your_country_note": "Vous ne pouvez changer de pays que 3 fois par an.",
-  "setup_2fa_app_description": "Utilisez une application d'authentification comme [Google Authenticator, Microsoft Authenticator, Authy] ou [1Password]. Scannez le code QR ci-dessous. Un code à 4 chiffres sera généré ; saisissez-le ci-dessous.",
+  "setup_2fa_app_description": "Utilisez une application d'authentification comme [Google Authenticator, Microsoft Authenticator, Authy,] ou [1Password]. Scannez le code QR ci-dessous. Un code à 4 chiffres sera généré ; saisissez-le ci-dessous.",
   "setup_2fa_app_note": "Si vous rencontrez des difficultés pour scanner le code QR, sélectionnez la saisie manuelle dans votre application d'authentification et entrez votre nom d'utilisateur et le code suivant :",
   "setup_2fa_app_title": "Configurer l'authentification à deux facteurs",
   "authentication_code": "Code d'authentification",
@@ -771,5 +771,18 @@
   "time_day_ago": "il y a {0} jour",
   "time_week_ago": "il y a {0} semaine",
   "time_month_ago": "il y a {0} mois",
-  "time_year_ago": "il y a {0} ans"
+  "time_year_ago": "il y a {0} ans",
+  "failed_to_crop_image": "Échec du recadrage de l'image",
+  "remaining": "Restant",
+  "you_have_reached_max_faucet_reward": "Vous avez atteint la récompense maximale du robinet 🎉 Continuez votre série pour la conserver !",
+  "your_faucet": "Votre robinet",
+  "your_faucet_ready": "Votre robinet est prêt !",
+  "claim_your_faucet": "Réclamez votre robinet",
+  "event_your_faucet": "Votre robinet",
+  "claim_faucet": "Robinet à réclamer",
+  "faucet_claimed_successfully": "Robinet utilisé avec succès !",
+  "ready": "Prêt",
+  "login_required": "Connexion requise",
+  "you_must_login_to_continue": "Vous devez vous connecter pour continuer",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Vous devez résoudre un captcha pour accéder à votre robinet."
 }

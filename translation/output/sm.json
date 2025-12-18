@@ -621,7 +621,7 @@
   "new_email_same_as_current": "E tatau ona ese le imeli fou mai le imeli fou",
   "your_country": "Lou Atunuu",
   "change_your_country_note": "E mafai ona e suia lou atunuu na o le 3 taimi i le tausaga.",
-  "setup_2fa_app_description": "Faaaoga se polokalama fa'amaonia e pei o le [Google Authenticator, Microsoft Authenticator, Authy] po'o le [1Password]. Skena le QR code o lo'o i lalo. O le a fa'atupuina ai se code e 4-numera mo oe e tusi i lalo.",
+  "setup_2fa_app_description": "Faaaoga se polokalama fa'amaonia e pei o le [Google Authenticator, Microsoft Authenticator, Authy,] po'o le [1Password]. Skena le QR code o lo'o i lalo. O le a fa'atupuina ai se code e 4-numera mo oe e tusi i lalo.",
   "setup_2fa_app_note": "Afai o loʻo e faʻafitauli i le suʻeina o le QR code, filifili le tusi tusi i totonu o lau faʻamaonia app ma faʻapipiʻi lou igoa ole igoa ma le code lea:",
   "setup_2fa_app_title": "Seti Fa'amautu Fa'ailoga Lua",
   "authentication_code": "Fa'ailoga Fa'amaonia",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} aso talu ai",
   "time_week_ago": "{0} vaiaso talu ai",
   "time_month_ago": "{0} masina talu ai",
-  "time_year_ago": "{0} tausaga talu ai"
+  "time_year_ago": "{0} tausaga talu ai",
+  "failed_to_crop_image": "Ua le manuia le tipiina o le ata",
+  "remaining": "O totoe",
+  "you_have_reached_max_faucet_reward": "Ua e ausia le taui sili ona maualuga o le faucet 🎉 Ia faatumauina pea lau saoasaoa e faatumauina ai!",
+  "your_faucet": "Lau Paipa",
+  "your_faucet_ready": "Ua Sauni Lau Paipa!",
+  "claim_your_faucet": "Fai lau Fa'aili",
+  "event_your_faucet": "Lau Paipa",
+  "claim_faucet": "Fa'aili o Talosaga",
+  "faucet_claimed_successfully": "Ua manuia le talosaga a le Faucet!",
+  "ready": "Sauni",
+  "login_required": "Mana'omia le Ulufale",
+  "you_must_login_to_continue": "E tatau ona e ulufale e fa'aauau ai",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "E manaʻomia ona e faʻamauina se captcha e fai ai lau faucet."
 }

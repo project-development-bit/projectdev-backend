@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Nova inscription electronica a praesenti differre debet.",
   "your_country": "Patria Tua",
   "change_your_country_note": "Patriam tuam tantum ter in anno mutare potes.",
-  "setup_2fa_app_description": "Applicatione authenticatoria utere, qualis est [Google Authenticator, Microsoft Authenticator, Authy] vel [1Password]. Codicem QR infra lege. Codicem quattuor digitorum generabit, quem infra inscribere debebis.",
+  "setup_2fa_app_description": "Applicatione authenticatoria utere, qualis est [Google Authenticator, Microsoft Authenticator, Authy,] vel [1Password]. Codicem QR infra lege. Codicem quattuor digitorum generabit, quem infra inscribere debebis.",
   "setup_2fa_app_note": "Si difficultatem habes codicem QR perlegendo, elige \"inscriptionem manualem\" in applicatione authenticatoria et nomen usoris tui et codicem sequentem inscribe:",
   "setup_2fa_app_title": "Authenticationem Duorum Factorum Configura",
   "authentication_code": "Codex Authenticationis",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} ante diem",
   "time_week_ago": "{0} hebdomade abhinc",
   "time_month_ago": "Abhinc mensem {0}",
-  "time_year_ago": "Abhinc annum {0}"
+  "time_year_ago": "Abhinc annum {0}",
+  "failed_to_crop_image": "Imago resecari non potuit.",
+  "remaining": "Reliquum",
+  "you_have_reached_max_faucet_reward": "Praemium maximum e fauce attigisti 🎉 Seriem tuam conserva ut eam conserves!",
+  "your_faucet": "Fistula Tua",
+  "your_faucet_ready": "Fistula tua parata est!",
+  "claim_your_faucet": "Vindica Fontem Tuum",
+  "event_your_faucet": "Fistula Tua",
+  "claim_faucet": "Vindicare Faucem",
+  "faucet_claimed_successfully": "Fauce feliciter vindicata!",
+  "ready": "Paratus",
+  "login_required": "Initium Sessionis Requiritur",
+  "you_must_login_to_continue": "Initium sessionis facere debes ut pergas.",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Captcha tibi solvendum est ut faucem tuam vindicare possis."
 }

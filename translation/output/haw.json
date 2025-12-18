@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Pono ʻokoʻa ka leka uila hou mai ka leka uila o kēia manawa",
   "your_country": "Kou Aina",
   "change_your_country_note": "Hiki iā ʻoe ke hoʻololi i kou ʻāina i 3 mau manawa i kēlā me kēia makahiki.",
-  "setup_2fa_app_description": "E hoʻohana i kahi polokalamu hōʻoia e like me [Google Authenticator, Microsoft Authenticator, Authy] a i ʻole [1Password]. E scan i ke code QR ma lalo. E hoʻopuka ia i kahi code 4-huahelu no ʻoe e hoʻokomo ma lalo.",
+  "setup_2fa_app_description": "E hoʻohana i kahi polokalamu hōʻoia e like me [Google Authenticator, Microsoft Authenticator, Authy,] a i ʻole [1Password]. E scan i ke code QR ma lalo. E hoʻopuka ia i kahi code 4-huahelu no ʻoe e hoʻokomo ma lalo.",
   "setup_2fa_app_note": "Inā pilikia ʻoe i ka nānā ʻana i ka QR code, koho i ke komo lima i kāu app authenticator a hoʻokomo i kou inoa inoa a me kēia code:",
   "setup_2fa_app_title": "E hoʻonohonoho i ʻelua Factor Authentication",
   "authentication_code": "Code hōʻoia",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} lā i hala aku nei",
   "time_week_ago": "{0} pule i hala aku nei",
   "time_month_ago": "{0} mahina i hala aku nei",
-  "time_year_ago": "{0} makahiki i hala"
+  "time_year_ago": "{0} makahiki i hala",
+  "failed_to_crop_image": "ʻAʻole i hiki ke ʻoki i ke kiʻi",
+  "remaining": "Ke koe nei",
+  "you_have_reached_max_faucet_reward": "Ua hōʻea ʻoe i ka uku faucet max 🎉 E mālama i kou kaha e mālama ai!",
+  "your_faucet": "Kou Faucet",
+  "your_faucet_ready": "Ua mākaukau kāu Faucet!",
+  "claim_your_faucet": "Koi i kāu Faucet",
+  "event_your_faucet": "Kou Faucet",
+  "claim_faucet": "Koi Faucet",
+  "faucet_claimed_successfully": "Ua hoʻopiʻi pono ʻia ʻo Faucet!",
+  "ready": "Mākaukau",
+  "login_required": "Pono ke komo ʻana",
+  "you_must_login_to_continue": "Pono ʻoe e komo e hoʻomau",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Pono ʻoe e hoʻoponopono i kahi captcha e koi ai i kāu faucet."
 }

@@ -771,5 +771,18 @@
   "time_day_ago": "för {0} dagar sedan",
   "time_week_ago": "för {0} vecka sedan",
   "time_month_ago": "för {0} månader sedan",
-  "time_year_ago": "för {0} år sedan"
+  "time_year_ago": "för {0} år sedan",
+  "failed_to_crop_image": "Misslyckades med att beskära bilden",
+  "remaining": "Återstående",
+  "you_have_reached_max_faucet_reward": "Du har nått din maximala faucet-belöning 🎉 Fortsätt din streak för att bibehålla den!",
+  "your_faucet": "Din kran",
+  "your_faucet_ready": "Din kran är klar!",
+  "claim_your_faucet": "Gör anspråk på din kran",
+  "event_your_faucet": "Din kran",
+  "claim_faucet": "Gör anspråk på kran",
+  "faucet_claimed_successfully": "Kranen har ansökts!",
+  "ready": "Redo",
+  "login_required": "Inloggning krävs",
+  "you_must_login_to_continue": "Du måste logga in för att fortsätta",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Du måste lösa en captcha för att kunna göra anspråk på din kran."
 }

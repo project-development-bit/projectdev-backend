@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Dole ne sabon imel ya bambanta da imel na yanzu",
   "your_country": "Kasar ku",
   "change_your_country_note": "Kuna iya canza ƙasarku sau 3 kawai a shekara.",
-  "setup_2fa_app_description": "Yi amfani da manhajar tantancewa kamar [Google Authenticator, Microsoft Authenticator, Authy] ko [1Password]. Duba lambar QR da ke ƙasa. Zai samar da lambar lambobi 4 don ku shigar a ƙasa.",
+  "setup_2fa_app_description": "Yi amfani da manhajar tantancewa kamar [Google Authenticator, Microsoft Authenticator, Authy,] ko [1Password]. Duba lambar QR da ke ƙasa. Zai samar da lambar lambobi 4 don ku shigar a ƙasa.",
   "setup_2fa_app_note": "Idan kuna fuskantar matsalar bincika lambar QR, zaɓi shigarwar hannu a cikin ƙa'idar mai tabbatarwa ku kuma shigar da sunan mai amfani da lambar mai zuwa:",
   "setup_2fa_app_title": "Saita Tabbatar da Factor Biyu",
   "authentication_code": "Lambar Tabbatarwa",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} kwana da ya wuce",
   "time_week_ago": "Mako {0} da ya wuce",
   "time_month_ago": "Wata {0} da ya wuce",
-  "time_year_ago": "{0} shekara da ta wuce"
+  "time_year_ago": "{0} shekara da ta wuce",
+  "failed_to_crop_image": "An kasa yanke hoton",
+  "remaining": "Sauran",
+  "you_have_reached_max_faucet_reward": "Kun kai ga mafi girman ladan famfo 🎉 Ku ci gaba da bin diddigin ku don kiyaye shi!",
+  "your_faucet": "Famfon ku",
+  "your_faucet_ready": "Famfon ku ya shirya!",
+  "claim_your_faucet": "Da'awar Famfon Ka",
+  "event_your_faucet": "Famfon ku",
+  "claim_faucet": "Famfon Da'awa",
+  "faucet_claimed_successfully": "Famfo ya yi iƙirarin nasara!",
+  "ready": "A shirye",
+  "login_required": "Ana buƙatar Shiga",
+  "you_must_login_to_continue": "Dole ne ka shiga domin ci gaba",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Kana buƙatar warware captcha don ɗaukar famfon ɗinka."
 }

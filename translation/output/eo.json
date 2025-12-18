@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Nova retpoŝtadreso devas esti malsama ol la nuna retpoŝtadreso",
   "your_country": "Via Lando",
   "change_your_country_note": "Vi povas ŝanĝi vian landon nur 3 fojojn jare.",
-  "setup_2fa_app_description": "Uzu aŭtentikigan aplikaĵon kiel [Google Authenticator, Microsoft Authenticator, Authy] aŭ [1Password]. Skanu la QR-kodon sube. Ĝi generos 4-ciferan kodon, kiun vi devas enigi sube.",
+  "setup_2fa_app_description": "Uzu aŭtentikigan aplikaĵon kiel [Google Authenticator, Microsoft Authenticator, Authy,] aŭ [1Password]. Skanu la QR-kodon sube. Ĝi generos 4-ciferan kodon, kiun vi devas enigi sube.",
   "setup_2fa_app_note": "Se vi havas problemojn skani la QR-kodon, elektu manan enigon en via aŭtentikiga aplikaĵo kaj enigu vian uzantnomon kaj la jenan kodon:",
   "setup_2fa_app_title": "Agordi Du-Faktoran Aŭtentigon",
   "authentication_code": "Aŭtentiga Kodo",
@@ -771,5 +771,18 @@
   "time_day_ago": "Antaŭ {0} tago",
   "time_week_ago": "Antaŭ {0} semajno",
   "time_month_ago": "antaŭ {0} monato",
-  "time_year_ago": "antaŭ {0} jaro"
+  "time_year_ago": "antaŭ {0} jaro",
+  "failed_to_crop_image": "Malsukcesis tondi bildon",
+  "remaining": "Restanta",
+  "you_have_reached_max_faucet_reward": "Vi atingis la maksimuman krano-rekompencon 🎉 Daŭrigu vian serion por konservi ĝin!",
+  "your_faucet": "Via Krano",
+  "your_faucet_ready": "Via krano estas preta!",
+  "claim_your_faucet": "Postulu Vian Kranon",
+  "event_your_faucet": "Via Krano",
+  "claim_faucet": "Claim Faucet",
+  "faucet_claimed_successfully": "Krano sukcese postulita!",
+  "ready": "Preta",
+  "login_required": "Ensaluto Necesa",
+  "you_must_login_to_continue": "Vi devas ensaluti por daŭrigi",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Vi devas solvi captcha-on por postuli vian kranon."
 }

@@ -771,5 +771,18 @@
   "time_day_ago": "Acum {0} zi",
   "time_week_ago": "Acum {0} săptămână",
   "time_month_ago": "Acum {0} luni",
-  "time_year_ago": "Acum {0} an"
+  "time_year_ago": "Acum {0} an",
+  "failed_to_crop_image": "Imaginea nu a putut fi decupată",
+  "remaining": "Rămas",
+  "you_have_reached_max_faucet_reward": "Ai atins recompensa maximă pentru robinet 🎉 Menține-ți seria pentru a o menține!",
+  "your_faucet": "Robinetul tău",
+  "your_faucet_ready": "Robinetul tău este gata!",
+  "claim_your_faucet": "Revendicați-vă robinetul",
+  "event_your_faucet": "Robinetul tău",
+  "claim_faucet": "Revendicați robinetul",
+  "faucet_claimed_successfully": "Robinet revendicat cu succes!",
+  "ready": "Gata",
+  "login_required": "Autentificare necesară",
+  "you_must_login_to_continue": "Trebuie să vă conectați pentru a continua",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Trebuie să rezolvi un captcha pentru a-ți revendica robinetul."
 }

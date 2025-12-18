@@ -771,5 +771,18 @@
   "time_day_ago": "{0} ရက်က",
   "time_week_ago": "{0} ပတ်အကြာက",
   "time_month_ago": "လွန်ခဲ့သော {0} လက",
-  "time_year_ago": "လွန်ခဲ့သော {0} နှစ်"
+  "time_year_ago": "လွန်ခဲ့သော {0} နှစ်",
+  "failed_to_crop_image": "ပုံကို ဖြတ်ယူ၍မရပါ",
+  "remaining": "ကျန်ရှိနေသော",
+  "you_have_reached_max_faucet_reward": "အမြင့်ဆုံး faucet ဆုလာဘ်ကို ရောက်ရှိပါပြီ 🎉 ၎င်းကို ထိန်းသိမ်းရန် သင်၏ စံချိန်ကို ဆက်လက်ထိန်းသိမ်းထားပါ။",
+  "your_faucet": "သင့်ရဲ့ ရေပိုက်ခေါင်း",
+  "your_faucet_ready": "သင့်ရဲ့ Faucet အဆင်သင့်ဖြစ်ပါပြီ!",
+  "claim_your_faucet": "သင့်ရဲ့ ရေပိုက်ခေါင်းကို တောင်းဆိုပါ",
+  "event_your_faucet": "သင့်ရဲ့ ရေပိုက်ခေါင်း",
+  "claim_faucet": "တောင်းဆိုမှု ရေပိုက်ခေါင်း",
+  "faucet_claimed_successfully": "Faucet ကို အောင်မြင်စွာ ရယူပြီးပါပြီ။",
+  "ready": "အသင့်ဖြစ်ပါပြီ",
+  "login_required": "ဝင်ရောက်ရန် လိုအပ်သည်",
+  "you_must_login_to_continue": "ဆက်လုပ်ရန် အကောင့်ဝင်ရမည်",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "သင့် faucet ကို တောင်းဆိုရန်အတွက် captcha တစ်ခုကို ဖြေရှင်းရန် လိုအပ်ပါသည်။"
 }

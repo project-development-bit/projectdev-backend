@@ -621,7 +621,7 @@
   "new_email_same_as_current": "អ៊ីមែលថ្មីត្រូវតែខុសពីអ៊ីមែលបច្ចុប្បន្ន",
   "your_country": "ប្រទេសរបស់អ្នក។",
   "change_your_country_note": "អ្នកអាចផ្លាស់ប្តូរប្រទេសរបស់អ្នកបានតែ 3 ដងក្នុងមួយឆ្នាំ។",
-  "setup_2fa_app_description": "សូមប្រើកម្មវិធីផ្ទៀងផ្ទាត់ដូចជា [Google Authenticator, Microsoft Authenticator, Authy] ឬ [1Password]។ សូមស្កេនលេខកូដ QR ខាងក្រោម។ វានឹងបង្កើតលេខកូដ ៤ ខ្ទង់សម្រាប់អ្នកបញ្ចូលខាងក្រោម។",
+  "setup_2fa_app_description": "សូមប្រើកម្មវិធីផ្ទៀងផ្ទាត់ដូចជា [Google Authenticator, Microsoft Authenticator, Authy,] ឬ [1Password]។ សូមស្កេនលេខកូដ QR ខាងក្រោម។ វានឹងបង្កើតលេខកូដ ៤ ខ្ទង់សម្រាប់អ្នកបញ្ចូលខាងក្រោម។",
   "setup_2fa_app_note": "ប្រសិនបើអ្នកមានបញ្ហាក្នុងការស្កេនកូដ QR សូមជ្រើសរើសការបញ្ចូលដោយដៃនៅក្នុងកម្មវិធីផ្ទៀងផ្ទាត់របស់អ្នក ហើយបញ្ចូលឈ្មោះអ្នកប្រើប្រាស់ និងលេខកូដខាងក្រោមរបស់អ្នក៖",
   "setup_2fa_app_title": "ដំឡើងការផ្ទៀងផ្ទាត់កត្តាពីរ",
   "authentication_code": "លេខកូដផ្ទៀងផ្ទាត់",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} ថ្ងៃមុន",
   "time_week_ago": "{0} សប្តាហ៍មុន",
   "time_month_ago": "{0} ខែមុន",
-  "time_year_ago": "{0} ឆ្នាំមុន"
+  "time_year_ago": "{0} ឆ្នាំមុន",
+  "failed_to_crop_image": "មិនអាចកាត់រូបភាពបានទេ",
+  "remaining": "នៅសល់",
+  "you_have_reached_max_faucet_reward": "អ្នកបានឈានដល់រង្វាន់ faucet អតិបរមាហើយ 🎉 រក្សាកំណត់ត្រារបស់អ្នកដើម្បីរក្សាវា!",
+  "your_faucet": "ក្បាលម៉ាស៊ីនទឹករបស់អ្នក",
+  "your_faucet_ready": "បំពង់ទឹករបស់អ្នករួចរាល់ហើយ!",
+  "claim_your_faucet": "ទាមទារម៉ាស៊ីនទឹករបស់អ្នក",
+  "event_your_faucet": "ក្បាលម៉ាស៊ីនទឹករបស់អ្នក",
+  "claim_faucet": "ក្បាលម៉ាស៊ីនទាមទារ",
+  "faucet_claimed_successfully": "បានទាមទារម៉ាស៊ីនទឹកដោយជោគជ័យ!",
+  "ready": "រួចរាល់ហើយ",
+  "login_required": "តម្រូវ​ឲ្យ​ចូល​គណនី",
+  "you_must_login_to_continue": "អ្នកត្រូវតែចូលដើម្បីបន្ត",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "អ្នកត្រូវដោះស្រាយ captcha ដើម្បីទាមទារម៉ាស៊ីនទឹករបស់អ្នក។"
 }

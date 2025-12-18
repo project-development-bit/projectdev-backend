@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Ní mór don ríomhphost nua a bheith difriúil ón ríomhphost reatha",
   "your_country": "Do Thír",
   "change_your_country_note": "Ní féidir leat do thír a athrú ach 3 huaire sa bhliain.",
-  "setup_2fa_app_description": "Bain úsáid as aip fíordheimhnitheora ar nós [Google Authenticator, Microsoft Authenticator, Authy] nó [1Password]. Scan an cód QR thíos. Ginfidh sé cód 4 dhigit duit le cur isteach thíos.",
+  "setup_2fa_app_description": "Bain úsáid as aip fíordheimhnitheora ar nós [Google Authenticator, Microsoft Authenticator, Authy,] nó [1Password]. Scan an cód QR thíos. Ginfidh sé cód 4 dhigit duit le cur isteach thíos.",
   "setup_2fa_app_note": "Má bhíonn deacracht agat an cód QR a scanadh, roghnaigh iontráil láimhe i d’aip fíordheimhnitheora agus cuir isteach d’ainm úsáideora agus an cód seo a leanas:",
   "setup_2fa_app_title": "Socraigh Fíordheimhniú Dhá Fhachtóir",
   "authentication_code": "Cód Fíordheimhnithe",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} lá ó shin",
   "time_week_ago": "{0} seachtain ó shin",
   "time_month_ago": "{0} mí ó shin",
-  "time_year_ago": "{0} bliain ó shin"
+  "time_year_ago": "{0} bliain ó shin",
+  "failed_to_crop_image": "Theip ar an íomhá a bhearradh",
+  "remaining": "Fágtha",
+  "you_have_reached_max_faucet_reward": "Tá an luach saothair uasta faucet bainte amach agat 🎉 Coinnigh do shraith chun í a choinneáil!",
+  "your_faucet": "Do sconna",
+  "your_faucet_ready": "Tá do sconna réidh!",
+  "claim_your_faucet": "Éiligh do sconna",
+  "event_your_faucet": "Do sconna",
+  "claim_faucet": "Éileamh faucet",
+  "faucet_claimed_successfully": "Éilíodh an faucet go rathúil!",
+  "ready": "Réidh",
+  "login_required": "Logáil Isteach Riachtanach",
+  "you_must_login_to_continue": "Ní mór duit logáil isteach le leanúint ar aghaidh",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Ní mór duit captcha a réiteach chun d’fhuinneog a éileamh."
 }

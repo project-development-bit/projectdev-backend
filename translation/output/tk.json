@@ -771,5 +771,18 @@
   "time_day_ago": "{0} gün öň",
   "time_week_ago": "{0} hepde mundan ozal",
   "time_month_ago": "{0} aý mundan ozal",
-  "time_year_ago": "{0} ýyl mundan ozal"
+  "time_year_ago": "{0} ýyl mundan ozal",
+  "failed_to_crop_image": "Suraty kesip bolmady",
+  "remaining": "Galan",
+  "you_have_reached_max_faucet_reward": "Maksimum kran baýragyna ýetdiňiz 🎉 Ony dowam etdirmek üçin seriýaňyzy dowam etdiriň!",
+  "your_faucet": "Siziň kranyňyz",
+  "your_faucet_ready": "Kranyňyz taýýar!",
+  "claim_your_faucet": "Kranyňyzy talap ediň",
+  "event_your_faucet": "Siziň kranyňyz",
+  "claim_faucet": "Krany talap ediň",
+  "faucet_claimed_successfully": "Kran üstünlikli talap edildi!",
+  "ready": "Taýýar",
+  "login_required": "Giriş gerek",
+  "you_must_login_to_continue": "Dowam etmek üçin giriş etmeli",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Kranyňyzy almak üçin captcha çözmeli."
 }

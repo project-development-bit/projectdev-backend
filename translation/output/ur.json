@@ -621,7 +621,7 @@
   "new_email_same_as_current": "نئی ای میل موجودہ ای میل سے مختلف ہونی چاہیے۔",
   "your_country": "آپ کا ملک",
   "change_your_country_note": "آپ سال میں صرف 3 بار اپنا ملک بدل سکتے ہیں۔",
-  "setup_2fa_app_description": "ایک مستند ایپ استعمال کریں جیسے [Google Authenticator, Microsoft Authenticator, Authy] یا [1Password]۔ نیچے دیا گیا QR کوڈ اسکین کریں۔ یہ آپ کے نیچے درج کرنے کے لیے 4 ہندسوں کا کوڈ تیار کرے گا۔",
+  "setup_2fa_app_description": "ایک مستند ایپ استعمال کریں جیسے [Google Authenticator, Microsoft Authenticator, Authy,] یا [1Password]۔ نیچے دیا گیا QR کوڈ اسکین کریں۔ یہ آپ کے نیچے درج کرنے کے لیے 4 ہندسوں کا کوڈ تیار کرے گا۔",
   "setup_2fa_app_note": "اگر آپ کو QR کوڈ اسکین کرنے میں دشواری ہو رہی ہے، تو اپنے مستند ایپ میں دستی اندراج کو منتخب کریں اور اپنا صارف نام اور درج ذیل کوڈ درج کریں:",
   "setup_2fa_app_title": "دو عنصر کی توثیق سیٹ اپ کریں۔",
   "authentication_code": "تصدیقی کوڈ",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} دن پہلے",
   "time_week_ago": "{0} ہفتہ پہلے",
   "time_month_ago": "{0} مہینہ پہلے",
-  "time_year_ago": "{0} سال پہلے"
+  "time_year_ago": "{0} سال پہلے",
+  "failed_to_crop_image": "تصویر تراشنے میں ناکام",
+  "remaining": "باقی",
+  "you_have_reached_max_faucet_reward": "آپ ٹونٹی کے زیادہ سے زیادہ انعام تک پہنچ گئے ہیں 🎉 اسے برقرار رکھنے کے لیے اپنا سلسلہ جاری رکھیں!",
+  "your_faucet": "آپ کا ٹونٹی",
+  "your_faucet_ready": "آپ کا ٹونٹی تیار ہے!",
+  "claim_your_faucet": "اپنے ٹونٹی کا دعوی کریں۔",
+  "event_your_faucet": "آپ کا ٹونٹی",
+  "claim_faucet": "کلیم ٹونٹی",
+  "faucet_claimed_successfully": "ٹونٹی نے کامیابی سے دعوی کیا!",
+  "ready": "تیار",
+  "login_required": "لاگ ان کی ضرورت ہے۔",
+  "you_must_login_to_continue": "جاری رکھنے کے لیے آپ کو لاگ ان کرنا ہوگا۔",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "اپنے ٹونٹی کا دعوی کرنے کے لیے آپ کو کیپچا حل کرنے کی ضرورت ہے۔"
 }

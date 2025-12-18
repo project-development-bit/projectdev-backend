@@ -771,5 +771,18 @@
   "time_day_ago": "Hai {0} días",
   "time_week_ago": "Hai {0} semana",
   "time_month_ago": "Hai {0} mes",
-  "time_year_ago": "Hai {0} ano"
+  "time_year_ago": "Hai {0} ano",
+  "failed_to_crop_image": "Non se puido recortar a imaxe",
+  "remaining": "Restantes",
+  "you_have_reached_max_faucet_reward": "Alcanzaches a recompensa máxima da billa 🎉 Mantén a túa racha para mantelo!",
+  "your_faucet": "A túa billa",
+  "your_faucet_ready": "A túa billa está lista!",
+  "claim_your_faucet": "Reclama a túa billa",
+  "event_your_faucet": "A túa billa",
+  "claim_faucet": "Reclamar billa",
+  "faucet_claimed_successfully": "Reclamouse a billa correctamente!",
+  "ready": "Listo/a",
+  "login_required": "Requírese inicio de sesión",
+  "you_must_login_to_continue": "Debe iniciar sesión para continuar",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Necesitas resolver un captcha para reclamar a túa billa."
 }

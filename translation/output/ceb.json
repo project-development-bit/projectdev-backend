@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Ang bag-ong email kinahanglan nga lahi sa karon nga email",
   "your_country": "Imong Nasud",
   "change_your_country_note": "Mahimo nimong usbon ang imong nasud 3 ka beses kada tuig.",
-  "setup_2fa_app_description": "Gamita ang authenticator app sama sa [Google Authenticator, Microsoft Authenticator, Authy] o [1Password]. I-scan ang QR code sa ubos. Kini makamugna og 4-digit nga code nga imong isulod sa ubos.",
+  "setup_2fa_app_description": "Gamita ang authenticator app sama sa [Google Authenticator, Microsoft Authenticator, Authy,] o [1Password]. I-scan ang QR code sa ubos. Kini makamugna og 4-digit nga code nga imong isulod sa ubos.",
   "setup_2fa_app_note": "Kung naproblema ka sa pag-scan sa QR code, pilia ang manual entry sa imong authenticator app ug isulod ang imong username ug ang mosunod nga code:",
   "setup_2fa_app_title": "I-set up ang Two Factor Authentication",
   "authentication_code": "Authentication Code",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} ka adlaw ang milabay",
   "time_week_ago": "{0} ka semana ang milabay",
   "time_month_ago": "{0} ka bulan ang milabay",
-  "time_year_ago": "{0} ka tuig ang milabay"
+  "time_year_ago": "{0} ka tuig ang milabay",
+  "failed_to_crop_image": "Napakyas sa pag-crop sa imahe",
+  "remaining": "Nabilin",
+  "you_have_reached_max_faucet_reward": "Naabot na nimo ang kinatas-ang ganti sa gripo 🎉 Ipadayon ang imong streak aron mapadayon kini!",
+  "your_faucet": "Ang Imong Gripo",
+  "your_faucet_ready": "Andam na ang Imong Gripo!",
+  "claim_your_faucet": "Kuhaa ang Imong Gripo",
+  "event_your_faucet": "Ang Imong Gripo",
+  "claim_faucet": "Gripo sa Pag-angkon",
+  "faucet_claimed_successfully": "Malampusong na-claim ang gripo!",
+  "ready": "Andam na",
+  "login_required": "Kinahanglan ang Pag-login",
+  "you_must_login_to_continue": "Kinahanglan ka nga mag-login aron makapadayon",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Kinahanglan nimo nga mo-resolve og captcha aron maangkon ang imong gripo."
 }

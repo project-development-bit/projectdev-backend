@@ -621,7 +621,7 @@
   "new_email_same_as_current": "I-imeyili entsha kufanele yehluke ku-imeyili yamanje",
   "your_country": "Izwe Lakho",
   "change_your_country_note": "Ungashintsha izwe lakini izikhathi ezi-3 kuphela ngonyaka.",
-  "setup_2fa_app_description": "Sebenzisa uhlelo lokusebenza lokufakazela ubuqiniso njenge-[Google Authenticator, Microsoft Authenticator, Authy] noma i-[1Password]. Skena ikhodi ye-QR engezansi. Izokhiqiza ikhodi enezinombolo ezingu-4 ukuze uyifake ngezansi.",
+  "setup_2fa_app_description": "Sebenzisa uhlelo lokusebenza lokufakazela ubuqiniso njenge-[Google Authenticator, Microsoft Authenticator, Authy,] noma i-[1Password]. Skena ikhodi ye-QR engezansi. Izokhiqiza ikhodi enezinombolo ezi-4 ukuze uyifake ngezansi.",
   "setup_2fa_app_note": "Uma unenkinga yokuskena ikhodi ye-QR, khetha ukufakwa ngesandla kuhlelo lwakho lokusebenza lokufakazela ubuqiniso bese ufaka igama lakho lomsebenzisi kanye nekhodi elandelayo:",
   "setup_2fa_app_title": "Setha Ukuqinisekiswa Kwezinto Ezimbili",
   "authentication_code": "Ikhodi Yokuqinisekisa",
@@ -771,5 +771,18 @@
   "time_day_ago": "Usuku olungu-{0} olwedlule",
   "time_week_ago": "Isonto elidlule elingu-{0}",
   "time_month_ago": "Inyanga engu-{0} edlule",
-  "time_year_ago": "Unyaka odlule ongu-{0}"
+  "time_year_ago": "Unyaka odlule ongu-{0}",
+  "failed_to_crop_image": "Yehlulekile ukunqampuna isithombe",
+  "remaining": "Okusele",
+  "you_have_reached_max_faucet_reward": "Usufinyelele umklomelo omkhulu wompompi 🎉 Gcina uchungechunge lwakho ukuze ululondoloze!",
+  "your_faucet": "Ipayipi Lakho",
+  "your_faucet_ready": "Ipayipi Lakho Lilungile!",
+  "claim_your_faucet": "Funa i-Faucet Yakho",
+  "event_your_faucet": "Ipayipi Lakho",
+  "claim_faucet": "Funa i-Faucet",
+  "faucet_claimed_successfully": "I-faucet ifunwe ngempumelelo!",
+  "ready": "Ukulungele",
+  "login_required": "Kudingeka Ukungena",
+  "you_must_login_to_continue": "Kumelwe ungene ngemvume ukuze uqhubeke",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Udinga ukuxazulula i-captcha ukuze uthole i-faucet yakho."
 }

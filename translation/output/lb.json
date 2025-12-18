@@ -771,5 +771,18 @@
   "time_day_ago": "Virun {0} Deeg",
   "time_week_ago": "Virun {0} Wochen",
   "time_month_ago": "Virun {0} Méint",
-  "time_year_ago": "Virun {0} Joer"
+  "time_year_ago": "Virun {0} Joer",
+  "failed_to_crop_image": "Bild konnt net ausgeschnidden ginn",
+  "remaining": "Rescht",
+  "you_have_reached_max_faucet_reward": "Du hues déi maximal Faucet-Belounung erreecht 🎉 Behaal deng Serie fir se z'erhalen!",
+  "your_faucet": "Äre Krunn",
+  "your_faucet_ready": "Äre Krunn ass fäerdeg!",
+  "claim_your_faucet": "Fuerdert Äre Krunn un",
+  "event_your_faucet": "Äre Krunn",
+  "claim_faucet": "Kran ufroen",
+  "faucet_claimed_successfully": "Krunn erfollegräich ugefrot!",
+  "ready": "Bereet",
+  "login_required": "Login erfuerderlech",
+  "you_must_login_to_continue": "Dir musst Iech aloggen fir weiderzemaachen",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Dir musst e Captcha léisen fir Äre Krunn ze kréien."
 }

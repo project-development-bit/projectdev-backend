@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Email baru harus berbeda dari email saat ini",
   "your_country": "Negara Anda",
   "change_your_country_note": "Anda dapat mengubah negara Anda hanya 3 kali setahun.",
-  "setup_2fa_app_description": "Gunakan aplikasi otentikasi seperti [Google Authenticator, Microsoft Authenticator, Authy] atau [1Password]. Pindai kode QR di bawah ini. Kode tersebut akan menghasilkan kode 4 digit yang perlu Anda masukkan di bawah ini.",
+  "setup_2fa_app_description": "Gunakan aplikasi otentikasi seperti [Google Authenticator, Microsoft Authenticator, Authy,] atau [1Password]. Pindai kode QR di bawah ini. Kode tersebut akan menghasilkan kode 4 digit yang perlu Anda masukkan di bawah ini.",
   "setup_2fa_app_note": "Jika Anda mengalami masalah saat memindai kode QR, pilih entri manual di aplikasi autentikator Anda dan masukkan nama pengguna dan kode berikut:",
   "setup_2fa_app_title": "Siapkan Autentikasi Dua Faktor",
   "authentication_code": "Kode Autentikasi",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} hari yang lalu",
   "time_week_ago": "0 minggu yang lalu",
   "time_month_ago": "0 bulan yang lalu",
-  "time_year_ago": "0 tahun yang lalu"
+  "time_year_ago": "0 tahun yang lalu",
+  "failed_to_crop_image": "Gambar gagal dipotong",
+  "remaining": "Tersisa",
+  "you_have_reached_max_faucet_reward": "Anda telah mencapai hadiah faucet maksimal 🎉 Pertahankan streak Anda untuk mempertahankannya!",
+  "your_faucet": "Keran Anda",
+  "your_faucet_ready": "Keran Anda Sudah Siap!",
+  "claim_your_faucet": "Klaim Keran Anda",
+  "event_your_faucet": "Keran Anda",
+  "claim_faucet": "Klaim Keran",
+  "faucet_claimed_successfully": "Keran berhasil dipasang!",
+  "ready": "Siap",
+  "login_required": "Login Diperlukan",
+  "you_must_login_to_continue": "Anda harus masuk untuk melanjutkan.",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Anda perlu menyelesaikan captcha untuk mengklaim faucet Anda."
 }

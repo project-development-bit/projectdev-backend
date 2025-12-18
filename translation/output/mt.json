@@ -621,7 +621,7 @@
   "new_email_same_as_current": "L-email il-ġdida trid tkun differenti mill-email attwali",
   "your_country": "Pajjiżek",
   "change_your_country_note": "Tista' tbiddel pajjiżek biss 3 darbiet fis-sena.",
-  "setup_2fa_app_description": "Uża app ta' awtentikar bħal [Google Authenticator, Microsoft Authenticator, Authy] jew [1Password]. Skennja l-kodiċi QR hawn taħt. Dan se jiġġenera kodiċi ta' 4 ċifri biex iddaħħal hawn taħt.",
+  "setup_2fa_app_description": "Uża app ta' awtentikar bħal [Google Authenticator, Microsoft Authenticator, Authy,] jew [1Password]. Skennja l-kodiċi QR hawn taħt. Dan se jiġġenera kodiċi ta' 4 ċifri biex iddaħħal hawn taħt.",
   "setup_2fa_app_note": "Jekk qed ikollok problemi biex tiskennja l-kodiċi QR, agħżel id-dħul manwali fl-app tal-awtentikatur tiegħek u daħħal l-isem tal-utent tiegħek u l-kodiċi li ġej:",
   "setup_2fa_app_title": "Issettja l-Awtentikazzjoni b'Żewġ Fattori",
   "authentication_code": "Kodiċi ta' Awtentikazzjoni",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} jum ilu",
   "time_week_ago": "{0} ġimgħa ilu",
   "time_month_ago": "{0} xahar ilu",
-  "time_year_ago": "{0} sena ilu"
+  "time_year_ago": "{0} sena ilu",
+  "failed_to_crop_image": "Ma rnexxiliex taqta' l-immaġni",
+  "remaining": "Fadal",
+  "you_have_reached_max_faucet_reward": "Laħaqt il-premju massimu tal-faucet 🎉 Żomm is-sensiela tiegħek biex iżżommha!",
+  "your_faucet": "Il-Vit Tiegħek",
+  "your_faucet_ready": "Il-Vit Tiegħek Lest!",
+  "claim_your_faucet": "Itlob il-Faucet Tiegħek",
+  "event_your_faucet": "Il-Vit Tiegħek",
+  "claim_faucet": "Talba tal-Faucet",
+  "faucet_claimed_successfully": "Il-faucet ġie mitlub b'suċċess!",
+  "ready": "Lest",
+  "login_required": "Login Meħtieġ",
+  "you_must_login_to_continue": "Trid tidħol biex tkompli",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Jeħtieġ li ssolvi captcha biex titlob il-faucet tiegħek."
 }

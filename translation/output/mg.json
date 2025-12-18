@@ -621,7 +621,7 @@
   "new_email_same_as_current": "Ny mailaka vaovao dia tsy maintsy hafa amin'ny mailaka ankehitriny",
   "your_country": "Firenenao",
   "change_your_country_note": "Afaka manova ny firenenao in-3 isan-taona fotsiny ianao.",
-  "setup_2fa_app_description": "Mampiasà fampiharana fanamarinana toy ny [Google Authenticator, Microsoft Authenticator, Authy] na [1Password]. Skanera ny kaody QR etsy ambany. Hamorona kaody misy isa 4 ho anao hampidirina eto ambany izy io.",
+  "setup_2fa_app_description": "Mampiasà fampiharana fanamarinana toy ny [Google Authenticator, Microsoft Authenticator, Authy,] na [1Password]. Skanera ny kaody QR etsy ambany. Hamorona kaody misy isa 4 ho anao hampidirina eto ambany izy io.",
   "setup_2fa_app_note": "Raha manana olana amin'ny fisavana ny kaody QR ianao dia fidio ny fidirana amin'ny tanana ao amin'ny fampiharana authenticator anao ary ampidiro ny anaranao sy ity kaody manaraka ity:",
   "setup_2fa_app_title": "Setup Two Factor Authentication",
   "authentication_code": "Code Authentication",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0} andro lasa izay",
   "time_week_ago": "{0} herinandro lasa izay",
   "time_month_ago": "{0} volana lasa izay",
-  "time_year_ago": "{0} taona lasa izay"
+  "time_year_ago": "{0} taona lasa izay",
+  "failed_to_crop_image": "Tsy nahomby ny fanapahana ny sary",
+  "remaining": "sisa tavela",
+  "you_have_reached_max_faucet_reward": "Nahatratra ny valisoa ambony indrindra amin'ny paompy ianao 🎉 Tohizo ny fandresenao mba hihazonana izany!",
+  "your_faucet": "Ny paompy anao",
+  "your_faucet_ready": "Vonona ny paompy anao!",
+  "claim_your_faucet": "Angataho ny paompy anao",
+  "event_your_faucet": "Ny paompy anao",
+  "claim_faucet": "Fantson-ketra",
+  "faucet_claimed_successfully": "Nahomby ny fangatahana nataon'ny Faucet!",
+  "ready": "Vonona",
+  "login_required": "Tsy maintsy miditra",
+  "you_must_login_to_continue": "Tsy maintsy miditra ianao vao afaka manohy",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Mila mamaha captcha ianao vao afaka maka ny paompyo."
 }

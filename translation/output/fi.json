@@ -771,5 +771,18 @@
   "time_day_ago": "{0} päivä sitten",
   "time_week_ago": "{0} viikko sitten",
   "time_month_ago": "{0} kuukausi sitten",
-  "time_year_ago": "{0} vuosi sitten"
+  "time_year_ago": "{0} vuosi sitten",
+  "failed_to_crop_image": "Kuvan rajaaminen epäonnistui",
+  "remaining": "Jäljellä",
+  "you_have_reached_max_faucet_reward": "Olet saavuttanut maksimihanapalkinnon 🎉 Jatka voittoputkeasi!",
+  "your_faucet": "Hana",
+  "your_faucet_ready": "Hanasi on valmis!",
+  "claim_your_faucet": "Lunasta hana",
+  "event_your_faucet": "Hana",
+  "claim_faucet": "Vaadi hana",
+  "faucet_claimed_successfully": "Hana lunastettu onnistuneesti!",
+  "ready": "Valmis",
+  "login_required": "Kirjautuminen vaaditaan",
+  "you_must_login_to_continue": "Sinun on kirjauduttava sisään jatkaaksesi",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Sinun on ratkaistava captcha lunastaaksesi hanasi."
 }

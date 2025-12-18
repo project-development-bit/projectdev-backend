@@ -771,5 +771,18 @@
   "time_day_ago": "{0} ditë më parë",
   "time_week_ago": "{0} javë më parë",
   "time_month_ago": "{0} muaj më parë",
-  "time_year_ago": "{0} vit më parë"
+  "time_year_ago": "{0} vit më parë",
+  "failed_to_crop_image": "Prerja e imazhit dështoi",
+  "remaining": "Mbetur",
+  "you_have_reached_max_faucet_reward": "Ke arritur shpërblimin maksimal të rubinetit 🎉 Vazhdo serinë tënde për ta ruajtur atë!",
+  "your_faucet": "Rubineti juaj",
+  "your_faucet_ready": "Rubineti juaj është gati!",
+  "claim_your_faucet": "Merrni rubinetin tuaj",
+  "event_your_faucet": "Rubineti juaj",
+  "claim_faucet": "Rubineti i Kërkesës",
+  "faucet_claimed_successfully": "Rubineti u rikuperua me sukses!",
+  "ready": "Gati",
+  "login_required": "Kërkohet hyrje",
+  "you_must_login_to_continue": "Duhet të identifikoheni për të vazhduar",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Duhet të zgjidhësh një captcha për të përfituar nga rubineti yt."
 }

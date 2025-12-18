@@ -771,5 +771,18 @@
   "time_day_ago": "Před {0} dnem",
   "time_week_ago": "Před {0} týdnem",
   "time_month_ago": "Před {0} měsícem",
-  "time_year_ago": "Před {0} rokem"
+  "time_year_ago": "Před {0} rokem",
+  "failed_to_crop_image": "Oříznutí obrázku se nezdařilo",
+  "remaining": "Zbývající",
+  "you_have_reached_max_faucet_reward": "Dosáhli jste maximální odměny za kohoutek 🎉 Udržte si ji v sérii!",
+  "your_faucet": "Váš kohoutek",
+  "your_faucet_ready": "Váš kohoutek je připraven!",
+  "claim_your_faucet": "Získejte svůj kohoutek",
+  "event_your_faucet": "Váš kohoutek",
+  "claim_faucet": "Nárok na faucet",
+  "faucet_claimed_successfully": "Úspěšně nárokován kohoutek!",
+  "ready": "Připraveno",
+  "login_required": "Vyžadováno přihlášení",
+  "you_must_login_to_continue": "Pro pokračování se musíte přihlásit",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Pro nárokování vašeho kohoutku musíte vyřešit captchu."
 }

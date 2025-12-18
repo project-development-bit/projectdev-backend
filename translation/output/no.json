@@ -771,5 +771,18 @@
   "time_day_ago": "for {0} dager siden",
   "time_week_ago": "for {0} uke siden",
   "time_month_ago": "for {0} måned siden",
-  "time_year_ago": "For {0} år siden"
+  "time_year_ago": "For {0} år siden",
+  "failed_to_crop_image": "Kunne ikke beskjære bildet",
+  "remaining": "Gjenværende",
+  "you_have_reached_max_faucet_reward": "Du har nådd maks belønning for tappekraner 🎉 Fortsett rekken din for å opprettholde den!",
+  "your_faucet": "Kranen din",
+  "your_faucet_ready": "Kranen din er klar!",
+  "claim_your_faucet": "Gjør krav på kranen din",
+  "event_your_faucet": "Kranen din",
+  "claim_faucet": "Krev kran",
+  "faucet_claimed_successfully": "Kranen er gjort krav på!",
+  "ready": "Ferdig",
+  "login_required": "Innlogging kreves",
+  "you_must_login_to_continue": "Du må logge inn for å fortsette",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Du må løse en captcha for å gjøre krav på kranen din."
 }

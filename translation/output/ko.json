@@ -621,7 +621,7 @@
   "new_email_same_as_current": "새 이메일 주소는 현재 이메일 주소와 달라야 합니다.",
   "your_country": "귀하의 국가",
   "change_your_country_note": "1년에 국가를 변경할 수 있는 횟수는 3회로 제한됩니다.",
-  "setup_2fa_app_description": "[Google Authenticator, Microsoft Authenticator, Authy] 또는 [1Password]와 같은 인증 앱을 사용하세요. 아래 QR 코드를 스캔하면 4자리 코드가 생성됩니다. 이 코드를 아래에 입력하세요.",
+  "setup_2fa_app_description": "[Google Authenticator, Microsoft Authenticator, Authy] 또는 [1Password]와 같은 인증 앱을 사용하세요. 아래 QR 코드를 스캔하세요. 4자리 코드가 생성되며, 이 코드를 아래에 입력하세요.",
   "setup_2fa_app_note": "QR 코드 스캔에 문제가 있는 경우, 인증 앱에서 수동 입력을 선택하고 사용자 이름과 다음 코드를 입력하세요.",
   "setup_2fa_app_title": "2단계 인증을 설정하세요",
   "authentication_code": "인증 코드",
@@ -771,5 +771,18 @@
   "time_day_ago": "{0}일 전",
   "time_week_ago": "{0}주 전",
   "time_month_ago": "{0}개월 전",
-  "time_year_ago": "{0}년 전"
+  "time_year_ago": "{0}년 전",
+  "failed_to_crop_image": "이미지 자르기에 실패했습니다",
+  "remaining": "남은",
+  "you_have_reached_max_faucet_reward": "탭 보상 최대치를 달성하셨습니다 🎉 연속 기록을 유지하여 보상을 계속 받으세요!",
+  "your_faucet": "당신의 수도꼭지",
+  "your_faucet_ready": "수도꼭지 설치가 완료되었습니다!",
+  "claim_your_faucet": "수도꼭지를 가져가세요",
+  "event_your_faucet": "당신의 수도꼭지",
+  "claim_faucet": "클레임 수도꼭지",
+  "faucet_claimed_successfully": "수도꼭지를 성공적으로 점유했습니다!",
+  "ready": "준비가 된",
+  "login_required": "로그인이 필요합니다",
+  "you_must_login_to_continue": "계속하려면 로그인해야 합니다.",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "수도꼭지를 사용하려면 캡차를 풀어야 합니다."
 }

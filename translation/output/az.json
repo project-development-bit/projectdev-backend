@@ -771,5 +771,18 @@
   "time_day_ago": "{0} gün əvvəl",
   "time_week_ago": "{0} həftə əvvəl",
   "time_month_ago": "{0} ay əvvəl",
-  "time_year_ago": "{0} il əvvəl"
+  "time_year_ago": "{0} il əvvəl",
+  "failed_to_crop_image": "Şəkli kəsmək alınmadı",
+  "remaining": "Qalan",
+  "you_have_reached_max_faucet_reward": "Maksimum kran mükafatına çatdınız 🎉 Seriyanızı qorumaq üçün onu qoruyun!",
+  "your_faucet": "Kranınız",
+  "your_faucet_ready": "Kranınız Hazırdır!",
+  "claim_your_faucet": "Kranınızı tələb edin",
+  "event_your_faucet": "Kranınız",
+  "claim_faucet": "Kran tələb edin",
+  "faucet_claimed_successfully": "Kran uğurla tələb olundu!",
+  "ready": "Hazır",
+  "login_required": "Giriş tələb olunur",
+  "you_must_login_to_continue": "Davam etmək üçün daxil olmalısınız",
+  "you_need_to_resolve_captcha_to_claim_your_faucet": "Kranınızı tələb etmək üçün captcha həll etməlisiniz."
 }
