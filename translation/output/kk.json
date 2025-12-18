@@ -544,7 +544,7 @@
   "change_your_email": "Электрондық поштаңызды өзгертіңіз",
   "change_your_country": "Еліңді өзгерт",
   "change_your_country_title": "Еліңді өзгерт",
-  "change_your_country_description": "Қазіргі уақытта тұратын елді таңдаңыз. Бұл сізге сәйкес мазмұн мен қызметтерді ұсынуға көмектеседі.",
+  "change_your_country_description": "Тұратын еліңізді таңдаңыз. Сізге қолжетімді ұсыныстар осы елге байланысты болады.",
   "change_your_country_btn_text": "Еліңізді өзгертіңіз",
   "select_your_country_hint": "Еліңізді таңдаңыз",
   "please_select_country_error": "Елді таңдаңыз",

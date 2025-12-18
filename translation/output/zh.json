@@ -544,7 +544,7 @@
   "change_your_email": "更改您的电子邮件",
   "change_your_country": "更改您的国家/地区",
   "change_your_country_title": "更改您的国家/地区",
-  "change_your_country_description": "请选择您目前居住的国家/地区。这将有助于我们为您提供相关的内容和服务。",
+  "change_your_country_description": "请选择您的居住国家/地区。您可享受的优惠将取决于您所在的国家/地区。",
   "change_your_country_btn_text": "更改您的国家/地区",
   "select_your_country_hint": "选择您的国家/地区",
   "please_select_country_error": "请选择一个国家/地区",

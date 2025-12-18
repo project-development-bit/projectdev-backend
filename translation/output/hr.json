@@ -544,7 +544,7 @@
   "change_your_email": "Promijenite svoju e-poštu",
   "change_your_country": "Promijenite svoju državu",
   "change_your_country_title": "Promijenite svoju zemlju",
-  "change_your_country_description": "Odaberite državu u kojoj trenutno boravite. To nam pomaže da vam pružimo relevantan sadržaj i usluge.",
+  "change_your_country_description": "Odaberite svoju zemlju prebivališta. Ponude koje su vam dostupne ovisit će o toj zemlji.",
   "change_your_country_btn_text": "Promijenite svoju zemlju",
   "select_your_country_hint": "Odaberite svoju državu",
   "please_select_country_error": "Molimo odaberite državu",

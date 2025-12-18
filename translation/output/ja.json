@@ -544,7 +544,7 @@
   "change_your_email": "メールアドレスを変更する",
   "change_your_country": "国を変更する",
   "change_your_country_title": "国を変更する",
-  "change_your_country_description": "現在お住まいの国を選択してください。これにより、お客様にとって関連性のあるコンテンツとサービスを提供できるようになります。",
+  "change_your_country_description": "お住まいの国を選択してください。ご利用可能なオファーは国によって異なります。",
   "change_your_country_btn_text": "国を変更する",
   "select_your_country_hint": "国を選択してください",
   "please_select_country_error": "国を選択してください",

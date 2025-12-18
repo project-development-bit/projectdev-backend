@@ -544,7 +544,7 @@
   "change_your_email": "เปลี่ยนอีเมล์ของคุณ",
   "change_your_country": "เปลี่ยนประเทศของคุณ",
   "change_your_country_title": "เปลี่ยนประเทศของคุณ",
-  "change_your_country_description": "โปรดเลือกประเทศที่คุณอาศัยอยู่ปัจจุบัน การทำเช่นนี้จะช่วยให้เราสามารถนำเสนอเนื้อหาและบริการที่เกี่ยวข้องกับคุณได้",
+  "change_your_country_description": "เลือกประเทศที่คุณอาศัยอยู่ ข้อเสนอที่คุณจะได้รับนั้นขึ้นอยู่กับประเทศนี้",
   "change_your_country_btn_text": "เปลี่ยนประเทศของคุณ",
   "select_your_country_hint": "เลือกประเทศของคุณ",
   "please_select_country_error": "โปรดเลือกประเทศ",

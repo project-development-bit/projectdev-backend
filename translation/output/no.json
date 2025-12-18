@@ -544,7 +544,7 @@
   "change_your_email": "Endre e-postadressen din",
   "change_your_country": "Endre landet ditt",
   "change_your_country_title": "Endre landet ditt",
-  "change_your_country_description": "Velg landet der du bor. Dette hjelper oss med å gi deg relevant innhold og tjenester.",
+  "change_your_country_description": "Velg landet du bor i. Tilbudene som er tilgjengelige for deg, vil avhenge av dette landet.",
   "change_your_country_btn_text": "Endre landet ditt",
   "select_your_country_hint": "Velg landet ditt",
   "please_select_country_error": "Vennligst velg et land",

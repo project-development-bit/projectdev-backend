@@ -544,7 +544,7 @@
   "change_your_email": "Променете имейла си",
   "change_your_country": "Променете държавата си",
   "change_your_country_title": "Променете държавата си",
-  "change_your_country_description": "Изберете държавата, в която живеете в момента. Това ни помага да ви предоставим подходящо съдържание и услуги.",
+  "change_your_country_description": "Изберете държавата си на пребиваване. Достъпните за вас оферти ще зависят от тази държава.",
   "change_your_country_btn_text": "Променете държавата си",
   "select_your_country_hint": "Изберете вашата държава",
   "please_select_country_error": "Моля, изберете държава",

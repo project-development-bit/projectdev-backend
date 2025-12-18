@@ -544,7 +544,7 @@
   "change_your_email": "Canvia el teu correu electrònic",
   "change_your_country": "Canvia el teu país",
   "change_your_country_title": "Canvia el teu país",
-  "change_your_country_description": "Selecciona el país on resideixes actualment. Això ens ajuda a oferir-te contingut i serveis rellevants.",
+  "change_your_country_description": "Seleccioneu el vostre país de residència. Les ofertes disponibles dependran d'aquest país.",
   "change_your_country_btn_text": "Canvia el teu país",
   "select_your_country_hint": "Selecciona el teu país",
   "please_select_country_error": "Si us plau, seleccioneu un país",

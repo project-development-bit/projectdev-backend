@@ -544,7 +544,7 @@
   "change_your_email": "Vaihda sähköpostiosoitteesi",
   "change_your_country": "Vaihda maata",
   "change_your_country_title": "Vaihda maata",
-  "change_your_country_description": "Valitse maa, jossa tällä hetkellä asut. Tämä auttaa meitä tarjoamaan sinulle olennaista sisältöä ja palveluita.",
+  "change_your_country_description": "Valitse asuinmaasi. Saatavilla olevat tarjoukset riippuvat maasta.",
   "change_your_country_btn_text": "Vaihda maata",
   "select_your_country_hint": "Valitse maasi",
   "please_select_country_error": "Valitse maa",

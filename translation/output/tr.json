@@ -544,7 +544,7 @@
   "change_your_email": "E-postanızı Değiştirin",
   "change_your_country": "Ülkenizi değiştirin",
   "change_your_country_title": "Ülkenizi Değiştirin",
-  "change_your_country_description": "Lütfen şu anda ikamet ettiğiniz ülkeyi seçin. Bu, size ilgili içerik ve hizmetleri sunmamıza yardımcı olur.",
+  "change_your_country_description": "Lütfen ikamet ettiğiniz ülkeyi seçin. Size sunulan fırsatlar bu ülkeye bağlı olacaktır.",
   "change_your_country_btn_text": "Ülkenizi Değiştirin",
   "select_your_country_hint": "Ülkenizi seçin",
   "please_select_country_error": "Lütfen bir ülke seçin",

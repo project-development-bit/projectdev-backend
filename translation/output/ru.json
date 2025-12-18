@@ -544,7 +544,7 @@
   "change_your_email": "Измените свой адрес электронной почты",
   "change_your_country": "Сменить страну",
   "change_your_country_title": "Сменить страну",
-  "change_your_country_description": "Выберите страну, в которой вы в настоящее время проживаете. Это поможет нам предоставлять вам актуальный контент и услуги.",
+  "change_your_country_description": "Выберите страну вашего проживания. Доступные вам предложения будут зависеть от этой страны.",
   "change_your_country_btn_text": "Сменить страну",
   "select_your_country_hint": "Выберите свою страну",
   "please_select_country_error": "Пожалуйста, выберите страну",

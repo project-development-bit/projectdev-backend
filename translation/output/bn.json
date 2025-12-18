@@ -544,7 +544,7 @@
   "change_your_email": "আপনার ইমেল পরিবর্তন করুন",
   "change_your_country": "তোমার দেশ পরিবর্তন করো।",
   "change_your_country_title": "তোমার দেশ পরিবর্তন করো",
-  "change_your_country_description": "আপনি বর্তমানে যে দেশে থাকেন সেই দেশটি নির্বাচন করুন। এটি আমাদের আপনাকে প্রাসঙ্গিক সামগ্রী এবং পরিষেবা প্রদান করতে সাহায্য করে।",
+  "change_your_country_description": "আপনার বসবাসের দেশ নির্বাচন করুন। আপনার জন্য উপলব্ধ অফারগুলি এই দেশের উপর নির্ভর করবে।",
   "change_your_country_btn_text": "তোমার দেশ পরিবর্তন করো",
   "select_your_country_hint": "আপনার দেশ নির্বাচন করুন",
   "please_select_country_error": "অনুগ্রহ করে একটি দেশ নির্বাচন করুন।",

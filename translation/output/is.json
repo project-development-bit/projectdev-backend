@@ -544,7 +544,7 @@
   "change_your_email": "Breyta netfanginu þínu",
   "change_your_country": "Skiptu um land",
   "change_your_country_title": "Skiptu um land",
-  "change_your_country_description": "Veldu landið þar sem þú býrð núna. Þetta hjálpar okkur að veita þér viðeigandi efni og þjónustu.",
+  "change_your_country_description": "Veldu búsetuland þitt. Tilboðin sem eru í boði fyrir þig fara eftir því landi.",
   "change_your_country_btn_text": "Skiptu um land",
   "select_your_country_hint": "Veldu landið þitt",
   "please_select_country_error": "Veldu land",

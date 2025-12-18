@@ -544,7 +544,7 @@
   "change_your_email": "E-mail cím módosítása",
   "change_your_country": "Váltsd át az országodat",
   "change_your_country_title": "Váltsd meg az országodat",
-  "change_your_country_description": "Válaszd ki azt az országot, ahol jelenleg laksz. Ez segít nekünk abban, hogy releváns tartalmakat és szolgáltatásokat nyújthassunk neked.",
+  "change_your_country_description": "Válassza ki a lakóhelye szerinti országot. Az elérhető ajánlatok ettől az országtól függenek.",
   "change_your_country_btn_text": "Váltsd meg az országodat",
   "select_your_country_hint": "Válassza ki az országát",
   "please_select_country_error": "Kérjük, válasszon egy országot",

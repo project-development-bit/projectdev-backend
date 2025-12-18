@@ -544,7 +544,7 @@
   "change_your_email": "ປ່ຽນອີເມວຂອງທ່ານ",
   "change_your_country": "ປ່ຽນປະເທດຂອງເຈົ້າ",
   "change_your_country_title": "ປ່ຽນປະເທດຂອງເຈົ້າ",
-  "change_your_country_description": "ເລືອກປະເທດທີ່ທ່ານອາໄສຢູ່ໃນປະຈຸບັນ. ນີ້ຊ່ວຍໃຫ້ພວກເຮົາສະໜອງເນື້ອຫາ ແລະການບໍລິການທີ່ກ່ຽວຂ້ອງໃຫ້ທ່ານ.",
+  "change_your_country_description": "ເລືອກປະເທດທີ່ທ່ານອາໄສຢູ່. ຂໍ້ສະເໜີທີ່ມີໃຫ້ຈະຂຶ້ນຢູ່ກັບປະເທດນີ້.",
   "change_your_country_btn_text": "ປ່ຽນປະເທດຂອງເຈົ້າ",
   "select_your_country_hint": "ເລືອກປະເທດຂອງທ່ານ",
   "please_select_country_error": "ກະລຸນາເລືອກປະເທດ",

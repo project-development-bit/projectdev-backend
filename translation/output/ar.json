@@ -544,7 +544,7 @@
   "change_your_email": "تغيير بريدك الإلكتروني",
   "change_your_country": "تغيير بلدك",
   "change_your_country_title": "غيّر بلدك",
-  "change_your_country_description": "اختر بلد إقامتك الحالي. سيساعدنا هذا في تزويدك بالمحتوى والخدمات المناسبة.",
+  "change_your_country_description": "اختر بلد إقامتك. ستعتمد العروض المتاحة لك على هذا البلد.",
   "change_your_country_btn_text": "غيّر بلدك",
   "select_your_country_hint": "اختر بلدك",
   "please_select_country_error": "الرجاء اختيار البلد",

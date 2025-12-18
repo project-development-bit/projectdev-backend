@@ -544,7 +544,7 @@
   "change_your_email": "ایمیل خود را تغییر دهید",
   "change_your_country": "کشورت رو عوض کن",
   "change_your_country_title": "کشور خود را تغییر دهید",
-  "change_your_country_description": "کشوری را که در حال حاضر در آن اقامت دارید انتخاب کنید. این به ما کمک می‌کند تا محتوا و خدمات مرتبط را در اختیار شما قرار دهیم.",
+  "change_your_country_description": "کشور محل اقامت خود را انتخاب کنید. پیشنهادهای موجود برای شما به این کشور بستگی دارد.",
   "change_your_country_btn_text": "کشور خود را تغییر دهید",
   "select_your_country_hint": "کشور خود را انتخاب کنید",
   "please_select_country_error": "لطفا یک کشور را انتخاب کنید",

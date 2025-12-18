@@ -544,7 +544,7 @@
   "change_your_email": "Aldatu zure posta elektronikoa",
   "change_your_country": "Aldatu zure herrialdea",
   "change_your_country_title": "Aldatu zure herrialdea",
-  "change_your_country_description": "Hautatu une honetan bizi zaren herrialdea. Horrek eduki eta zerbitzu garrantzitsuak eskaintzen lagunduko digu.",
+  "change_your_country_description": "Hautatu zure bizileku herrialdea. Zure eskura dauden eskaintzak herrialde horren araberakoak izango dira.",
   "change_your_country_btn_text": "Aldatu zure herrialdea",
   "select_your_country_hint": "Hautatu zure herrialdea",
   "please_select_country_error": "Mesedez, aukeratu herrialde bat",

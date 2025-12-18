@@ -544,7 +544,7 @@
   "change_your_email": "Pakeiskite savo el. pašto adresą",
   "change_your_country": "Pakeiskite savo šalį",
   "change_your_country_title": "Pakeiskite savo šalį",
-  "change_your_country_description": "Pasirinkite šalį, kurioje šiuo metu gyvenate. Tai padės mums pateikti jums aktualų turinį ir paslaugas.",
+  "change_your_country_description": "Pasirinkite savo gyvenamąją šalį. Jums prieinami pasiūlymai priklausys nuo šios šalies.",
   "change_your_country_btn_text": "Pakeiskite savo šalį",
   "select_your_country_hint": "Pasirinkite savo šalį",
   "please_select_country_error": "Pasirinkite šalį",

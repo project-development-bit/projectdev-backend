@@ -544,7 +544,7 @@
   "change_your_email": "Ändern Sie Ihre E-Mail-Adresse",
   "change_your_country": "Ändere dein Land",
   "change_your_country_title": "Ändere dein Land",
-  "change_your_country_description": "Wählen Sie das Land aus, in dem Sie derzeit wohnen. Dies hilft uns, Ihnen relevante Inhalte und Dienstleistungen anzubieten.",
+  "change_your_country_description": "Wählen Sie Ihr Wohnsitzland. Die Ihnen zur Verfügung stehenden Angebote hängen von diesem Land ab.",
   "change_your_country_btn_text": "Ändere dein Land",
   "select_your_country_hint": "Wählen Sie Ihr Land aus",
   "please_select_country_error": "Bitte wählen Sie ein Land aus.",

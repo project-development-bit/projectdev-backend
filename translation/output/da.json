@@ -544,7 +544,7 @@
   "change_your_email": "Skift din e-mail",
   "change_your_country": "Skift dit land",
   "change_your_country_title": "Skift dit land",
-  "change_your_country_description": "Vælg det land, hvor du bor i øjeblikket. Dette hjælper os med at levere relevant indhold og tjenester til dig.",
+  "change_your_country_description": "Vælg dit bopælsland. De tilgængelige tilbud afhænger af dette land.",
   "change_your_country_btn_text": "Skift dit land",
   "select_your_country_hint": "Vælg dit land",
   "please_select_country_error": "Vælg venligst et land",

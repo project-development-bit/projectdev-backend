@@ -544,7 +544,7 @@
   "change_your_email": "Muutke oma e-posti aadressi",
   "change_your_country": "Muuda oma riiki",
   "change_your_country_title": "Muuda oma riiki",
-  "change_your_country_description": "Valige riik, kus te praegu elate. See aitab meil pakkuda teile asjakohast sisu ja teenuseid.",
+  "change_your_country_description": "Valige oma elukohariik. Teile saadaolevad pakkumised olenevad sellest riigist.",
   "change_your_country_btn_text": "Muuda oma riiki",
   "select_your_country_hint": "Valige oma riik",
   "please_select_country_error": "Palun valige riik",

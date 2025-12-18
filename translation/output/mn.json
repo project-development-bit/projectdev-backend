@@ -544,7 +544,7 @@
   "change_your_email": "Имэйлээ солино уу",
   "change_your_country": "Улсаа өөрчил",
   "change_your_country_title": "Эх орноо өөрчил",
-  "change_your_country_description": "Одоо амьдарч буй улсаа сонгоно уу. Энэ нь танд холбогдох контент, үйлчилгээг үзүүлэхэд бидэнд тусална.",
+  "change_your_country_description": "Оршин суугаа улсаа сонгоно уу. Танд санал болгож буй саналууд нь тухайн улсаас хамаарна.",
   "change_your_country_btn_text": "Улсаа өөрчил",
   "select_your_country_hint": "Улсаа сонго",
   "please_select_country_error": "Улсаа сонгоно уу",
