@@ -97,7 +97,7 @@ class UserModel {
   };
 
   create = async (
-    { name, password, email, role = Role.NormalUser, interest_enable = 0, referred_by = null, country_id = null, language = null, show_onboarding = 1 },
+    { name, password, email, role = Role.NormalUser, interest_enable = 0, referred_by = null, country_id = null, language = "us", show_onboarding = 1 },
     { securityCode, referralCode }
   ) => {
     try {
@@ -134,6 +134,9 @@ class UserModel {
         interest_enable,
         show_onboarding
       ]);
+
+      // Add email auth provider
+      await this.addAuthProvider(userId, 'email', null, email);
 
       // Return created user object
       return {
@@ -567,8 +570,28 @@ class UserModel {
     return result;
   };
 
-  // Find user by social provider
-  findBySocialProvider = async (provider, providerId) => {
+  // Add an auth provider to a user account
+  addAuthProvider = async (userId, provider, providerUserId = null, providerEmail = null) => {
+    const sql = `
+      INSERT INTO user_auth_providers
+      (user_id, provider, provider_user_id, provider_email, last_used_at)
+      VALUES (?, ?, ?, ?, NOW())
+      ON DUPLICATE KEY UPDATE
+        last_used_at = NOW(),
+        provider_email = VALUES(provider_email)
+    `;
+
+    const result = await coinQuery(sql, [
+      userId,
+      provider,
+      providerUserId,
+      providerEmail
+    ]);
+    return result;
+  };
+
+  // Find user by auth provider
+  findByAuthProvider = async (provider, providerUserId) => {
     const sql = `
       SELECT
         u.*,
@@ -582,41 +605,65 @@ class UserModel {
         up.notifications_enabled,
         up.show_stats_enabled,
         up.anonymous_in_contests
-      FROM ${this.tableName} u
+      FROM user_auth_providers uap
+      INNER JOIN ${this.tableName} u ON uap.user_id = u.id
       LEFT JOIN ${this.profilesTableName} up ON u.id = up.user_id
-      WHERE u.login_provider = ? AND u.social_provider_id = ?
+      WHERE uap.provider = ? AND uap.provider_user_id = ?
     `;
 
-    const result = await coinQuery(sql, [provider, providerId]);
+    const result = await coinQuery(sql, [provider, providerUserId]);
     return result[0];
   };
 
-  // Check if social provider account exists
-  socialProviderExists = async (provider, providerId) => {
+  // Get all auth providers for a user
+  getUserAuthProviders = async (userId) => {
     const sql = `
-      SELECT id FROM ${this.tableName}
-      WHERE login_provider = ? AND social_provider_id = ?
+      SELECT provider, provider_user_id, provider_email, linked_at, last_used_at
+      FROM user_auth_providers
+      WHERE user_id = ?
+      ORDER BY linked_at ASC
     `;
-    const result = await coinQuery(sql, [provider, providerId]);
-    return result.length > 0;
+
+    const result = await coinQuery(sql, [userId]);
+    return result;
   };
 
-  // Create user with Google authentication
-  createGoogleUser = async ({ email, googleId, name, referralCode, referrerId, countryId, role, avatarUrl = null }) => {
+  // Check if auth provider exists for any user
+  authProviderExists = async (provider, providerUserId) => {
+    const sql = `
+      SELECT user_id FROM user_auth_providers
+      WHERE provider = ? AND provider_user_id = ?
+    `;
+    const result = await coinQuery(sql, [provider, providerUserId]);
+    return result.length > 0 ? result[0] : null;
+  };
+
+  // Update last used time for auth provider
+  updateAuthProviderLastUsed = async (userId, provider) => {
+    const sql = `
+      UPDATE user_auth_providers
+      SET last_used_at = NOW()
+      WHERE user_id = ? AND provider = ?
+    `;
+    const result = await coinQuery(sql, [userId, provider]);
+    return result;
+  };
+
+  // Create user with social authentication (Google, Apple, etc.)
+  createSocialUser = async ({ email, provider, providerId, name, referralCode, referrerId, countryId, role, avatarUrl = null }) => {
     try {
       // Insert into users table
       const userSql = `
         INSERT INTO ${this.tableName}
-        (email, password, role, referral_code, referred_by, is_verified, is_banned, login_provider, social_provider_id)
-        VALUES (?, NULL, ?, ?, ?, 1, 0, 'google', ?)
+        (email, password, role, referral_code, referred_by, is_verified, is_banned)
+        VALUES (?, NULL, ?, ?, ?, 1, 0)
       `;
 
       const userResult = await coinQuery(userSql, [
         email,
         role,
         referralCode,
-        referrerId,
-        googleId
+        referrerId
       ]);
 
       const userId = userResult.insertId;
@@ -635,13 +682,16 @@ class UserModel {
         countryId
       ]);
 
+      // Add auth provider
+      await this.addAuthProvider(userId, provider, providerId, email);
+
       return {
         id: userId,
         insertId: userId
       };
 
     } catch (error) {
-      console.error('Google user creation failed:', error);
+      console.error('Social user creation failed:', error);
       throw error;
     }
   };

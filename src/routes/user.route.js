@@ -117,7 +117,7 @@ router.post(
   "/google/signup",
   googleSignupLimiter,
   validateGoogleSignup,
-  verifyTurnstile({ expectedAction: 'google-signup', includeRemoteIp: true }),
+  verifyTurnstile({ expectedAction: 'create_user', includeRemoteIp: true }),
   awaitHandlerFactory(userController.googleSignup)
 ); // localhost:3000/api/v1/users/google-signup
 
@@ -125,7 +125,7 @@ router.post(
   "/google/signin",
   googleSigninLimiter,
   validateGoogleSignin,
-  verifyTurnstile({ expectedAction: 'google-signin', includeRemoteIp: true }),
+  verifyTurnstile({ expectedAction: 'login', includeRemoteIp: true }),
   awaitHandlerFactory(userController.googleSignin)
 ); // localhost:3000/api/v1/users/google-signin
 

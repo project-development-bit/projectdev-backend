@@ -8,12 +8,13 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const BalanceModel = require('../models/balance.model');
 const CountryModel = require("../models/country.model");
-const admin = require("../config/firebase.config");
+const { OAuth2Client } = require('google-auth-library');
 
 const {
   uploadImageToS3,
   deleteImageFromS3,
   validateImageFile,
+  downloadImageFromUrl,
 } = require("../utils/imageUpload.utils");
 dotenv.config();
 
@@ -99,16 +100,47 @@ class UserController {
     // Get user's COIN balance
     const coinBalance = await BalanceModel.getBalanceByCurrency(userWithoutPassword.id, 'COIN');
 
-    // Get country name if country_id exists
-    let country_name = null;
-    if (userWithoutPassword.country_id) {
-      const profileData = await UserModel.getProfileWithCountry(userWithoutPassword.id);
-      country_name = profileData?.country_name || null;
+    // Get language and country data
+    const profileData = await UserModel.getProfileWithCountry(userWithoutPassword.id);
+
+    // Map language code to full language object
+    const language = profileData?.language || null;
+    let language_data = null;
+    if (profileData?.language) {
+      const fs = require('fs');
+      const path = require('path');
+      const languagesFilePath = path.join(__dirname, '../config/language.json');
+
+      if (fs.existsSync(languagesFilePath)) {
+        const languagesData = JSON.parse(fs.readFileSync(languagesFilePath, 'utf8'));
+        const languageObj = languagesData.find(lang => lang.code === profileData.language);
+
+        if (languageObj) {
+          language_data = {
+            code: languageObj.code,
+            name: languageObj.name,
+            country_code: languageObj.country_code,
+            flag: languageObj.flag,
+            default: languageObj.default
+          };
+        }
+      }
     }
+
+    const country_name = profileData?.country_name || null;
+    const country = profileData?.country_id ? {
+      id: profileData.country_id,
+      code: profileData.country_code || null,
+      name: profileData.country_name || null,
+      flag: profileData.country_flag || null
+    } : null;
 
     res.send({
       ...userWithoutPassword,
+      language,
+      language_data,
       country_name,
+      country,
       current_status: userLevelState.user_level_state.current_status,
       coin_balance: coinBalance ? coinBalance.available : 0,
       security_pin_required: security_pin_enabled
@@ -334,13 +366,25 @@ class UserController {
 
       const user = await this.checkUserExists(email);
 
-      // Prevent Google accounts from logging in with password
-      if (user.social_provider_id) {
-        throw new HttpException(
-          403,
-          "This account uses Google Sign-In. Please continue with Google.",
-          "GOOGLE_ACCOUNT_NO_PASSWORD"
-        );
+      // Check if user has a password set (email auth enabled)
+      if (!user.password) {
+        // Get user's auth providers to give helpful error message
+        const authProviders = await UserModel.getUserAuthProviders(user.id);
+        const providerNames = authProviders.map(p => p.provider).filter(p => p !== 'email');
+
+        if (providerNames.length > 0) {
+          throw new HttpException(
+            403,
+            `This account uses ${providerNames.join(' or ')} Sign-In. Please continue with ${providerNames[0]}.`,
+            "SOCIAL_ACCOUNT_NO_PASSWORD"
+          );
+        } else {
+          throw new HttpException(
+            403,
+            "No password set for this account. Please use social login or reset your password.",
+            "NO_PASSWORD_SET"
+          );
+        }
       }
 
       const hashedPassword = Buffer.isBuffer(user.password)
@@ -352,15 +396,8 @@ class UserController {
         throw new HttpException(401, "Invalid password", "INVALID_CREDENTIALS");
       }
 
-      const userData = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        twofa_enabled: user.twofa_enabled,
-        interest_enable: user.interest_enable,
-        show_onboarding: user.show_onboarding,
-      };
+      // Update last used time for email provider
+      await UserModel.updateAuthProviderLastUsed(user.id, 'email');
 
       // If 2FA is enabled, return only userId without tokens
       if (user.twofa_enabled === 1) {
@@ -370,6 +407,58 @@ class UserController {
           userId: user.id,
         });
       }
+
+      // Get user's XP and compute level state
+      const userXpData = await UserModel.getUserXp(user.id);
+      const currentXp = userXpData?.xp || 0;
+      const userLevelState = computeUserLevelState(currentXp);
+
+      // Get user's COIN balance
+      const coinBalance = await BalanceModel.getBalanceByCurrency(user.id, 'COIN');
+
+      // Get language and country data
+      const profileData = await UserModel.getProfileWithCountry(user.id);
+
+      // Map language code to full language object
+      //const language = profileData?.language || null;
+      let language_data = null;
+      if (profileData?.language) {
+        const fs = require('fs');
+        const path = require('path');
+        const languagesFilePath = path.join(__dirname, '../config/language.json');
+
+        if (fs.existsSync(languagesFilePath)) {
+          const languagesData = JSON.parse(fs.readFileSync(languagesFilePath, 'utf8'));
+          const languageObj = languagesData.find(lang => lang.code === profileData.language);
+
+          if (languageObj) {
+            // Return all language fields
+            language_data = { ...languageObj };
+          }
+        }
+      }
+
+      //const country_name = profileData?.country_name || null;
+      // Return all country fields
+      const country = profileData?.country_id ? {
+        id: profileData.country_id,
+        code: profileData.country_code || null,
+        name: profileData.country_name || null,
+        flag: profileData.country_flag || null
+      } : null;
+
+      const { password, security_pin_enabled,refresh_token, ...userWithoutPassword } = user;
+
+      const userData = {
+        ...userWithoutPassword,
+        //language,
+        language_data,
+        //country_name,
+        country,
+        current_status: userLevelState.user_level_state.current_status,
+        coin_balance: coinBalance ? coinBalance.available : 0,
+        security_pin_required: security_pin_enabled
+      };
 
       // For users without 2FA, generate and return tokens
       const tokens = await this.generateToken(user, req);
@@ -1116,6 +1205,24 @@ class UserController {
         throw new HttpException(404, "User profile not found");
       }
 
+      // Map language code to full language object
+      let language_data = null;
+      if (userData.language) {
+        const fs = require('fs');
+        const path = require('path');
+        const languagesFilePath = path.join(__dirname, '../config/language.json');
+
+        if (fs.existsSync(languagesFilePath)) {
+          const languagesData = JSON.parse(fs.readFileSync(languagesFilePath, 'utf8'));
+          const languageObj = languagesData.find(lang => lang.code === userData.language);
+
+          if (languageObj) {
+            // Return all language fields
+            language_data = { ...languageObj };
+          }
+        }
+      }
+
       // Format response
       const profile = {
         account: {
@@ -1139,6 +1246,7 @@ class UserController {
         },
         settings: {
           language: userData.language || "en",
+          language_data: language_data,
           notifications_enabled: Boolean(userData.notifications_enabled),
           show_stats_enabled: Boolean(userData.show_stats_enabled),
           anonymous_in_contests: Boolean(userData.anonymous_in_contests),
@@ -1804,24 +1912,23 @@ class UserController {
 
       const { idToken, referral_code, country_code } = req.body;
 
-      // Verify the Firebase ID token
-      let decodedToken;
+      // Verify the Google ID token using google-auth-library
+      const client = new OAuth2Client();
+      let ticket;
+      let payload;
+
       try {
-        decodedToken = await admin.auth().verifyIdToken(idToken);
+        ticket = await client.verifyIdToken({
+          idToken: idToken,
+          audience: process.env.GOOGLE_CLIENT_ID || null,
+        });
+        payload = ticket.getPayload();
       } catch (error) {
-        throw new HttpException(401, "Invalid Firebase token", "INVALID_TOKEN");
+        console.log("Google token verification error:", error);
+        throw new HttpException(401, "Invalid Google token", "INVALID_TOKEN");
       }
 
-      // Validate that the token is from Google provider
-      if (decodedToken.firebase?.sign_in_provider !== 'google.com') {
-        throw new HttpException(
-          401,
-          "Invalid sign-in provider. Only Google authentication is supported.",
-          "INVALID_PROVIDER"
-        );
-      }
-
-      const { email, name, uid: googleId } = decodedToken;
+      const { email, name, sub: googleId ,picture } = payload;
 
       if (!email) {
         throw new HttpException(
@@ -1831,14 +1938,81 @@ class UserController {
         );
       }
 
-      // Check if user already exists
-      const existingUser = await UserModel.findOne({ email });
-      if (existingUser) {
+      // Check if this Google account is already linked to a user
+      const existingAuthProvider = await UserModel.authProviderExists('google', googleId);
+      if (existingAuthProvider) {
         throw new HttpException(
           409,
-          "An account with this email already exists. Please sign in instead.",
-          "EMAIL_ALREADY_EXISTS"
+          "This Google account is already linked to another account. Please sign in instead.",
+          "GOOGLE_ACCOUNT_ALREADY_LINKED"
         );
+      }
+
+      // Check if email already exists
+      const existingUser = await UserModel.findOne({ email });
+      if (existingUser) {
+        // Email exists - link Google to this existing account
+        await UserModel.addAuthProvider(existingUser.id, 'google', googleId, email);
+
+        // Get user's XP and compute level state
+        const userXpData = await UserModel.getUserXp(existingUser.id);
+        const currentXp = userXpData?.xp || 0;
+        const userLevelState = computeUserLevelState(currentXp);
+
+        // Get user's COIN balance
+        const coinBalance = await BalanceModel.getBalanceByCurrency(existingUser.id, 'COIN');
+
+        // Get language and country data
+        const profileData = await UserModel.getProfileWithCountry(existingUser.id);
+
+        // Map language code to full language object
+        let language_data = null;
+        if (profileData?.language) {
+          const fs = require('fs');
+          const path = require('path');
+          const languagesFilePath = path.join(__dirname, '../config/language.json');
+
+          if (fs.existsSync(languagesFilePath)) {
+            const languagesData = JSON.parse(fs.readFileSync(languagesFilePath, 'utf8'));
+            const languageObj = languagesData.find(lang => lang.code === profileData.language);
+
+            if (languageObj) {
+              language_data = { ...languageObj };
+            }
+          }
+        }
+
+        // Return all country fields
+        const country = profileData?.country_id ? {
+          id: profileData.country_id,
+          code: profileData.country_code || null,
+          name: profileData.country_name || null,
+          flag: profileData.country_flag || null
+        } : null;
+
+        const { password, refresh_token, ...userWithoutPassword } = existingUser;
+
+        const userData = {
+          ...userWithoutPassword,
+          language_data,
+          country,
+          current_status: userLevelState.user_level_state.current_status,
+          coin_balance: coinBalance ? coinBalance.available : 0,
+          security_pin_required: userWithoutPassword.security_pin_enabled || 0
+        };
+
+        // Generate tokens
+        const tokens = await this.generateToken(existingUser, req);
+
+        return res.status(200).json({
+          success: true,
+          message: "Google account linked to existing account successfully.",
+          data: {
+            user: userData,
+            tokens: tokens,
+            linked: true
+          },
+        });
       }
 
       // Handle country_code if provided
@@ -1864,43 +2038,38 @@ class UserController {
       // Generate unique referral code for new user
       const referralCode = await generateUniqueReferralCode();
 
-      // Handle avatar upload if provided
+      // Handle avatar upload from Google profile picture
       let avatarUrl = null;
-      if (req.file) {
-        // Validate avatar file
-        const maxSizeBytes = parseInt(
-          process.env.AVATAR_MAX_SIZE_BYTES || 2097152
-        ); // Default 2MB
-        const validation = validateImageFile(req.file, maxSizeBytes);
-
-        if (!validation.valid) {
-          throw new HttpException(400, validation.error, "INVALID_AVATAR_FILE");
-        }
-
-        // Upload avatar to S3
+      if (picture) {
         try {
+          // Download image from Google picture URL
+          const imageData = await downloadImageFromUrl(picture);
+
+          // Upload avatar to S3
           avatarUrl = await uploadImageToS3(
-            req.file.buffer,
+            imageData.buffer,
             "avatars",
             `google-${googleId}`,
-            req.file.mimetype,
-            req.file.originalname
+            imageData.mimetype,
+            `google-profile${imageData.extension}`
           );
         } catch (error) {
-          console.error("S3 upload failed during Google signup:", error);
+          console.error("Failed to download/upload Google profile picture:", error);
+          // Don't fail the signup if avatar upload fails
           avatarUrl = null;
         }
       }
 
       // Create user with Google authentication
-      const userResult = await UserModel.createGoogleUser({
+      const userResult = await UserModel.createSocialUser({
         email,
-        googleId,
+        provider: 'google',
+        providerId: googleId,
         name,
         referralCode,
         referrerId,
         countryId,
-        role: Role.NormalUser,
+        role: "NormalUser",
         avatarUrl
       });
 
@@ -1915,6 +2084,53 @@ class UserController {
       // Get the created user
       const user = await UserModel.findOne({ id: userId }, true);
 
+      // Get user's XP and compute level state
+      const userXpData = await UserModel.getUserXp(user.id);
+      const currentXp = userXpData?.xp || 0;
+      const userLevelState = computeUserLevelState(currentXp);
+
+      // Get user's COIN balance
+      const coinBalance = await BalanceModel.getBalanceByCurrency(user.id, 'COIN');
+
+      // Get language and country data
+      const profileData = await UserModel.getProfileWithCountry(user.id);
+
+      // Map language code to full language object
+      let language_data = null;
+      if (profileData?.language) {
+        const fs = require('fs');
+        const path = require('path');
+        const languagesFilePath = path.join(__dirname, '../config/language.json');
+
+        if (fs.existsSync(languagesFilePath)) {
+          const languagesData = JSON.parse(fs.readFileSync(languagesFilePath, 'utf8'));
+          const languageObj = languagesData.find(lang => lang.code === profileData.language);
+
+          if (languageObj) {
+            language_data = { ...languageObj };
+          }
+        }
+      }
+
+      // Return all country fields
+      const country = profileData?.country_id ? {
+        id: profileData.country_id,
+        code: profileData.country_code || null,
+        name: profileData.country_name || null,
+        flag: profileData.country_flag || null
+      } : null;
+
+      const { password, refresh_token, ...userWithoutPassword } = user;
+
+      const userData = {
+        ...userWithoutPassword,
+        language_data,
+        country,
+        current_status: userLevelState.user_level_state.current_status,
+        coin_balance: coinBalance ? coinBalance.available : 0,
+        security_pin_required: userWithoutPassword.security_pin_enabled || 0
+      };
+
       // Generate tokens
       const tokens = await this.generateToken(user, req);
 
@@ -1922,14 +2138,7 @@ class UserController {
         success: true,
         message: "Google account registered successfully.",
         data: {
-          user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            interest_enable: user.interest_enable,
-            show_onboarding: user.show_onboarding,
-          },
+          user: userData,
           tokens: tokens,
         },
       });
@@ -1945,24 +2154,24 @@ class UserController {
 
       const { idToken } = req.body;
 
-      // Verify the Firebase ID token
-      let decodedToken;
+      // Verify the Google ID token using google-auth-library
+      const client = new OAuth2Client();
+      let ticket;
+      let payload;
+
       try {
-        decodedToken = await admin.auth().verifyIdToken(idToken);
+        ticket = await client.verifyIdToken({
+          idToken: idToken,
+          audience: process.env.GOOGLE_CLIENT_ID || null
+        });
+        payload = ticket.getPayload();
+
       } catch (error) {
-        throw new HttpException(401, "Invalid Firebase token", "INVALID_TOKEN");
+        console.log("Google token verification error:", error);
+        throw new HttpException(401, "Invalid Google token", "INVALID_TOKEN");
       }
 
-      // Validate that the token is from Google provider
-      if (decodedToken.firebase?.sign_in_provider !== 'google.com') {
-        throw new HttpException(
-          401,
-          "Invalid sign-in provider. Only Google authentication is supported.",
-          "INVALID_PROVIDER"
-        );
-      }
-
-      const { email, uid: googleId } = decodedToken;
+      const { email, sub: googleId } = payload;
 
       if (!email) {
         throw new HttpException(
@@ -1972,15 +2181,26 @@ class UserController {
         );
       }
 
-      // Find user by email
-      const user = await UserModel.findOne({ email }, true);
+      // First, try to find user by Google auth provider
+      let user = await UserModel.findByAuthProvider('google', googleId);
 
+      // If not found by Google provider, try to find by email and link the account
       if (!user) {
-        throw new HttpException(
-          404,
-          "No account found with this email. Please sign up first.",
-          "USER_NOT_FOUND"
-        );
+        user = await UserModel.findOne({ email }, true);
+
+        if (!user) {
+          throw new HttpException(
+            404,
+            "No account found with this email. Please sign up first.",
+            "USER_NOT_FOUND"
+          );
+        }
+
+        // Link Google to this existing account
+        await UserModel.addAuthProvider(user.id, 'google', googleId, email);
+      } else {
+        // Update last used time for Google provider
+        await UserModel.updateAuthProviderLastUsed(user.id, 'google');
       }
 
       // Check if user is banned
@@ -1992,16 +2212,6 @@ class UserController {
         );
       }
 
-      const userData = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        twofa_enabled: user.twofa_enabled,
-        interest_enable: user.interest_enable,
-        show_onboarding: user.show_onboarding,
-      };
-
       // If 2FA is enabled, return only userId without tokens
       if (user.twofa_enabled === 1) {
         return res.status(200).json({
@@ -2010,6 +2220,53 @@ class UserController {
           userId: user.id,
         });
       }
+
+      // Get user's XP and compute level state
+      const userXpData = await UserModel.getUserXp(user.id);
+      const currentXp = userXpData?.xp || 0;
+      const userLevelState = computeUserLevelState(currentXp);
+
+      // Get user's COIN balance
+      const coinBalance = await BalanceModel.getBalanceByCurrency(user.id, 'COIN');
+
+      // Get language and country data
+      const profileData = await UserModel.getProfileWithCountry(user.id);
+
+      // Map language code to full language object
+      let language_data = null;
+      if (profileData?.language) {
+        const fs = require('fs');
+        const path = require('path');
+        const languagesFilePath = path.join(__dirname, '../config/language.json');
+
+        if (fs.existsSync(languagesFilePath)) {
+          const languagesData = JSON.parse(fs.readFileSync(languagesFilePath, 'utf8'));
+          const languageObj = languagesData.find(lang => lang.code === profileData.language);
+
+          if (languageObj) {
+            language_data = { ...languageObj };
+          }
+        }
+      }
+
+      // Return all country fields
+      const country = profileData?.country_id ? {
+        id: profileData.country_id,
+        code: profileData.country_code || null,
+        name: profileData.country_name || null,
+        flag: profileData.country_flag || null
+      } : null;
+
+      const { password, refresh_token, ...userWithoutPassword } = user;
+
+      const userData = {
+        ...userWithoutPassword,
+        language_data,
+        country,
+        current_status: userLevelState.user_level_state.current_status,
+        coin_balance: coinBalance ? coinBalance.available : 0,
+        security_pin_required: userWithoutPassword.security_pin_enabled || 0
+      };
 
       // Generate tokens
       const tokens = await this.generateToken(user, req);

@@ -125,9 +125,46 @@ const validateImageFile = (file, maxSizeBytes, allowedMimeTypes = null) => {
   return { valid: true };
 };
 
+//Download image from URL
+const downloadImageFromUrl = async (imageUrl) => {
+  try {
+    const response = await fetch(imageUrl);
+
+    if (!response.ok) {
+      throw new Error(`Failed to download image: ${response.statusText}`);
+    }
+
+    const contentType = response.headers.get('content-type');
+
+    // Validate it's an image
+    if (!contentType || !contentType.startsWith('image/')) {
+      throw new Error('URL does not point to an image');
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Get file extension from content type
+    let extension = '.jpg'; // default
+    if (contentType.includes('png')) extension = '.png';
+    else if (contentType.includes('webp')) extension = '.webp';
+    else if (contentType.includes('jpeg') || contentType.includes('jpg')) extension = '.jpg';
+
+    return {
+      buffer,
+      mimetype: contentType,
+      extension
+    };
+  } catch (error) {
+    console.error('Download Image Error:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   uploadImageToS3,
   deleteImageFromS3,
   validateImageFile,
   generateUniqueFilename,
+  downloadImageFromUrl,
 };
