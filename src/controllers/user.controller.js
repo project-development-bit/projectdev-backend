@@ -366,25 +366,30 @@ class UserController {
 
       const user = await this.checkUserExists(email);
 
-      // Check if user has a password set (email auth enabled)
-      if (!user.password) {
-        // Get user's auth providers to give helpful error message
-        const authProviders = await UserModel.getUserAuthProviders(user.id);
+      // Check if user has email provider (prevent social-only accounts from using email login)
+      const authProviders = await UserModel.getUserAuthProviders(user.id);
+      const hasEmailProvider = authProviders.some(provider => provider.provider === 'email');
+
+      if (!hasEmailProvider) {
+        // User only has social providers (Google, Apple, Facebook, etc.)
         const providerNames = authProviders.map(p => p.provider).filter(p => p !== 'email');
 
         if (providerNames.length > 0) {
           throw new HttpException(
             403,
-            `This account uses ${providerNames.join(' or ')} Sign-In. Please continue with ${providerNames[0]}.`,
-            "SOCIAL_ACCOUNT_NO_PASSWORD"
-          );
-        } else {
-          throw new HttpException(
-            403,
-            "No password set for this account. Please use social login or reset your password.",
-            "NO_PASSWORD_SET"
+            `This account was created with ${providerNames.join(' or ')} Sign-In. Please continue with ${providerNames[0]}.`,
+            "SOCIAL_ACCOUNT_ONLY"
           );
         }
+      }
+
+      // Check if user has a password set (email auth enabled)
+      if (!user.password) {
+        throw new HttpException(
+          403,
+          "No password set for this account. Please use social login or reset your password.",
+          "NO_PASSWORD_SET"
+        );
       }
 
       const hashedPassword = Buffer.isBuffer(user.password)
@@ -2193,6 +2198,18 @@ class UserController {
             404,
             "No account found with this email. Please sign up first.",
             "USER_NOT_FOUND"
+          );
+        }
+
+        // Check if user already has an email provider (signed up with email/password)
+        const userAuthProviders = await UserModel.getUserAuthProviders(user.id);
+        const hasEmailProvider = userAuthProviders.some(provider => provider.provider === 'email');
+
+        if (hasEmailProvider) {
+          throw new HttpException(
+            403,
+            "This email is already registered with email/password. Please sign in using your email and password, or sign up with a different Google account.",
+            "EMAIL_PROVIDER_EXISTS"
           );
         }
 
