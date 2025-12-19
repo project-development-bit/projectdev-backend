@@ -277,15 +277,15 @@ class FortuneWheelModel {
         now
       ]);
 
-      // 7. Update user balance if coins > 0
+      // 7. Update user balance if coins > 0 (creates balance if doesn't exist)
       if (finalCoins > 0) {
         const updateBalanceSql = `
-          UPDATE ${this.balancesTableName}
-          SET available = available + ?
-          WHERE user_id = ? AND currency = 'COIN'
+          INSERT INTO ${this.balancesTableName} (user_id, currency, available, pending)
+          VALUES (?, 'COIN', ?, 0)
+          ON DUPLICATE KEY UPDATE available = available + ?
         `;
 
-        await executeQuery(updateBalanceSql, [finalCoins, userId]);
+        await executeQuery(updateBalanceSql, [userId, finalCoins, finalCoins]);
 
         // 8. Create ledger entry
         const ledgerSql = `
@@ -445,15 +445,15 @@ class FortuneWheelModel {
         now
       ]);
 
-      // 7. Update user balance if coins > 0
+      // 7. Update user balance if coins > 0 (creates balance if doesn't exist)
       if (finalCoins > 0) {
         const updateBalanceSql = `
-          UPDATE ${this.balancesTableName}
-          SET available = available + ?
-          WHERE user_id = ? AND currency = 'COIN'
+          INSERT INTO ${this.balancesTableName} (user_id, currency, available, pending)
+          VALUES (?, 'COIN', ?, 0)
+          ON DUPLICATE KEY UPDATE available = available + ?
         `;
 
-        await executeQuery(updateBalanceSql, [finalCoins, userId]);
+        await executeQuery(updateBalanceSql, [userId, finalCoins, finalCoins]);
 
         // 8. Create ledger entry
         const ledgerSql = `
