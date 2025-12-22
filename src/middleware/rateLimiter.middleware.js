@@ -256,6 +256,40 @@ const googleSigninLimiter = rateLimit({
   },
 });
 
+// Rate limiter for Facebook signup
+// 20 requests per 15 minutes per IP + email
+const facebookSignupLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // 20 requests per 15 minutes per IP/email
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: keyByUserOrIp, // IP + email based limiting
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: "Too many Facebook signup attempts. Please try again after 15 minutes.",
+      error: "FACEBOOK_SIGNUP_RATE_LIMIT_EXCEEDED",
+    });
+  },
+});
+
+// Rate limiter for Facebook signin
+// 10 requests per 15 minutes per IP + email (stricter than signup)
+const facebookSigninLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 requests per 15 minutes per IP/email (stricter for signin)
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: keyByUserOrIp, // IP + email based limiting
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: "Too many Facebook signin attempts. Please try again after 15 minutes.",
+      error: "FACEBOOK_SIGNIN_RATE_LIMIT_EXCEEDED",
+    });
+  },
+});
+
 module.exports = {
   createRateLimiter,
   twoFALoginLimiter,
@@ -270,4 +304,6 @@ module.exports = {
   verifyDeleteAccountLimiter,
   googleSignupLimiter,
   googleSigninLimiter,
+  facebookSignupLimiter,
+  facebookSigninLimiter,
 };
