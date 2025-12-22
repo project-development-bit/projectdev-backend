@@ -117,6 +117,153 @@ class WithdrawalModel {
       network: method.network || null,
     }));
   };
+
+  //Get withdrawal method by ID
+  getWithdrawalMethodById = async (id) => {
+    const sql = `
+      SELECT
+        id,
+        code,
+        name,
+        network,
+        icon_url,
+        min_amount_coins,
+        fee_coins,
+        is_enabled,
+        sort_order,
+        created_at,
+        updated_at
+      FROM ${this.withdrawalMethodsTable}
+      WHERE id = ?
+    `;
+
+    const result = await coinQuery(sql, [id]);
+
+    if (!result || result.length === 0) {
+      return null;
+    }
+
+    const method = result[0];
+    return {
+      id: method.id,
+      code: method.code,
+      name: method.name,
+      network: method.network || null,
+      icon_url: method.icon_url || null,
+      min_amount_coins: parseFloat(method.min_amount_coins),
+      fee_coins: parseFloat(method.fee_coins),
+      is_enabled: method.is_enabled === 1,
+      sort_order: method.sort_order,
+      created_at: method.created_at,
+      updated_at: method.updated_at,
+    };
+  };
+
+  //Check if withdrawal method code already exists
+  codeExists = async (code, excludeId = null) => {
+    let sql = `SELECT id FROM ${this.withdrawalMethodsTable} WHERE code = ?`;
+    const params = [code];
+
+    if (excludeId) {
+      sql += ` AND id != ?`;
+      params.push(excludeId);
+    }
+
+    const result = await coinQuery(sql, params);
+    return result && result.length > 0;
+  };
+
+  //Create withdrawal method
+  createWithdrawalMethod = async (data) => {
+    const {
+      code,
+      name,
+      network,
+      icon_url,
+      min_amount_coins,
+      fee_coins,
+      is_enabled,
+      sort_order,
+    } = data;
+
+    const sql = `
+      INSERT INTO ${this.withdrawalMethodsTable}
+      (code, name, network, icon_url, min_amount_coins, fee_coins, is_enabled, sort_order)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const result = await coinQuery(sql, [
+      code,
+      name,
+      network || null,
+      icon_url || null,
+      min_amount_coins,
+      fee_coins,
+      is_enabled ? 1 : 0,
+      sort_order || 0,
+    ]);
+
+    return {
+      success: true,
+      insertId: result.insertId,
+    };
+  };
+
+  //Update withdrawal method
+  updateWithdrawalMethod = async (id, data) => {
+    const {
+      code,
+      name,
+      network,
+      icon_url,
+      min_amount_coins,
+      fee_coins,
+      is_enabled,
+      sort_order,
+    } = data;
+
+    const sql = `
+      UPDATE ${this.withdrawalMethodsTable}
+      SET
+        code = ?,
+        name = ?,
+        network = ?,
+        icon_url = ?,
+        min_amount_coins = ?,
+        fee_coins = ?,
+        is_enabled = ?,
+        sort_order = ?
+      WHERE id = ?
+    `;
+
+    const result = await coinQuery(sql, [
+      code,
+      name,
+      network || null,
+      icon_url || null,
+      min_amount_coins,
+      fee_coins,
+      is_enabled ? 1 : 0,
+      sort_order || 0,
+      id,
+    ]);
+
+    return {
+      success: true,
+      affectedRows: result.affectedRows,
+    };
+  };
+
+  //Delete withdrawal method
+  deleteWithdrawalMethod = async (id) => {
+    const sql = `DELETE FROM ${this.withdrawalMethodsTable} WHERE id = ?`;
+    const result = await coinQuery(sql, [id]);
+
+    return {
+      success: true,
+      affectedRows: result.affectedRows,
+    };
+  };
 }
 
 module.exports = new WithdrawalModel();
