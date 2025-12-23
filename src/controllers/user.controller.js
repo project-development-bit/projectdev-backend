@@ -2301,6 +2301,408 @@ class UserController {
     }
   };
 
+  // Facebook Sign Up
+  facebookSignup = async (req, res, next) => {
+    try {
+      this.checkValidation(req);
+
+      const { accessToken, referral_code, country_code } = req.body;
+
+      let fbUserData;
+      try {
+        // Get user data from Facebook
+        const userUrl = `https://graph.facebook.com/me?fields=id,name,email,picture.type(large)&access_token=${accessToken}`;
+        const userResponse = await fetch(userUrl);
+        fbUserData = await userResponse.json();
+
+        if (fbUserData.error) {
+          throw new HttpException(
+            401,
+            fbUserData.error.message || "Failed to fetch Facebook user data",
+            "FACEBOOK_API_ERROR"
+          );
+        }
+      } catch (error) {
+        if (error instanceof HttpException) {
+          throw error;
+        }
+        console.log("Facebook token verification error:", error);
+        throw new HttpException(401, "Invalid Facebook token", "INVALID_TOKEN");
+      }
+
+      const { email, name, id: facebookId, picture } = fbUserData;
+
+      if (!email) {
+        throw new HttpException(
+          400,
+          "Email not found in Facebook account. Please make sure your Facebook account has a verified email address.",
+          "EMAIL_NOT_FOUND"
+        );
+      }
+
+      // Check if this Facebook account is already linked to a user
+      const existingAuthProvider = await UserModel.authProviderExists('facebook', facebookId);
+      if (existingAuthProvider) {
+        throw new HttpException(
+          409,
+          "This Facebook account is already linked to another account. Please sign in instead.",
+          "FACEBOOK_ACCOUNT_ALREADY_LINKED"
+        );
+      }
+
+      // Check if email already exists
+      const existingUser = await UserModel.findOne({ email });
+      if (existingUser) {
+        // Email exists - link Facebook to this existing account
+        await UserModel.addAuthProvider(existingUser.id, 'facebook', facebookId, email);
+
+        // Get user's XP and compute level state
+        const userXpData = await UserModel.getUserXp(existingUser.id);
+        const currentXp = userXpData?.xp || 0;
+        const userLevelState = computeUserLevelState(currentXp);
+
+        // Get user's COIN balance
+        const coinBalance = await BalanceModel.getBalanceByCurrency(existingUser.id, 'COIN');
+
+        // Get language and country data
+        const profileData = await UserModel.getProfileWithCountry(existingUser.id);
+
+        // Map language code to full language object
+        let language_data = null;
+        if (profileData?.language) {
+          const fs = require('fs');
+          const path = require('path');
+          const languagesFilePath = path.join(__dirname, '../config/language.json');
+
+          if (fs.existsSync(languagesFilePath)) {
+            const languagesData = JSON.parse(fs.readFileSync(languagesFilePath, 'utf8'));
+            const languageObj = languagesData.find(lang => lang.code === profileData.language);
+
+            if (languageObj) {
+              language_data = { ...languageObj };
+            }
+          }
+        }
+
+        // Return all country fields
+        const country = profileData?.country_id ? {
+          id: profileData.country_id,
+          code: profileData.country_code || null,
+          name: profileData.country_name || null,
+          flag: profileData.country_flag || null
+        } : null;
+
+        const { password, refresh_token, ...userWithoutPassword } = existingUser;
+
+        const userData = {
+          ...userWithoutPassword,
+          language_data,
+          country,
+          current_status: userLevelState.user_level_state.current_status,
+          coin_balance: coinBalance ? coinBalance.available : 0,
+          security_pin_required: userWithoutPassword.security_pin_enabled || 0
+        };
+
+        // Generate tokens
+        const tokens = await this.generateToken(existingUser, req);
+
+        return res.status(200).json({
+          success: true,
+          message: "Facebook account linked to existing account successfully.",
+          data: {
+            user: userData,
+            tokens: tokens,
+            linked: true
+          },
+        });
+      }
+
+      // Handle country_code if provided
+      let countryId = null;
+      if (country_code) {
+        const country = await CountryModel.findByCode(country_code);
+        if (country) {
+          countryId = country.id;
+        }
+      }
+
+      // Handle referral code if provided
+      let referrerId = null;
+      if (referral_code) {
+        const referrer = await ReferralModel.getUserByReferralCode(
+          referral_code
+        );
+        if (referrer) {
+          referrerId = referrer.id;
+        }
+      }
+
+      // Generate unique referral code for new user
+      const referralCode = await generateUniqueReferralCode();
+
+      // Handle avatar upload from Facebook profile picture
+      let avatarUrl = null;
+      if (picture && picture.data && picture.data.url) {
+        try {
+          // Download image from Facebook picture URL
+          const imageData = await downloadImageFromUrl(picture.data.url);
+
+          // Upload avatar to S3
+          avatarUrl = await uploadImageToS3(
+            imageData.buffer,
+            "avatars",
+            `facebook-${facebookId}`,
+            imageData.mimetype,
+            `facebook-profile${imageData.extension}`
+          );
+        } catch (error) {
+          console.error("Failed to download/upload Facebook profile picture:", error);
+          // Don't fail the signup if avatar upload fails
+          avatarUrl = null;
+        }
+      }
+
+      // Create user with Facebook authentication
+      const userResult = await UserModel.createSocialUser({
+        email,
+        provider: 'facebook',
+        providerId: facebookId,
+        name,
+        referralCode,
+        referrerId,
+        countryId,
+        role: "NormalUser",
+        avatarUrl
+      });
+
+      const userId = userResult.insertId;
+
+      // Create referral relationship if user was referred
+      if (referrerId) {
+        await ReferralModel.createReferralRelationship(referrerId, userId);
+        await ReferralModel.updateUserReferredBy(userId, referrerId);
+      }
+
+      // Get the created user
+      const user = await UserModel.findOne({ id: userId }, true);
+
+      // Get user's XP and compute level state
+      const userXpData = await UserModel.getUserXp(user.id);
+      const currentXp = userXpData?.xp || 0;
+      const userLevelState = computeUserLevelState(currentXp);
+
+      // Get user's COIN balance
+      const coinBalance = await BalanceModel.getBalanceByCurrency(user.id, 'COIN');
+
+      // Get language and country data
+      const profileData = await UserModel.getProfileWithCountry(user.id);
+
+      // Map language code to full language object
+      let language_data = null;
+      if (profileData?.language) {
+        const fs = require('fs');
+        const path = require('path');
+        const languagesFilePath = path.join(__dirname, '../config/language.json');
+
+        if (fs.existsSync(languagesFilePath)) {
+          const languagesData = JSON.parse(fs.readFileSync(languagesFilePath, 'utf8'));
+          const languageObj = languagesData.find(lang => lang.code === profileData.language);
+
+          if (languageObj) {
+            language_data = { ...languageObj };
+          }
+        }
+      }
+
+      // Return all country fields
+      const country = profileData?.country_id ? {
+        id: profileData.country_id,
+        code: profileData.country_code || null,
+        name: profileData.country_name || null,
+        flag: profileData.country_flag || null
+      } : null;
+
+      const { password, refresh_token, ...userWithoutPassword } = user;
+
+      const userData = {
+        ...userWithoutPassword,
+        language_data,
+        country,
+        current_status: userLevelState.user_level_state.current_status,
+        coin_balance: coinBalance ? coinBalance.available : 0,
+        security_pin_required: userWithoutPassword.security_pin_enabled || 0
+      };
+
+      // Generate tokens
+      const tokens = await this.generateToken(user, req);
+
+      res.status(201).json({
+        success: true,
+        message: "Facebook account registered successfully.",
+        data: {
+          user: userData,
+          tokens: tokens,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // Facebook Sign In
+  facebookSignin = async (req, res, next) => {
+    try {
+      this.checkValidation(req);
+
+      const { accessToken } = req.body;
+
+      let fbUserData;
+      try {
+        // Get user data from Facebook
+        const userUrl = `https://graph.facebook.com/me?fields=id,name,email&access_token=${accessToken}`;
+        const userResponse = await fetch(userUrl);
+        fbUserData = await userResponse.json();
+
+        if (fbUserData.error) {
+          throw new HttpException(
+            401,
+            fbUserData.error.message || "Failed to fetch Facebook user data",
+            "FACEBOOK_API_ERROR"
+          );
+        }
+      } catch (error) {
+        if (error instanceof HttpException) {
+          throw error;
+        }
+        console.log("Facebook token verification error:", error);
+        throw new HttpException(401, "Invalid Facebook token", "INVALID_TOKEN");
+      }
+
+      const { email, id: facebookId } = fbUserData;
+
+      if (!email) {
+        throw new HttpException(
+          400,
+          "Email not found in Facebook account. Please make sure your Facebook account has a verified email address.",
+          "EMAIL_NOT_FOUND"
+        );
+      }
+
+      // First, try to find user by Facebook auth provider
+      let user = await UserModel.findByAuthProvider('facebook', facebookId);
+
+      // If not found by Facebook provider, try to find by email and link the account
+      if (!user) {
+        user = await UserModel.findOne({ email }, true);
+
+        if (!user) {
+          throw new HttpException(
+            404,
+            "No account found with this email. Please sign up first.",
+            "USER_NOT_FOUND"
+          );
+        }
+
+        // Check if user already has an email provider (signed up with email/password)
+        const userAuthProviders = await UserModel.getUserAuthProviders(user.id);
+        const hasEmailProvider = userAuthProviders.some(provider => provider.provider === 'email');
+
+        if (hasEmailProvider) {
+          throw new HttpException(
+            403,
+            "This email is already registered with email/password. Please sign in using your email and password, or sign up with a different Facebook account.",
+            "EMAIL_PROVIDER_EXISTS"
+          );
+        }
+
+        // Link Facebook to this existing account
+        await UserModel.addAuthProvider(user.id, 'facebook', facebookId, email);
+      } else {
+        // Update last used time for Facebook provider
+        await UserModel.updateAuthProviderLastUsed(user.id, 'facebook');
+      }
+
+      // Check if user is banned
+      if (user.is_banned === 1) {
+        throw new HttpException(
+          401,
+          "Your account is banned. Please contact support.",
+          "BANNED_ACCOUNT"
+        );
+      }
+
+      // If 2FA is enabled, return only userId without tokens
+      if (user.twofa_enabled === 1) {
+        return res.status(200).json({
+          success: true,
+          message: "Login successful.",
+          userId: user.id,
+        });
+      }
+
+      // Get user's XP and compute level state
+      const userXpData = await UserModel.getUserXp(user.id);
+      const currentXp = userXpData?.xp || 0;
+      const userLevelState = computeUserLevelState(currentXp);
+
+      // Get user's COIN balance
+      const coinBalance = await BalanceModel.getBalanceByCurrency(user.id, 'COIN');
+
+      // Get language and country data
+      const profileData = await UserModel.getProfileWithCountry(user.id);
+
+      // Map language code to full language object
+      let language_data = null;
+      if (profileData?.language) {
+        const fs = require('fs');
+        const path = require('path');
+        const languagesFilePath = path.join(__dirname, '../config/language.json');
+
+        if (fs.existsSync(languagesFilePath)) {
+          const languagesData = JSON.parse(fs.readFileSync(languagesFilePath, 'utf8'));
+          const languageObj = languagesData.find(lang => lang.code === profileData.language);
+
+          if (languageObj) {
+            language_data = { ...languageObj };
+          }
+        }
+      }
+
+      // Return all country fields
+      const country = profileData?.country_id ? {
+        id: profileData.country_id,
+        code: profileData.country_code || null,
+        name: profileData.country_name || null,
+        flag: profileData.country_flag || null
+      } : null;
+
+      const { password, refresh_token, ...userWithoutPassword } = user;
+
+      const userData = {
+        ...userWithoutPassword,
+        language_data,
+        country,
+        current_status: userLevelState.user_level_state.current_status,
+        coin_balance: coinBalance ? coinBalance.available : 0,
+        security_pin_required: userWithoutPassword.security_pin_enabled || 0
+      };
+
+      // Generate tokens
+      const tokens = await this.generateToken(user, req);
+
+      res.status(200).json({
+        success: true,
+        message: "Facebook sign in successful.",
+        data: {
+          user: userData,
+          tokens: tokens,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
 }
 
 /******************************************************************************

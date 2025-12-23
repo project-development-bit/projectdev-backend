@@ -332,3 +332,33 @@ exports.validateGoogleSignin = [
     .isString()
     .withMessage("Firebase ID token must be a string"),
 ];
+
+exports.validateFacebookSignup = [
+  body("accessToken")
+    .exists()
+    .withMessage("Facebook access token is required")
+    .notEmpty()
+    .withMessage("Facebook access token must not be empty")
+    .isString()
+    .withMessage("Facebook access token must be a string"),
+  body("referral_code")
+    .optional()
+    .isString()
+    .withMessage("Referral code must be a string"),
+  body("country_code")
+    .optional()
+    .isString()
+    .withMessage("Country code must be a string")
+    .isLength({ min: 2, max: 2 })
+    .withMessage("Country code must be exactly 2 characters"),
+];
+
+exports.validateFacebookSignin = [
+  body("accessToken")
+    .exists()
+    .withMessage("Facebook access token is required")
+    .notEmpty()
+    .withMessage("Facebook access token must not be empty")
+    .isString()
+    .withMessage("Facebook access token must be a string"),
+];

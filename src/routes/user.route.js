@@ -26,6 +26,8 @@ const {
   validateVerifyDeleteAccount,
   validateGoogleSignup,
   validateGoogleSignin,
+  validateFacebookSignup,
+  validateFacebookSignin,
 } = require("../middleware/validators/userValidator.middleware");
 
 const {
@@ -38,6 +40,8 @@ const {
   verifyDeleteAccountLimiter,
   googleSignupLimiter,
   googleSigninLimiter,
+  facebookSignupLimiter,
+  facebookSigninLimiter,
 } = require("../middleware/rateLimiter.middleware");
 
 router.get(
@@ -128,6 +132,22 @@ router.post(
   verifyTurnstile({ expectedAction: 'login', includeRemoteIp: true }),
   awaitHandlerFactory(userController.googleSignin)
 ); // localhost:3000/api/v1/users/google-signin
+
+router.post(
+  "/facebook/signup",
+  facebookSignupLimiter,
+  validateFacebookSignup,
+  verifyTurnstile({ expectedAction: 'create_user', includeRemoteIp: true }),
+  awaitHandlerFactory(userController.facebookSignup)
+); // localhost:3000/api/v1/users/facebook/signup
+
+router.post(
+  "/facebook/signin",
+  facebookSigninLimiter,
+  validateFacebookSignin,
+  verifyTurnstile({ expectedAction: 'login', includeRemoteIp: true }),
+  awaitHandlerFactory(userController.facebookSignin)
+); // localhost:3000/api/v1/users/facebook/signin
 
 router.post(
   "/forgot_password",
