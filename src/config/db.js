@@ -94,5 +94,6 @@ module.exports = {
   // jwdbQuery: JWDB.query,
   coinQuery: coinDB.query,
   getCoinConnection: coinDB.getConnection,
+  coinDB: coinDB.db, // Export the pool for transactions
   // Export more query functions for other databases if necessary
 };

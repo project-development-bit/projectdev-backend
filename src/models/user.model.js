@@ -1,6 +1,8 @@
 const { coinQuery } = require("../config/db");
 const { multipleColumnSet } = require("../utils/common.utils");
 const Role = require("../utils/userRoles.utils");
+const { generateOfferToken } = require("../utils/offerToken.utils");
+
 class UserModel {
   tableName = "users";
   profilesTableName = "user_profiles";
@@ -101,11 +103,14 @@ class UserModel {
     { securityCode, referralCode }
   ) => {
     try {
+      // Generate unique offer token
+      const offerToken = await generateOfferToken();
+
       // Insert into users table (core authentication data)
       const userSql = `
         INSERT INTO ${this.tableName}
-        (email, password, role, security_code, referral_code, referred_by, is_verified, is_banned)
-        VALUES (?, ?, ?, ?, ?, ?, 0, 0)
+        (email, password, role, security_code, referral_code, referred_by, offer_token, is_verified, is_banned)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0)
       `;
 
       const userResult = await coinQuery(userSql, [
@@ -114,7 +119,8 @@ class UserModel {
         role,
         securityCode,
         referralCode,
-        referred_by
+        referred_by,
+        offerToken
       ]);
 
       const userId = userResult.insertId;
@@ -147,6 +153,7 @@ class UserModel {
         interest_enable,
         referralCode,
         securityCode,
+        offerToken,
         referred_by,
         country_id,
         language,
