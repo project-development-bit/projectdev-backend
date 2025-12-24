@@ -5,13 +5,13 @@ class EarningsModel {
   offersTable = "offers";
   ledgerTable = "ledger_entries";
 
-  //Get earnings history with offer details
+  //Get earnings history from ledger entries
   getEarningsHistory = async (userId, options = {}) => {
     const {
       days = 30,
       page = 1,
       limit = 20,
-      category = null, // 'app', 'survey', or null for all
+      category = null,
     } = options;
 
     const pageInt = Math.max(1, parseInt(page, 10) || 1);
@@ -20,15 +20,15 @@ class EarningsModel {
     const daysInt = Math.max(1, parseInt(days, 10) || 30);
 
     let whereConditions = [
-      "oc.user_id = ?",
-      "oc.status = 'credited'",
-      `oc.created_at >= DATE_SUB(NOW(), INTERVAL ${daysInt} DAY)`,
+      "user_id = ?",
+      "entry_type = 'credit'",
+      `created_at >= DATE_SUB(NOW(), INTERVAL ${daysInt} DAY)`,
     ];
     let queryParams = [userId];
 
-    // Filter by category if specified
+    // Filter by category (ref_type) if specified
     if (category) {
-      whereConditions.push("o.category = ?");
+      whereConditions.push("ref_type = ?");
       queryParams.push(category);
     }
 
@@ -37,25 +37,21 @@ class EarningsModel {
     // Count total
     const countSql = `
       SELECT COUNT(*) as total
-      FROM ${this.offerConversionsTable} oc
-      INNER JOIN ${this.offersTable} o ON oc.offer_id = o.id
+      FROM ${this.ledgerTable}
       WHERE ${whereClause}
     `;
 
-    // Get earnings history with offer details
+    // Get earnings history from ledger entries
     const dataSql = `
       SELECT
-        oc.id,
-        oc.credited_amount as amount,
-        oc.currency,
-        oc.created_at,
-        o.title as offer_title,
-        o.category as offer_category,
-        o.provider
-      FROM ${this.offerConversionsTable} oc
-      INNER JOIN ${this.offersTable} o ON oc.offer_id = o.id
+        id,
+        ref_type,
+        amount,
+        currency,
+        created_at
+      FROM ${this.ledgerTable}
       WHERE ${whereClause}
-      ORDER BY oc.created_at DESC
+      ORDER BY created_at DESC
       LIMIT ${limitInt} OFFSET ${offset}
     `;
 
@@ -90,11 +86,21 @@ class EarningsModel {
           timeAgo = `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
         }
 
+        // Generate title based on ref_type
+        const titleMap = {
+          offer: "Offer Completion",
+          referral: "Referral Bonus",
+          faucet: "Faucet Claim",
+          deposit: "Deposit",
+          fortune_wheel: "Fortune Wheel Win",
+          treasure_chest: "Treasure Chest Reward",
+        };
+
         return {
           id: earning.id,
-          type: "offer",
-          category: earning.offer_category || "unknown",
-          title: earning.offer_title || "Offer Completion",
+          type: earning.ref_type,
+          category: earning.ref_type,
+          title: titleMap[earning.ref_type] || earning.ref_type,
           amount: Number(earning.amount) || 0,
           currency: earning.currency,
           timeAgo: timeAgo,
@@ -110,38 +116,48 @@ class EarningsModel {
     };
   };
 
-  //Get earnings statistics by category
+  //Get earnings statistics by category from ledger entries
   getEarningsStatistics = async (userId, options = {}) => {
     const { days = 30 } = options;
     const daysInt = Math.max(1, parseInt(days, 10) || 30);
 
     const sql = `
       SELECT
-        o.category,
+        ref_type as category,
         COUNT(*) as count,
-        COALESCE(SUM(oc.credited_amount), 0) as total_earned
-      FROM ${this.offerConversionsTable} oc
-      INNER JOIN ${this.offersTable} o ON oc.offer_id = o.id
-      WHERE oc.user_id = ?
-        AND oc.status = 'credited'
-        AND oc.created_at >= DATE_SUB(NOW(), INTERVAL ${daysInt} DAY)
-        AND o.category IN ('app', 'survey', 'offerwall')
-      GROUP BY o.category
+        COALESCE(SUM(amount), 0) as total_earned
+      FROM ${this.ledgerTable}
+      WHERE user_id = ?
+        AND entry_type = 'credit'
+        AND created_at >= DATE_SUB(NOW(), INTERVAL ${daysInt} DAY)
+      GROUP BY ref_type
     `;
 
     const results = await coinQuery(sql, [userId]);
 
-    // Initialize response with default values
+    // Initialize response with default values for all earning types
     const statistics = {
-      surveys: {
+      offers: {
         count: 0,
         totalEarned: 0,
       },
-      gameApps: {
+      referrals: {
         count: 0,
         totalEarned: 0,
       },
-      offerwalls: {
+      faucets: {
+        count: 0,
+        totalEarned: 0,
+      },
+      deposits: {
+        count: 0,
+        totalEarned: 0,
+      },
+      fortuneWheels: {
+        count: 0,
+        totalEarned: 0,
+      },
+      treasureChests: {
         count: 0,
         totalEarned: 0,
       },
@@ -154,15 +170,24 @@ class EarningsModel {
       const count = Number(row.count) || 0;
       const totalEarned = Number(row.total_earned) || 0;
 
-      if (row.category === "survey") {
-        statistics.surveys.count = count;
-        statistics.surveys.totalEarned = totalEarned;
-      } else if (row.category === "app") {
-        statistics.gameApps.count = count;
-        statistics.gameApps.totalEarned = totalEarned;
-      } else if (row.category === "offerwall") {
-        statistics.offerwalls.count = count;
-        statistics.offerwalls.totalEarned = totalEarned;
+      if (row.category === "offer") {
+        statistics.offers.count = count;
+        statistics.offers.totalEarned = totalEarned;
+      } else if (row.category === "referral") {
+        statistics.referrals.count = count;
+        statistics.referrals.totalEarned = totalEarned;
+      } else if (row.category === "faucet") {
+        statistics.faucets.count = count;
+        statistics.faucets.totalEarned = totalEarned;
+      } else if (row.category === "deposit") {
+        statistics.deposits.count = count;
+        statistics.deposits.totalEarned = totalEarned;
+      } else if (row.category === "fortune_wheel") {
+        statistics.fortuneWheels.count = count;
+        statistics.fortuneWheels.totalEarned = totalEarned;
+      } else if (row.category === "treasure_chest") {
+        statistics.treasureChests.count = count;
+        statistics.treasureChests.totalEarned = totalEarned;
       }
 
       statistics.totalEarned += totalEarned;
