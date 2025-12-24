@@ -1,6 +1,7 @@
 const OfferwallModel = require("../models/offerwall.model");
 const HttpException = require("../utils/HttpException.utils");
 const crypto = require("crypto");
+const playtimeService = require("../services/playtime.service");
 
 class OfferwallController {
   handlePlaytimePostback = async (req, res, next) => {
@@ -11,6 +12,7 @@ class OfferwallController {
     try {
       const params = req.query;
       const headers = req.headers;
+      console.log(params)
 
       await OfferwallModel.saveWebhookLog(
         provider,
@@ -423,6 +425,37 @@ class OfferwallController {
     } catch (error) {
       console.error("BitLabs signature validation error:", error);
       return false;
+    }
+  };
+
+  /**
+   * Get offers from Playtime Offerwall API
+   * GET /api/v1/offerwall/playtime/offers
+   * Query params: page, limit, os, country, sort
+   */
+  getPlaytimeOffers = async (req, res, next) => {
+    try {
+      const { page, limit, os, country, sort } = req.query;
+
+      // Build options object with query parameters
+      const options = {};
+      if (page) options.page = parseInt(page);
+      if (limit) options.limit = parseInt(limit);
+      if (os) options.os = os;
+      if (country) options.country = country;
+      if (sort) options.sort = sort; // 'asc' or 'desc'
+
+      // Fetch offers from Playtime API (with backend pagination & sorting)
+      const offersData = await playtimeService.fetchOffers(options);
+
+      // Return the offers to the frontend
+      res.status(200).json({
+        success: true,
+        data: offersData,
+      });
+    } catch (error) {
+      // Pass error to error handling middleware
+      next(error);
     }
   };
 }
