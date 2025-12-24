@@ -1915,19 +1915,23 @@ class UserController {
     try {
       this.checkValidation(req);
 
-      const { idToken, referral_code, country_code } = req.body;
+      const { accessToken, referral_code, country_code } = req.body;
 
       // Verify the Google ID token using google-auth-library
-      const client = new OAuth2Client();
-      let ticket;
+      // const client = new OAuth2Client();
+      // let ticket;
       let payload;
 
       try {
-        ticket = await client.verifyIdToken({
-          idToken: idToken,
-          audience: process.env.GOOGLE_CLIENT_ID || null,
+        // ticket = await client.verifyIdToken({
+        //   idToken: idToken,
+        //   audience: process.env.GOOGLE_CLIENT_ID || null,
+        // });
+        // payload = ticket.getPayload();
+        const response = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
+          headers: { Authorization: `Bearer ${accessToken}` }
         });
-        payload = ticket.getPayload();
+        payload = await response.json();
       } catch (error) {
         console.log("Google token verification error:", error);
         throw new HttpException(401, "Invalid Google token", "INVALID_TOKEN");
@@ -2157,19 +2161,23 @@ class UserController {
     try {
       this.checkValidation(req);
 
-      const { idToken } = req.body;
+      const { accessToken } = req.body;
 
       // Verify the Google ID token using google-auth-library
-      const client = new OAuth2Client();
-      let ticket;
+      // const client = new OAuth2Client();
+      // let ticket;
       let payload;
 
       try {
-        ticket = await client.verifyIdToken({
-          idToken: idToken,
-          audience: process.env.GOOGLE_CLIENT_ID || null
+        // ticket = await client.verifyIdToken({
+        //   idToken: idToken,
+        //   audience: process.env.GOOGLE_CLIENT_ID || null
+        // });
+        // payload = ticket.getPayload();
+        const response = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
+          headers: { Authorization: `Bearer ${accessToken}` }
         });
-        payload = ticket.getPayload();
+        payload = await response.json();
 
       } catch (error) {
         console.log("Google token verification error:", error);
