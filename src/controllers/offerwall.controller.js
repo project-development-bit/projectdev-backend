@@ -2,6 +2,9 @@ const OfferwallModel = require("../models/offerwall.model");
 const HttpException = require("../utils/HttpException.utils");
 const crypto = require("crypto");
 const playtimeService = require("../services/playtime.service");
+const bitlabsService = require("../services/bitlabs.service");
+const dotenv = require("dotenv");
+dotenv.config();
 
 class OfferwallController {
   handlePlaytimePostback = async (req, res, next) => {
@@ -27,7 +30,6 @@ class OfferwallController {
         "user_id",
         "offer_id",
         "payout",
-        "signature",
       ];
 
       for (const param of requiredParams) {
@@ -40,26 +42,7 @@ class OfferwallController {
         }
       }
 
-      const isValidSignature = this.validatePlaytimeSignature(params);
-      if (!isValidSignature) {
-        await OfferwallModel.saveWebhookLog(
-          provider,
-          webhookIp,
-          headers,
-          params,
-          "invalid_signature",
-          "Signature validation failed"
-        );
-
-        throw new HttpException(
-          403,
-          "Invalid signature",
-          "INVALID_SIGNATURE"
-        );
-      }
-
-      const conversionTimestamp = params.conversionDatetime || Date.now();
-      const providerConversionId = `${params.offer_id}_${params.user_id}_${conversionTimestamp}`;
+      const providerConversionId = `${params.offer_id}_${params.user_id}_${Date.now()}`;
 
       const existingConversion = await OfferwallModel.checkDuplicateConversion(
         provider,
@@ -82,33 +65,25 @@ class OfferwallController {
       // Try to find user by offer_token
       let user = await OfferwallModel.getUserByOfferToken(params.user_id);
 
-      // Fallback: try to find by user ID 
-      if (!user && !isNaN(params.user_id)) {
-        user = await OfferwallModel.getUserById(parseInt(params.user_id));
-      }
-
       if (!user) {
         throw new HttpException(404, "User not found", "USER_NOT_FOUND");
       }
 
-      const payout = parseFloat(params.payout) || 0;
-      const coins = payout;
-      const xpEarned = Math.floor(coins * 10);
+      const RATE = parseFloat(process.env.COIN_RATE) || 0.0001;
+      const XP_PER_COIN = parseFloat(process.env.XP_PER_COIN) || 0.2;
 
-      // Playtime only sends 'event' parameter for event name
-      // Reversals/chargebacks are typically indicated by negative payout or specific event names
-      const event = params.event?.toLowerCase() || "";
-      const isReversed = event === "reversed" ||
-                        event === "chargeback" ||
-                        event.includes("reversal") ||
-                        payout < 0;
+      const payout = parseFloat(params.payout) || 0;
+      const coins = Math.floor(payout / RATE);
+      const xpEarned = Math.floor(coins * XP_PER_COIN);
+
+      const isReversed = payout < 0;
 
       const conversionData = {
         userId: user.id,
         providerId: provider,
         providerConversionId: providerConversionId,
         externalUserId: params.user_id,
-        rewardType: "playtime",
+        rewardType: "offer",
         coins: coins,
         usdAmount: payout,
         xpEarned: xpEarned,
@@ -156,68 +131,6 @@ class OfferwallController {
     }
   };
 
-  validatePlaytimeSignature = (params) => {
-    try {
-
-      const secretKey = process.env.PLAYTIME_SECRET_KEY;
-
-      if (!secretKey) {
-        console.error("PLAYTIME_SECRET_KEY not configured");
-        return false;
-      }
-
-      // Temporarily disable signature validation if PLAYTIME_SKIP_SIGNATURE_CHECK=true
-      if (process.env.PLAYTIME_SKIP_SIGNATURE_CHECK === 'true') {
-        console.warn("⚠️ WARNING: Signature validation is DISABLED - only for testing!");
-        return true;
-      }
-
-      const receivedSignature = params.signature;
-      if (!receivedSignature) {
-        console.error("No signature parameter received");
-        return false;
-      }
-
-      const paramsToSign = { ...params };
-      delete paramsToSign.signature;
-
-      // Try common signature algorithms
-      const algorithms = ['sha256', 'sha1', 'md5'];
-      const algorithm = process.env.PLAYTIME_SIGNATURE_ALGORITHM || 'sha256';
-
-      // Alphabetically sort parameters (common pattern)
-      const sortedKeys = Object.keys(paramsToSign).sort();
-      const signatureString = sortedKeys
-        .map((key) => `${key}=${paramsToSign[key]}`)
-        .join("&");
-
-      console.log("Signature validation debug:", {
-        algorithm: algorithm,
-        signatureString: signatureString,
-        receivedSignature: receivedSignature,
-      });
-
-      const calculatedSignature = crypto
-        .createHmac(algorithm, secretKey)
-        .update(signatureString)
-        .digest("hex");
-
-      const isValid = calculatedSignature === receivedSignature;
-
-      if (!isValid) {
-        console.error("Signature validation failed:", {
-          received: receivedSignature,
-          calculated: calculatedSignature,
-          algorithm: algorithm,
-        });
-      }
-
-      return isValid;
-    } catch (error) {
-      console.error("Signature validation error:", error);
-      return false;
-    }
-  };
 
   handleBitLabsPostback = async (req, res, next) => {
     const provider = "bitlabs";
@@ -238,7 +151,7 @@ class OfferwallController {
       );
 
       // Validate required parameters
-      const requiredParams = ["uid", "tx", "val", "hash"];
+      const requiredParams = ["uid", "tx", "usd", "hash"];
       for (const param of requiredParams) {
         if (!params[param]) {
           throw new HttpException(
@@ -296,17 +209,20 @@ class OfferwallController {
       }
 
       // Parse amounts
-      const coins = parseFloat(params.val) || 0;
-      const usdAmount = parseFloat(params.raw) || 0;
-      const xpEarned = Math.floor(coins * 10);
+      const RATE = parseFloat(process.env.COIN_RATE) || 0.0001;
+      const XP_PER_COIN = parseFloat(process.env.XP_PER_COIN) || 0.2;
+
+      const usdAmount = parseFloat(params.usd) || 0;
+      const coins = parseFloat(params.coin) || Math.floor(usdAmount / RATE);;
+      const xpEarned = Math.floor(coins * XP_PER_COIN);
 
       // Determine reward type based on additional parameters
       let rewardType = "other";
-      if (params.callback_type === "survey" || params.type) {
+      if (params.callback_type === "survey") {
         rewardType = "survey";
-      } else if (params.callback_type === "offer" || params.offer_id) {
+      } else if (params.callback_type === "offer") {
         rewardType = "offer";
-      } else if (params.callback_type === "receipt" || params.receipt_state) {
+      } else if (params.callback_type === "receipt") {
         rewardType = "other"; // Can add 'receipt' to enum if needed
       }
 
@@ -374,6 +290,8 @@ class OfferwallController {
     try {
       const secretKey = process.env.BITLABS_APP_SECRET;
 
+      console.log(secretKey)
+
       if (!secretKey) {
         console.error("BITLABS_APP_SECRET not configured");
         return false;
@@ -428,11 +346,6 @@ class OfferwallController {
     }
   };
 
-  /**
-   * Get offers from Playtime Offerwall API
-   * GET /api/v1/offerwall/playtime/offers
-   * Query params: page, limit, os, country, sort
-   */
   getPlaytimeOffers = async (req, res, next) => {
     try {
       const { page, limit, os, country, sort } = req.query;
@@ -455,6 +368,127 @@ class OfferwallController {
       });
     } catch (error) {
       // Pass error to error handling middleware
+      next(error);
+    }
+  };
+
+  getBitLabsSurveys = async (req, res, next) => {
+    try {
+      const { page, limit, sort } = req.query;
+
+      // Get authenticated user ID
+      const userId = req.currentUser.id;
+
+      // Get user's offer_token to use as BitLabs User ID
+      const user = await OfferwallModel.getUserById(userId);
+
+      if (!user || !user.offer_token) {
+        throw new HttpException(
+          400,
+          "User does not have an offer token configured",
+          "OFFER_TOKEN_NOT_FOUND"
+        );
+      }
+
+      // Build options object with query parameters
+      const options = {};
+      if (page) options.page = parseInt(page);
+      if (limit) options.limit = parseInt(limit);
+      if (sort) options.sort = sort; // 'asc' or 'desc'
+
+      // Fetch surveys from BitLabs API (with backend pagination & sorting)
+      const surveysData = await bitlabsService.fetchSurveys(user.offer_token, options);
+
+      // Return the surveys to the frontend
+      res.status(200).json({
+        success: true,
+        data: surveysData,
+      });
+    } catch (error) {
+      // Pass error to error handling middleware
+      next(error);
+    }
+  };
+
+  getWebhookLogs = async (req, res, next) => {
+    try {
+      const { provider, processingStatus, limit, page } = req.query;
+
+      // Calculate offset from page number
+      const itemsPerPage = parseInt(limit) || 50;
+      const currentPage = parseInt(page) || 1;
+      const offset = (currentPage - 1) * itemsPerPage;
+
+      // Build filter object
+      const filters = {
+        limit: itemsPerPage,
+        offset: offset
+      };
+
+      if (provider) {
+        filters.provider = provider;
+      }
+
+      if (processingStatus) {
+        filters.processingStatus = processingStatus;
+      }
+
+      // Get webhook logs from database
+      const result = await OfferwallModel.getWebhookLogs(filters);
+
+      // Return the logs to the frontend
+      res.status(200).json({
+        success: true,
+        data: result.logs,
+        pagination: result.pagination
+      });
+    } catch (error) {
+      // Pass error to error handling middleware
+      next(error);
+    }
+  };
+
+  getOfferConversions = async (req, res, next) => {
+    try {
+      const { provider, rewardType, status, limit, page } = req.query;
+
+      // Get authenticated user ID from middleware
+      const userId = req.currentUser.id;
+
+      // Calculate offset from page number
+      const itemsPerPage = parseInt(limit) || 50;
+      const currentPage = parseInt(page) || 1;
+      const offset = (currentPage - 1) * itemsPerPage;
+
+      // Build filter object with user ID
+      const filters = {
+        userId: userId,
+        limit: itemsPerPage,
+        offset: offset
+      };
+
+      if (provider) {
+        filters.provider = provider;
+      }
+
+      if (rewardType) {
+        filters.rewardType = rewardType;
+      }
+
+      if (status) {
+        filters.status = status;
+      }
+
+      // Get conversions from database
+      const result = await OfferwallModel.getOfferConversions(filters);
+
+      // Return the conversions to the frontend
+      res.status(200).json({
+        success: true,
+        data: result.conversions,
+        pagination: result.pagination
+      });
+    } catch (error) {
       next(error);
     }
   };

@@ -25,6 +25,119 @@ class OfferwallModel {
     return result.insertId;
   };
 
+  getWebhookLogs = async (filters = {}) => {
+    const { provider, processingStatus, limit = 50, offset = 0 } = filters;
+
+    let whereClauses = [];
+    let params = [];
+
+    if (provider) {
+      whereClauses.push('provider = ?');
+      params.push(provider);
+    }
+
+    if (processingStatus) {
+      whereClauses.push('processing_status = ?');
+      params.push(processingStatus);
+    }
+
+    const whereClause = whereClauses.length > 0
+      ? 'WHERE ' + whereClauses.join(' AND ')
+      : '';
+
+    const limitInt = parseInt(limit) || 50;
+    const offsetInt = parseInt(offset) || 0;
+
+    // Get total count
+    const countSql = `
+      SELECT COUNT(*) as total
+      FROM ${this.webhookLogsTable}
+      ${whereClause}
+    `;
+    const countResult = await coinQuery(countSql, params);
+    const total = countResult[0].total;
+
+    const sql = `
+      SELECT id, provider, ip, headers_json, payload_json,
+             processing_status, error_message, created_at
+      FROM ${this.webhookLogsTable}
+      ${whereClause}
+      ORDER BY created_at DESC
+      LIMIT ${limitInt} OFFSET ${offsetInt}
+    `;
+    const results = await coinQuery(sql, params);
+
+    return {
+      logs: results,
+      pagination: {
+        total,
+        limit: limitInt,
+        offset: offsetInt,
+        totalPages: Math.ceil(total / limitInt),
+        currentPage: Math.floor(offsetInt / limitInt) + 1
+      }
+    };
+  };
+
+  getOfferConversions = async (filters = {}) => {
+    const { userId, provider, rewardType, status, limit = 50, offset = 0 } = filters;
+
+    let whereClauses = ['user_id = ?'];
+    let params = [userId];
+
+    if (provider) {
+      whereClauses.push('provider_id = ?');
+      params.push(provider);
+    }
+
+    if (rewardType) {
+      whereClauses.push('reward_type = ?');
+      params.push(rewardType);
+    }
+
+    if (status) {
+      whereClauses.push('status = ?');
+      params.push(status);
+    }
+
+    const whereClause = 'WHERE ' + whereClauses.join(' AND ');
+
+    const limitInt = parseInt(limit) || 50;
+    const offsetInt = parseInt(offset) || 0;
+
+    // Get total count
+    const countSql = `
+      SELECT COUNT(*) as total
+      FROM ${this.offerConversionsTable}
+      ${whereClause}
+    `;
+    const countResult = await coinQuery(countSql, params);
+    const total = countResult[0].total;
+
+    // Get paginated results
+    const sql = `
+      SELECT id, provider_id, provider_conversion_id, external_user_id,
+             reward_type, coins, usd_amount, xp_earned, status,
+             ip, webhook_ip, created_at, credited_at, reversed_at
+      FROM ${this.offerConversionsTable}
+      ${whereClause}
+      ORDER BY created_at DESC
+      LIMIT ${limitInt} OFFSET ${offsetInt}
+    `;
+    const results = await coinQuery(sql, params);
+
+    return {
+      conversions: results,
+      pagination: {
+        total,
+        limit: limitInt,
+        offset: offsetInt,
+        totalPages: Math.ceil(total / limitInt),
+        currentPage: Math.floor(offsetInt / limitInt) + 1
+      }
+    };
+  };
+
   checkDuplicateConversion = async (providerId, providerConversionId) => {
     const sql = `
       SELECT id, status
@@ -106,17 +219,25 @@ class OfferwallModel {
 
   creditUserBalance = async (userId, coins, xpEarned, conversionId) => {
     const connection = await this.getConnection();
+    const now = new Date();
 
     try {
       await this.beginTransaction(connection);
 
       const updateBalanceSql = `
         UPDATE ${this.balancesTable}
-        SET available = available + ?,
-            updated_at = NOW()
+        SET available = available + ?
         WHERE user_id = ? AND currency = 'COIN'
       `;
       await this.queryWithConnection(connection, updateBalanceSql, [coins, userId]);
+
+      const ledgerSql = `
+        INSERT INTO ledger_entries
+        (user_id, currency, entry_type, amount, ref_type, ref_id,  created_at)
+        VALUES (?, 'COIN', 'credit', ?, 'offerwall', ?, ?)
+      `;
+
+      await this.queryWithConnection(connection,ledgerSql, [userId,coins,conversionId.toString(),now]);
 
       const updateXpSql = `
         UPDATE ${this.usersTable}
@@ -152,11 +273,17 @@ class OfferwallModel {
 
       const updateBalanceSql = `
         UPDATE ${this.balancesTable}
-        SET available = GREATEST(0, available - ?),
-            updated_at = NOW()
+        SET available = GREATEST(0, available - ?) 
         WHERE user_id = ? AND currency = 'COIN'
       `;
       await this.queryWithConnection(connection, updateBalanceSql, [coins, userId]);
+
+      const ledgerSql = `
+        INSERT INTO ledger_entries
+        (user_id, currency, entry_type, amount, ref_type, ref_id,  created_at)
+        VALUES (?, 'COIN', 'debit', ?, 'offerwall', ?, ?)
+      `;
+      await this.queryWithConnection(connection,ledgerSql, [userId,coins,conversionId.toString(),now]);
 
       const updateXpSql = `
         UPDATE ${this.usersTable}
