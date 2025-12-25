@@ -304,13 +304,13 @@ exports.validateVerifyDeleteAccount = [
 ];
 
 exports.validateGoogleSignup = [
-  body("idToken")
+  body("accessToken")
     .exists()
-    .withMessage("Firebase ID token is required")
+    .withMessage("Access token is required")
     .notEmpty()
-    .withMessage("Firebase ID token must not be empty")
+    .withMessage("Access token must not be empty")
     .isString()
-    .withMessage("Firebase ID token must be a string"),
+    .withMessage("Access token must be a string"),
   body("referral_code")
     .optional()
     .isString()
@@ -324,7 +324,7 @@ exports.validateGoogleSignup = [
 ];
 
 exports.validateGoogleSignin = [
-  body("idToken")
+  body("accessToken")
     .exists()
     .withMessage("Firebase ID token is required")
     .notEmpty()
