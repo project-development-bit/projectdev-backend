@@ -1,6 +1,7 @@
 const TreasureChestModel = require("../models/treasureChest.model");
 const HttpException = require("../utils/HttpException.utils");
 const { validationResult } = require("express-validator");
+const UserRewardsModel = require("../models/userRewards.model");
 
 class TreasureChestController {
 
@@ -11,7 +12,6 @@ class TreasureChestController {
     }
   };
 
-  //Returns user's chest availability status
   getChestStatus = async (req, res, next) => {
     try {
       if (!req.currentUser || !req.currentUser.id) {
@@ -23,28 +23,61 @@ class TreasureChestController {
       // Get user's level and status
       const { level, status } = await TreasureChestModel.getUserLevelAndStatus(userId);
 
-      // Get weekly chest statistics
+      // Get weekly chest statistics (base + bonus)
       const weeklyLimit = await TreasureChestModel.getWeeklyChestLimit(userId);
       const thisWeekCount = await TreasureChestModel.getThisWeekChestCount(userId);
-      const availableChests = Math.max(0, weeklyLimit - thisWeekCount);
+      const baseChests = Math.max(0, weeklyLimit - thisWeekCount);
       const nextResetAt = TreasureChestModel.getNextWeeklyReset();
+
+      // Get bonus chests from user_rewards
+
+      const bonusChests = await UserRewardsModel.getActiveRewardCount(userId, 'treasure_chest');
+      const totalChests = baseChests + bonusChests;
+      
+      const cooldownResult = await TreasureChestModel.getCooldownResult(userId);
+
+      let cooldownInfo = {
+        active: false,
+        remainingHours: 0
+      };
+
+      if (cooldownResult && cooldownResult.length > 0 && cooldownResult[0].last_opened_at) {
+        const lastOpened = new Date(cooldownResult[0].last_opened_at);
+        const now = new Date();
+        const hoursSinceLastOpen = (now - lastOpened) / (1000 * 60 * 60);
+        const COOLDOWN_HOURS = 24;
+
+        if (hoursSinceLastOpen < COOLDOWN_HOURS) {
+          cooldownInfo = {
+            active: true,
+            remainingHours: Math.ceil(COOLDOWN_HOURS - hoursSinceLastOpen)
+          };
+        }
+      }
 
       // Determine status
       let chestStatus = "available";
-      if (availableChests === 0) {
+      if (totalChests === 0) {
         chestStatus = "no_chest_available";
+      } else if (cooldownInfo.active && bonusChests === 0) {
+        chestStatus = "cooldown";
       }
 
       res.status(200).json({
         success: true,
         data: {
-          available_chests: availableChests,
+          chests: {
+            base: baseChests,
+            bonus: bonusChests,
+            total: totalChests
+          },
           status: chestStatus,
+          cooldown: cooldownInfo,
           next_reset_at: nextResetAt,
           user_status: status,
           user_level: level,
           weekly_limit: weeklyLimit,
-          opened_this_week: thisWeekCount
+          opened_this_week: thisWeekCount,
         }
       });
 
@@ -52,6 +85,15 @@ class TreasureChestController {
       next(error);
     }
   };
+
+   getSpinBonus = async (req, res, next) => {
+     const userId = req.currentUser.id;
+    const resp = await TreasureChestModel.getBonusTest(userId);
+    res.status(200).json({
+          success: true,
+          data: resp
+        });
+   }
 
   //Opens a treasure chest and returns the reward
   openChest = async (req, res, next) => {
@@ -82,32 +124,62 @@ class TreasureChestController {
       res.status(200).json({
         success: true,
         message,
-        reward: result.reward
+        reward: result.reward,
+        chests_remaining: result.chests_remaining
       });
 
     } catch (error) {
-      // Handle specific errors
+
+      if (error.message === "COOLDOWN") {
+        return res.status(403).json({
+          success: false,
+          status: 'cooldown',
+          message: `Chest is cooling down. Try again in ${error.remainingHours} hour(s).`,
+          remainingHours: error.remainingHours
+        });
+      }
+
+      // Handle no chests available
       if (error.message === "NO_CHEST_AVAILABLE") {
         const weeklyLimit = await TreasureChestModel.getWeeklyChestLimit(req.currentUser.id);
         const thisWeekCount = await TreasureChestModel.getThisWeekChestCount(req.currentUser.id);
         const nextResetAt = TreasureChestModel.getNextWeeklyReset();
 
-        next(new HttpException(403, "Treasure Chest Unavailable", {
-          code: 'NO_CHEST_AVAILABLE',
+        return res.status(403).json({
+          success: false,
           status: 'no_chest_available',
           message: `You have used all ${weeklyLimit} of your weekly treasure chests (${thisWeekCount}/${weeklyLimit}). Next reset: ${nextResetAt}`,
           thisWeekCount,
           weeklyLimit,
           nextResetAt
-        }));
-      } else if (error.message === "NO_REWARDS_CONFIGURED") {
-        next(new HttpException(500, "Chest configuration error", {
-          code: 'NO_REWARDS_CONFIGURED',
-          message: "Treasure chest is not configured properly. Please contact support."
-        }));
-      } else {
-        next(error);
+        });
       }
+
+      // Handle max reward limit reached
+      if (error.message === "MAX_REWARD_LIMIT") {
+        return res.status(403).json({
+          success: false,
+          status: 'max_reward_limit',
+          message: 'You have reached the weekly limit for this reward. Try again later.'
+        });
+      }
+
+      // Handle configuration errors
+      if (error.message === "NO_REWARDS_CONFIGURED") {
+        return res.status(500).json({
+          success: false,
+          status: 'configuration_error',
+          message: "Treasure chest is not configured properly. Please contact support."
+        });
+      }
+
+      // Handle all other unexpected errors (don't leak internal details)
+      console.error('Treasure chest error:', error);
+      return res.status(500).json({
+        success: false,
+        status: 'error',
+        message: 'An error occurred while opening the chest. Please try again later.'
+      });
     }
   };
 

@@ -31,6 +31,12 @@ router.get(
 );
 
 router.get(
+  "/bonus",
+  auth(),
+  awaitHandlerFactory(fortuneWheelController.getSpinBonus)
+);
+
+router.get(
   "/rewards/status",
   auth(),
   awaitHandlerFactory(fortuneWheelController.getWheelStatus)

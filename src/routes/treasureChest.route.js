@@ -40,6 +40,12 @@ router.post(
   awaitHandlerFactory(treasureChestController.openChest)
 );
 
+router.get(
+  "/bonus",
+  auth(),
+  awaitHandlerFactory(treasureChestController.getSpinBonus)
+);
+
 
 router.get(
   "/history",

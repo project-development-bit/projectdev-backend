@@ -1,5 +1,6 @@
 const { coinQuery, getCoinConnection } = require("../config/db");
 const { getUserLevelConfig } = require("../config/rewards.config");
+const UserRewardsModel = require("./userRewards.model");
 
 class FortuneWheelModel {
   rewardsTableName = "fortune_wheel_rewards";
@@ -7,9 +8,6 @@ class FortuneWheelModel {
   balancesTableName = "balances";
   ledgerTableName = "ledger_entries";
   usersTableName = "users";
-
-  // Daily coin cap for fortune wheel
-  DAILY_COIN_CAP = 30;
 
   //Get user's current XP and level
   getUserLevel = async (userId) => {
@@ -95,6 +93,19 @@ class FortuneWheelModel {
     return await coinQuery(sql);
   };
 
+  getBonusTest = async (userId,) => {
+    const connection = await getCoinConnection();
+    await UserRewardsModel.grantReward({
+              userId,
+              rewardType: 'extra_spin',
+              sourceType: 'treasure_chest',
+              sourceId: null,
+              quantity: 2, // 2 spins
+              rewardData: { spins: 2 },
+              expiresAt: null // Spins don't expire
+            }, connection);
+  }
+
   //Get all rewards with weights
   getAllRewardsWithWeights = async () => {
     const sql = `
@@ -115,7 +126,7 @@ class FortuneWheelModel {
     return await coinQuery(sql);
   };
 
-  //Get today's spin count
+  //Get today's base spin count 
   getTodaySpinCount = async (userId) => {
     const today = new Date().toISOString().split('T')[0]; // UTC date
 
@@ -123,6 +134,7 @@ class FortuneWheelModel {
       SELECT COUNT(*) as count
       FROM ${this.logsTableName}
       WHERE user_id = ?
+        AND spin_type = 'base'
         AND DATE(created_at) = ?
     `;
 
@@ -136,6 +148,40 @@ class FortuneWheelModel {
     const dailyLimit = await this.getDailySpinLimit(userId);
 
     return todaySpinCount >= dailyLimit;
+  };
+
+  //Get available spins for user (base + bonus from treasure chest)
+  getAvailableSpins = async (userId) => {
+    const todaySpinCount = await this.getTodaySpinCount(userId);
+    const dailyLimit = await this.getDailySpinLimit(userId);
+    const baseSpins = Math.max(0, dailyLimit - todaySpinCount);
+
+    // Get bonus spins from user_rewards (from treasure chest)
+    const bonusSpins = await UserRewardsModel.getActiveRewardCount(userId, 'extra_spin');
+
+    return {
+      baseSpins,
+      bonusSpins,
+      totalSpins: baseSpins + bonusSpins
+    };
+  };
+
+  //Find user's current sub-level configuration
+  findUserSubLevel = (level, config) => {
+    if (!config || !config.statuses) return null;
+
+    for (const status of config.statuses) {
+      for (const subLevel of status.sub_levels) {
+        const nextSubLevel = status.sub_levels[status.sub_levels.indexOf(subLevel) + 1];
+        const maxLevel = nextSubLevel ? nextSubLevel.min_level - 1 : status.max_level;
+
+        if (level >= subLevel.min_level && (!maxLevel || level <= maxLevel)) {
+          return subLevel;
+        }
+      }
+    }
+
+    return null;
   };
 
   //Get total coins earned from fortune wheel today
@@ -170,6 +216,7 @@ class FortuneWheelModel {
     }
 
     // Fallback to first reward (should never reach here)
+    console.log(rewards[0])
     return rewards[0];
   };
 
@@ -214,56 +261,48 @@ class FortuneWheelModel {
         });
       });
 
-      // 1. Check if user already spun today
-      const hasSpun = await this.hasSpunToday(userId);
-      if (hasSpun) {
+      // Check if user has available spins
+      const { baseSpins, bonusSpins, totalSpins } = await this.getAvailableSpins(userId);
+      console.log(baseSpins,bonusSpins,totalSpins)
+
+      if (totalSpins <= 0) {
         await new Promise((resolve) => {
           connection.rollback(() => resolve());
         });
         connection.release();
-        throw new Error("ALREADY_SPUN_TODAY");
+        throw new Error("NO_SPINS_AVAILABLE");
       }
 
-      // 2. Get today's earnings
-      const todayEarnings = await this.getTodayCoinsEarned(userId);
-
-      // 3. Get all rewards with weights
+      // Get all rewards with weights
       const allRewards = await this.getAllRewardsWithWeights();
 
       if (!allRewards || allRewards.length === 0) {
         throw new Error("NO_REWARDS_CONFIGURED");
       }
 
-      // 4. Select reward using weighted algorithm
+      // Select reward using weighted algorithm
       let selectedReward = this.selectRewardByWeight(allRewards);
-
-      // 5. Enforce daily coin cap
-      const remainingCap = this.DAILY_COIN_CAP - todayEarnings;
+      console.log(selectedReward.reward_coins)
+      // Enforce daily coin cap
       const selectedCoins = parseFloat(selectedReward.reward_coins);
 
-      if (selectedCoins > remainingCap) {
-        // Force lowest reward or zero
-        if (remainingCap > 0) {
-          selectedReward = this.getLowestCoinReward(allRewards);
-          // Ensure it doesn't exceed remaining cap
-          if (parseFloat(selectedReward.reward_coins) > remainingCap) {
-            // Find or create a zero reward
-            selectedReward = allRewards.find(r => parseFloat(r.reward_coins) === 0) || selectedReward;
-          }
-        } else {
-          // Cap reached, force zero reward
-          selectedReward = allRewards.find(r => parseFloat(r.reward_coins) === 0) || this.getLowestCoinReward(allRewards);
-        }
-      }
-
-      const finalCoins = Math.min(parseFloat(selectedReward.reward_coins), remainingCap);
+      const finalCoins = selectedCoins;
       const now = new Date();
 
-      // 6. Insert spin log
+      // Consume a spin BEFORE inserting log (prefer bonus spins first)
+      let usedBonusSpin = false;
+      if (bonusSpins > 0) {
+        // Consume bonus spin from user_rewards
+        await UserRewardsModel.consumeRewardsByType(userId, 'extra_spin', 1, connection);
+        usedBonusSpin = true;
+      }
+
+      // Insert spin log with spin_type
+      const spinType = usedBonusSpin ? 'bonus' : 'base';
       const insertLogSql = `
         INSERT INTO ${this.logsTableName}
-        (user_id, reward_id, reward_coins, reward_usd, wheel_index, ip, device_fingerprint, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        (user_id, reward_id, reward_coins, reward_usd, wheel_index, spin_type, ip, device_fingerprint, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const logResult = await executeQuery(insertLogSql, [
@@ -272,12 +311,13 @@ class FortuneWheelModel {
         finalCoins,
         selectedReward.reward_usd,
         selectedReward.wheel_index,
+        spinType,
         ip,
         deviceFingerprint,
         now
       ]);
 
-      // 7. Update user balance if coins > 0 (creates balance if doesn't exist)
+      // Update user balance if coins > 0 (creates balance if doesn't exist)
       if (finalCoins > 0) {
         const updateBalanceSql = `
           INSERT INTO ${this.balancesTableName} (user_id, currency, available, pending)
@@ -287,7 +327,7 @@ class FortuneWheelModel {
 
         await executeQuery(updateBalanceSql, [userId, finalCoins, finalCoins]);
 
-        // 8. Create ledger entry
+        // Create ledger entry
         const ledgerSql = `
           INSERT INTO ${this.ledgerTableName}
           (user_id, currency, entry_type, amount, ref_type, ref_id, created_at)
@@ -302,6 +342,44 @@ class FortuneWheelModel {
         ]);
       }
 
+      // Grant special rewards if applicable
+      if (selectedReward.reward_type === 'treasure_chest') {
+        const expiresAt = new Date();
+        expiresAt.setHours(expiresAt.getHours() + 24);
+        await UserRewardsModel.grantReward({
+          userId,
+          rewardType: 'treasure_chest',
+          sourceType: 'fortune_wheel',
+          sourceId: logResult.insertId,
+          quantity: 1,
+          rewardData: null,
+          expiresAt: expiresAt // Chests don't expire
+        }, connection);
+
+      } else if (selectedReward.reward_type === 'offer_boost') {
+        // Grant offer boost to user_rewards
+        const { level } = await this.getUserLevel(userId);
+        const config = getUserLevelConfig();
+        const userSubLevel = this.findUserSubLevel(level, config);
+        const boostPercent = userSubLevel?.offer_boost_percent || 8;
+
+        const expiresAt = new Date();
+        expiresAt.setHours(expiresAt.getHours() + 24); // 24 hours from now
+
+        await UserRewardsModel.grantReward({
+          userId,
+          rewardType: 'offer_boost',
+          sourceType: 'fortune_wheel',
+          sourceId: logResult.insertId,
+          quantity: 1,
+          rewardData: {
+            percentage: boostPercent,
+            duration_hours: 24
+          },
+          expiresAt
+        }, connection);
+      }
+
       // Commit transaction
       await new Promise((resolve, reject) => {
         connection.commit((err) => {
@@ -313,6 +391,12 @@ class FortuneWheelModel {
       // Release connection
       connection.release();
 
+      const remainingSpins = {
+        base: usedBonusSpin ? baseSpins : Math.max(0, baseSpins - 1),
+        bonus: usedBonusSpin ? Math.max(0, bonusSpins - 1) : bonusSpins,
+        total: Math.max(0, totalSpins - 1)
+      };
+
       // Return result for frontend
       return {
         wheel_index: selectedReward.wheel_index,
@@ -320,6 +404,7 @@ class FortuneWheelModel {
         reward_coins: finalCoins,
         reward_usd: selectedReward.reward_usd,
         reward_type: selectedReward.reward_type,
+        spins_remaining: remainingSpins
       };
 
     } catch (error) {
@@ -355,151 +440,7 @@ class FortuneWheelModel {
     return await coinQuery(sql, [userId]);
   };
 
-    //Process a fortune wheel spin
-  testProcessSpin = async (userId, ip = null, deviceFingerprint = null) => {
-    // Get a dedicated connection for transaction
-    const connection = await getCoinConnection();
 
-    // Helper function to execute queries on the connection
-    const executeQuery = (sql, values) => {
-      return new Promise((resolve, reject) => {
-        connection.execute(sql, values, (error, result) => {
-          if (error) {
-            reject(error);
-            return;
-          }
-          resolve(result);
-        });
-      });
-    };
-
-    try {
-      // Start transaction
-      await new Promise((resolve, reject) => {
-        connection.beginTransaction((err) => {
-          if (err) reject(err);
-          else resolve();
-        });
-      });
-
-      // 1. Check if user already spun today
-      // const hasSpun = await this.hasSpunToday(userId);
-      // if (hasSpun) {
-      //   await new Promise((resolve) => {
-      //     connection.rollback(() => resolve());
-      //   });
-      //   connection.release();
-      //   throw new Error("ALREADY_SPUN_TODAY");
-      // }
-
-      // 2. Get today's earnings
-      const todayEarnings = await this.getTodayCoinsEarned(userId);
-
-      // 3. Get all rewards with weights
-      const allRewards = await this.getAllRewardsWithWeights();
-
-      if (!allRewards || allRewards.length === 0) {
-        throw new Error("NO_REWARDS_CONFIGURED");
-      }
-
-      // 4. Select reward using weighted algorithm
-      let selectedReward = this.selectRewardByWeight(allRewards);
-
-      // 5. Enforce daily coin cap
-      const remainingCap = this.DAILY_COIN_CAP - todayEarnings;
-      const selectedCoins = parseFloat(selectedReward.reward_coins);
-
-      if (selectedCoins > remainingCap) {
-        // Force lowest reward or zero
-        if (remainingCap > 0) {
-          selectedReward = this.getLowestCoinReward(allRewards);
-          // Ensure it doesn't exceed remaining cap
-          if (parseFloat(selectedReward.reward_coins) > remainingCap) {
-            // Find or create a zero reward
-            selectedReward = allRewards.find(r => parseFloat(r.reward_coins) === 0) || selectedReward;
-          }
-        } else {
-          // Cap reached, force zero reward
-          selectedReward = allRewards.find(r => parseFloat(r.reward_coins) === 0) || this.getLowestCoinReward(allRewards);
-        }
-      }
-
-      const finalCoins = Math.min(parseFloat(selectedReward.reward_coins), remainingCap);
-      const now = new Date();
-
-      // 6. Insert spin log
-      const insertLogSql = `
-        INSERT INTO ${this.logsTableName}
-        (user_id, reward_id, reward_coins, reward_usd, wheel_index, ip, device_fingerprint, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-
-      const logResult = await executeQuery(insertLogSql, [
-        userId,
-        selectedReward.id,
-        finalCoins,
-        selectedReward.reward_usd,
-        selectedReward.wheel_index,
-        ip,
-        deviceFingerprint,
-        now
-      ]);
-
-      // 7. Update user balance if coins > 0 (creates balance if doesn't exist)
-      if (finalCoins > 0) {
-        const updateBalanceSql = `
-          INSERT INTO ${this.balancesTableName} (user_id, currency, available, pending)
-          VALUES (?, 'COIN', ?, 0)
-          ON DUPLICATE KEY UPDATE available = available + ?
-        `;
-
-        await executeQuery(updateBalanceSql, [userId, finalCoins, finalCoins]);
-
-        // 8. Create ledger entry
-        const ledgerSql = `
-          INSERT INTO ${this.ledgerTableName}
-          (user_id, currency, entry_type, amount, ref_type, ref_id, created_at)
-          VALUES (?, 'COIN', 'credit', ?, 'fortune_wheel', ?, ?)
-        `;
-
-        await executeQuery(ledgerSql, [
-          userId,
-          finalCoins,
-          logResult.insertId.toString(),
-          now
-        ]);
-      }
-
-      // Commit transaction
-      await new Promise((resolve, reject) => {
-        connection.commit((err) => {
-          if (err) reject(err);
-          else resolve();
-        });
-      });
-
-      // Release connection
-      connection.release();
-
-      // Return result for frontend
-      return {
-        wheel_index: selectedReward.wheel_index,
-        label: selectedReward.label,
-        reward_coins: finalCoins,
-        reward_usd: selectedReward.reward_usd,
-        reward_type: selectedReward.reward_type,
-        remaining_daily_cap: Math.max(0, this.DAILY_COIN_CAP - todayEarnings - finalCoins)
-      };
-
-    } catch (error) {
-      // Rollback on error
-      await new Promise((resolve) => {
-        connection.rollback(() => resolve());
-      });
-      connection.release();
-      throw error;
-    }
-  };
 }
 
 module.exports = new FortuneWheelModel();

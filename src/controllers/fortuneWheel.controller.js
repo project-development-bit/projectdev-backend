@@ -34,19 +34,21 @@ class FortuneWheelController {
 
       const userId = req.currentUser.id;
 
-      // Get spin statistics
-      const todaySpinCount = await FortuneWheelModel.getTodaySpinCount(userId);
+      // Get spin statistics (base + bonus)
+      const { baseSpins, bonusSpins, totalSpins } = await FortuneWheelModel.getAvailableSpins(userId);
       const dailyLimit = await FortuneWheelModel.getDailySpinLimit(userId);
-      const remainingSpins = Math.max(0, dailyLimit - todaySpinCount);
-      const canSpin = remainingSpins > 0;
+      const canSpin = totalSpins > 0;
 
       res.status(200).json({
         success: true,
         data: {
           canSpin,
-          todaySpins: todaySpinCount,
-          dailyLimit,
-          remainingSpins
+          spins: {
+            base: baseSpins,
+            bonus: bonusSpins,
+            total: totalSpins
+          },
+          dailyLimit
         }
       });
 
@@ -85,15 +87,16 @@ class FortuneWheelController {
 
     } catch (error) {
       // Handle specific errors
-      if (error.message === "ALREADY_SPUN_TODAY") {
+      if (error.message === "NO_SPINS_AVAILABLE") {
         // Get spin info for better error message
-        const todaySpins = await FortuneWheelModel.getTodaySpinCount(req.currentUser.id);
+        const { baseSpins, bonusSpins } = await FortuneWheelModel.getAvailableSpins(req.currentUser.id);
         const dailyLimit = await FortuneWheelModel.getDailySpinLimit(req.currentUser.id);
 
-        next(new HttpException(403, "Daily spin limit reached", {
-          code: 'ALREADY_SPUN_TODAY',
-          message: `You have used all ${dailyLimit} of your daily spins (${todaySpins}/${dailyLimit}). Come back tomorrow or level up to get more spins!`,
-          todaySpins,
+        next(new HttpException(403, "No spins available", {
+          code: 'NO_SPINS_AVAILABLE',
+          message: `You have no spins available. Come back tomorrow for your daily spin or open treasure chests to get bonus spins!`,
+          baseSpins,
+          bonusSpins,
           dailyLimit
         }));
       } else if (error.message === "NO_REWARDS_CONFIGURED") {
@@ -107,6 +110,15 @@ class FortuneWheelController {
     }
   };
 
+
+ getSpinBonus = async (req, res, next) => {
+   const userId = req.currentUser.id;
+  const resp = await FortuneWheelModel.getBonusTest(userId);
+  res.status(200).json({
+        success: true,
+        data: resp
+      });
+ }
 
   //Get user's spin history
   getSpinHistory = async (req, res, next) => {
